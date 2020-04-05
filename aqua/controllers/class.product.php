@@ -209,11 +209,7 @@ class product extends baseController {
                 $new_product_idx = $query_result['return_data']['insert_id'];
   
                 # 제품 단위 정보처리
-                $this->productUnitInfoProc( $new_product_idx
-                    , $this->page_data['product_unit'] 
-                    , $this->page_data['product_unit_type'] 
-                    , $this->page_data['packaging_unit_quantity'] 
-                );
+                $this->productUnitInfoProc( $new_product_idx );
                 
 
                 # 트랜잭션 종료
@@ -260,13 +256,10 @@ class product extends baseController {
 
                 # 기업 정보 수정
                 $query_result = $this->model->updateProduct( $update_data," product_idx = '" . $this->page_data['product_idx'] . "'" );
-                                
+                      
+               
                # 제품 단위 정보처리
-               $this->productUnitInfoProc( $this->page_data['product_idx']
-                    , $this->page_data['product_unit'] 
-                    , $this->page_data['product_unit_type'] 
-                    , $this->page_data['packaging_unit_quantity'] 
-                );
+               $this->productUnitInfoProc( $this->page_data['product_idx'] );
 
                 # 트랜잭션 종료
                 $this->model->stopTransaction();
@@ -307,14 +300,59 @@ class product extends baseController {
     /**
      * 식품유형 정보를 처리한다.
      */
-    private function productUnitInfoProc( $arg_product_idx, $arg_product_unit, $arg_product_unit_type, $arg_packaging_unit_quantity ){
-        # company_idx 에 해당하는 기존 데이터 삭제처리
-        $this->model->updateProductUnitInfo([
-            'del_flag' => 'Y'
-        ], " product_idx  = '" . $arg_product_idx. "'"  );
+    private function productUnitInfoProc( $arg_product_idx ){
 
-        # 신규 insert 처리
-        return $this->model->insertProductUnitInfo( $arg_product_idx, $arg_product_unit, $arg_product_unit_type, $arg_packaging_unit_quantity, COMPANY_CODE );
+        // echoBr( $this->page_data['product_unit_idx'] ); 
+        // echoBr( $this->page_data['product_unit'] ); 
+        // echoBr( $this->page_data['product_unit_type'] ); exit;
+
+        foreach( $this->page_data['product_unit_idx'] AS $idx=>$val){
+
+            if( $val == '' ){
+
+                # 삽입
+                $query_result = $this->model->insertProductUnit([
+                    'company_idx' => COMPANY_CODE
+                    ,'product_idx' => $arg_product_idx
+                    ,'product_unit' => $this->page_data['product_unit'][$idx]
+                    ,'product_unit_type' => $this->page_data['product_unit_type'][$idx]
+                    ,'packaging_unit_quantity' => $this->page_data['packaging_unit_quantity'][$idx]
+                    ,'product_unit_name' => $this->page_data['product_unit_name'][$idx]
+                    ,'use_flag' => $this->page_data['use_flag'][$idx]
+                    ,'reg_idx' => getAccountInfo()['idx']
+                    ,'reg_date' => 'NOW()'
+                    ,'reg_ip' => $this->getIP()
+                ]);
+
+            } else {
+                # 업데이트
+                $query_result = $this->model->updateProductUnit([
+                    'product_unit' => $this->page_data['product_unit'][$idx]
+                    ,'product_unit_type' => $this->page_data['product_unit_type'][$idx]
+                    ,'packaging_unit_quantity' => $this->page_data['packaging_unit_quantity'][$idx]
+                    ,'product_unit_name' => $this->page_data['product_unit_name'][$idx]
+                    ,'use_flag' => $this->page_data['use_flag'][$idx]
+                    ,'edit_idx' => getAccountInfo()['idx']
+                    ,'edit_date' => 'NOW()'
+                    ,'edit_ip' => $this->getIP()
+                ]," product_unit_idx = '" . $this->page_data['product_unit_idx'][$idx] . "'" );
+            }
+        }
+
+        if( empty( $this->page_data['product_unit_del_idx'] ) == false ){
+
+            # company_idx 에 해당하는 기존 데이터 삭제처리
+            $this->model->updateProductUnit([
+                'del_flag' => 'Y'
+                ,'del_idx' => getAccountInfo()['idx']
+                ,'del_date' => 'NOW()'
+                ,'del_ip' => $this->getIP()
+            ], " product_unit_idx  IN (" . $this->page_data['product_unit_del_idx']. ") "  );
+            
+        }
+
+
+        // exit;
 
     }
 
@@ -572,7 +610,7 @@ class product extends baseController {
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         # SET Values
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-        $unit_info_result = $this->model->getProductUnitInfo( " del_flag='N' AND product_idx = '". $this->page_data['product_idx'] ."' " );
+        $unit_info_result = $this->model->getProductUnitInfo( " ( del_flag='N') AND ( use_flag='Y' ) AND ( product_idx = '". $this->page_data['product_idx'] ."' ) " );
         
         if( count( $unit_info_result['row'] ) > 0  ) {
             $result['product_units'] = $unit_info_result['rows'];
@@ -728,8 +766,7 @@ class product extends baseController {
         jsonExit( $result );
         
     }
-  
-    
+
 
 
 }

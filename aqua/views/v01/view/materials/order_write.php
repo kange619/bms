@@ -177,7 +177,7 @@
         var data = [materials_obj[arg_m_idx]];
 
         materials_obj[arg_m_idx].element = arg_this;
-console.log( data );
+// console.log( data );
         $( arg_this ).hide();
 
         $('#tmplate_material_choice_area').append( $('#tmplate_material_choice_area_form').tmpl( data ) );

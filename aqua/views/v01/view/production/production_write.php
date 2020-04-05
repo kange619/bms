@@ -18,8 +18,7 @@
                 <input type="hidden" name="top_code" value="<?=$top_code?>" />
                 <input type="hidden" name="left_code" value="<?=$left_code?>" />
                 <input type="hidden" name="ref_params" value="<?=$params?>" />
-                <input type="hidden" name="page_name" value="<?=$page_name?>" />                
-                <input type="hidden" name="use_material_info" id="use_material_info" value="<?=preg_replace( '/\"/', "'", $use_material_info)?>" />
+                <input type="hidden" name="page_name" value="<?=$page_name?>" />                                
                 <input type="hidden" name="raw_material_info" id="raw_material_info" value="<?=preg_replace( '/\"/', "'", $raw_material_info)?>" />
                 <input type="hidden" name="sub_material_info" id="sub_material_info" value="<?=preg_replace( '/\"/', "'", $sub_material_info)?>" />
                 
@@ -405,6 +404,9 @@ var product_unit_obj = {};
  */
 function foodCodeChangeHandler(){
 // console.log( $(this).val() );
+
+    $('#expiration_days').val('');
+
     if( $(this).val() !== '' ) {
 
         ajaxProcessing('open');
@@ -429,6 +431,8 @@ function foodCodeChangeHandler(){
                 }
             }
         });
+    } else {
+        makeProductUnitOption([]);
     }
         
 }
@@ -476,7 +480,7 @@ function productChangeHandler(){
                 product_idx : $(this).val()                              
             } ,
             callBack : function( arg_result ){
-                
+                // console.log( arg_result );
                 ajaxProcessing('close');
                 
                 if( arg_result.status == 'success' ){
@@ -496,9 +500,12 @@ function productChangeHandler(){
  */
 function makeProductUnitOption( arg_data ){
     var selected = '';
+
     $("#product_unit_idx").html( "<option value='' >선택하세요</option>" );
 
     $.each(arg_data, function(idx, item){
+
+        $('#expiration_days').val( item.product_expiration_date );
 
         product_unit_obj[ item.product_unit_idx ] = item;
 

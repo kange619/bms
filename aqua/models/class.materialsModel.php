@@ -468,9 +468,9 @@ class materialsModel extends baseModel {
                         ,(SELECT IFNULL( SUM( quantity ), 0 ) FROM ". $this->table_materials_stock ." WHERE ( del_flag='N' ) AND ( task_type <> 'I' ) AND (  material_idx=use_insert_quantity.material_idx )   ) AS use_quantity                        
                         FROM 
                         (
-                        SELECT  SUM( quantity ) AS total_in_quantity , receipt_date, material_idx, material_kind   		
-                        FROM ". $this->table_materials_stock ." WHERE ( del_flag='N' ) AND ( task_type='I' ) 
-                        GROUP BY material_idx
+                            SELECT  SUM( quantity ) AS total_in_quantity , receipt_date, material_idx, material_kind   		
+                            FROM ". $this->table_materials_stock ." WHERE ( del_flag='N' ) AND ( task_type='I' ) AND ( company_idx = '". COMPANY_CODE ."' )
+                            GROUP BY material_idx
                         ) AS use_insert_quantity
                     
                     )  AS t_cur

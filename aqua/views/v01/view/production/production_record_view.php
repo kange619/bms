@@ -28,7 +28,7 @@
 				<div class="col-lg-12">
 					<div class="card-box">
 						<h5 class="header-title m-t-0">
-							<b>지시하기</b>
+							<b>기본정보</b>
 						</h5>
 						<hr class="m-t-0">
 						<div class="col-lg-12 table-responsive m-b-0">

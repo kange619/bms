@@ -100,7 +100,7 @@ class clientModel extends baseModel {
     }
     
      /**
-     * 배합비율 정보를 insert 한다.
+     * 고객사 배송지 정보를 insert 한다.
      */ 
     public function insertcompanyAddrs( 
         $arg_client_idx
@@ -172,7 +172,7 @@ class clientModel extends baseModel {
                         , as_client.manager_phone_no                
 
                 FROM
-                        ". $this->table_client_receive_order ." AS as_order LEFT OUTER JOIN ". $this->table_client_company_addr ." AS as_client
+                        ". $this->table_client_receive_order ." AS as_order LEFT OUTER JOIN ". $this->table_client ." AS as_client
                         ON as_order.client_idx = as_client.client_idx
             ) AS t_new
             

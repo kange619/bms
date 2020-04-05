@@ -58,6 +58,7 @@ class productionModel extends baseModel {
                         , as_pu.product_unit
                         , as_pu.product_unit_type
                         , as_pu.packaging_unit_quantity
+                        , as_pu.product_unit_name
                         , as_member.member_name
                         , ( SELECT IFNULL( SUM(schedule_quantity), 0 ) FROM t_production_order WHERE production_status=as_production.production_status AND del_flag='N' ) AS total_schedule_quantity
                         , ( SELECT IFNULL( SUM(pouch_quantity), 0 ) FROM t_production_order WHERE production_status=as_production.production_status AND del_flag='N' ) AS total_pouch_quantity

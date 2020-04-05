@@ -16,6 +16,7 @@ class client extends baseController {
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         $this->paging = $this->new('pageHelper');
         $this->model = $this->new('clientModel');         
+        $this->model_product = $this->new('productModel');         
         
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         # GET parameters
@@ -373,7 +374,7 @@ class client extends baseController {
         if( $this->page_data['sch_order_field'] ){
             $query_sort = ' ORDER BY '. $this->page_data['sch_order_field'] .' '.$this->page_data['sch_order_status'].' ';
         } else {            
-            $query_sort = ' ORDER BY order_idx DESC, order_date DESC, receipt_date DESC ';
+            $query_sort = ' ORDER BY order_idx DESC, order_date DESC, delivery_date DESC ';
         }
 
 
@@ -417,6 +418,75 @@ class client extends baseController {
         $this->view( $this->page_data );
 
 
+    }
+    
+    /**
+     * 수주 등록화면 구성
+     */
+    public function receive_an_order_write(){
+    
+
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # SET Values
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        $page_name = 'receive_an_order';
+        $this->page_data['products'] = [];
+
+        # 생산 제품별 재고 수량을 가져온다.
+        $query_result = $this->model_product->getProdcuctStockState();    
+        
+        // echobr( $query_result ); exit;
+        
+        if( $query_result['num_rows'] > 0 ){
+            $this->page_data['products'] = json_encode( $query_result['rows'] );;
+        }
+
+        # 고객사 정보를 요청한다.
+        $this->page_data['clients'] = $this->model->getClient( " ( company_idx = '". COMPANY_CODE ."' ) AND ( use_flag='Y' ) AND ( del_flag='N' ) " )['rows'];    
+         
+        # 고객사 별 배송지를 요청한다.
+        $query_result = $this->model->getClientComapnyAddr( " ( company_idx = '". COMPANY_CODE ."' ) AND ( del_flag='N' ) " );    
+        
+
+        if( $query_result['num_rows'] > 0 ) {
+
+            $client_addrs = [];
+            $client_addrs[0]['addr_idx'] = 0;
+            $client_addrs[0]['addr_name'] = '본점';
+
+            foreach( $query_result['rows'] AS $idx=>$item ) {
+            
+            
+                if( gettype($client_addrs[ $item['client_idx'] ]) == 'NULL' ) {
+                    $client_addrs[ $item['client_idx'] ] = [];
+                }
+                
+                array_push( $client_addrs[ $item['client_idx'] ], $item);
+                
+            }
+            
+
+        } else {
+            $client_addrs['addr_idx'] = 0;
+            $client_addrs['addr_name'] = '본점';
+        }
+
+        $this->page_data['client_addrs'] = $client_addrs;
+
+        $this->page_data['mode'] = 'ins';
+        $this->page_data['page_work'] = '등록';
+
+
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/client/'. $page_name .'_write.php';
+        $this->page_data['list'] = $list_result['rows'];
+        
+        $this->view( $this->page_data );
+
+        
     }
 
 }

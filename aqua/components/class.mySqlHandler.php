@@ -241,9 +241,9 @@ class mySqlHandler extends aqua {
         foreach ($arg_set_data as $key=>$value):      
         
             
-            if( empty( $value ) == false ){
-                $value = strtoupper( $value );
-            }
+            // if( empty( $value ) == false ){
+            //     $value = strtoupper( $value );
+            // }
 
             if( preg_replace('/\s+/', '', $value ) == 'NOW()' ) {
                 $make_items[] = $key ."= ". $value;

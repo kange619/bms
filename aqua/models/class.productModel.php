@@ -5,12 +5,14 @@ class productModel extends baseModel {
     private $table;
     private $table_product_unit;
     private $table_mixing_ratio;
+    private $table_product_stock;
 
     function __construct() {
 
         $this->table = ' t_products_info ';        
         $this->table_product_unit = ' t_product_unit_info ';        
         $this->table_mixing_ratio = ' t_mixing_ratio ';                
+        $this->table_product_stock = ' t_product_stock ';                
         $this->db = $this->connDB('masic');
 
     }
@@ -77,7 +79,10 @@ class productModel extends baseModel {
      */
     public function getProductUnitInfo( $arg_where ){
 
-        $query = " SELECT * FROM ". $this->table_product_unit ." WHERE " . $arg_where;
+        $query = "  SELECT 
+                            * 
+                            , ( SELECT product_expiration_date FROM ". $this->table ." WHERE product_idx=as_unit.product_idx ) AS product_expiration_date
+                    FROM ". $this->table_product_unit ." AS as_unit WHERE " . $arg_where;
         $query_result = $this->db->execute( $query );
 
         return $query_result['return_data'];
@@ -96,6 +101,21 @@ class productModel extends baseModel {
      */
     public function updateProduct( $arg_data, $arg_where ) {
         return $this->db->update( $this->table, $arg_data, $arg_where );
+    }
+
+
+     /**
+     * 제품 단위정보를 insert 한다.
+     */
+    public function insertProductUnit( $arg_data ){
+        return $this->db->insert( $this->table_product_unit, $arg_data );
+    }
+
+    /**
+     * 제품 단위 정보를 update 한다
+     */
+    public function updateProductUnit( $arg_data, $arg_where ) {
+        return $this->db->update( $this->table_product_unit, $arg_data, $arg_where );
     }
 
 
@@ -219,14 +239,68 @@ class productModel extends baseModel {
     }
 
 
-    
     /**
-     * 원부자재 정보를 반환한다.
+     * 제품별 재고현황을 조회 반환한다.
      */
-    public function getMaterials(){
-        // t_materials_usage
-    }
+    public function getProdcuctStockState(){
 
+        $query = " 
+            SELECT	as_product.product_idx
+                    , as_product.product_name
+                    , as_product.food_code
+                    , tmp_available_stocks.product_unit_idx
+                    , as_p_unit.product_unit
+                    , as_p_unit.product_unit_type
+                    , as_p_unit.packaging_unit_quantity
+                    , as_p_unit.product_unit_name
+                    , IFNULL( tmp_available_stocks.total_in_quantity, 0 ) AS total_in_quantity 
+                    , IFNULL( tmp_available_stocks.use_quantity , 0 ) AS use_quantity 
+                    , IFNULL( tmp_available_stocks.stock_quantity , 0 ) AS stock_quantity 
+                    , (	
+                        SELECT IFNULL( SUM(product_quantity), 0 ) 
+                        FROM ". $this->table_product_stock ." 
+                        WHERE ( product_idx=tmp_available_stocks.product_idx ) AND ( del_flag='N' ) AND ( task_type = 'U' )
+                    ) AS total_use_quantity 
+                    , (
+                        SELECT IFNULL( SUM(product_quantity), 0 ) 
+                        FROM ". $this->table_product_stock ." 
+                        WHERE ( product_idx=tmp_available_stocks.product_idx ) AND ( del_flag='N' ) AND ( task_type = 'D' ) 
+                    ) AS total_discard_quantity 
+                    , ( 
+                        SELECT IFNULL( SUM(product_quantity), 0 ) 
+                        FROM ". $this->table_product_stock ." 
+                        WHERE ( product_idx=tmp_available_stocks.product_idx ) AND ( del_flag='N' ) AND ( task_type = 'S' )
+                    ) AS total_schedule_quantity 
+            FROM ".$this->table." AS as_product LEFT OUTER JOIN ( 
+            SELECT * 
+            FROM ( 
+                SELECT * , ( total_in_quantity - use_quantity ) AS stock_quantity 
+                FROM ( 
+                    SELECT * 
+                            ,(	SELECT IFNULL( SUM( product_quantity ), 0 ) 
+                                FROM ". $this->table_product_stock ." WHERE ( del_flag='N' ) AND ( task_type <> 'I' ) AND ( product_idx=use_insert_quantity.product_idx ) 
+                            ) AS use_quantity 
+                    FROM ( 
+                        SELECT	SUM( product_quantity ) AS total_in_quantity
+                                    , product_unit_idx 
+                                    , product_idx 
+                        FROM ". $this->table_product_stock ." 
+                        WHERE ( del_flag='N' ) AND ( task_type='I' ) AND ( company_idx = '". COMPANY_CODE ."' ) 
+                        GROUP BY product_unit_idx 
+                    ) AS use_insert_quantity 
+                ) AS t_cur 
+            ) AS t_result 
+            ) AS tmp_available_stocks ON as_product.product_idx = tmp_available_stocks.product_idx 
+            LEFT OUTER JOIN ". $this->table_product_unit ." AS as_p_unit
+            ON tmp_available_stocks.product_unit_idx = as_p_unit.product_unit_idx
+            WHERE as_product.del_flag='N'
+        ";
+
+        $query_result = $this->db->execute( $query );
+
+        return $query_result['return_data'];
+
+    }
     
 
 

@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                제품정보관리 > 제품 정보 <?=$page_work?>
+                    제품정보관리 > 제품 정보 <?=$page_work?>
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
                 </h1>                
             </section>
@@ -18,6 +18,7 @@
                 <input type="hidden" name="top_code" value="<?=$top_code?>" />
                 <input type="hidden" name="left_code" value="<?=$left_code?>" />
                 <input type="hidden" name="ref_params" value="<?=$params?>" />
+                <input type="hidden" name="product_unit_del_idx" id="product_unit_del_idx" value="" />
 
 
             <!-- 제품정보 -->
@@ -160,9 +161,19 @@
                             <hr class="m-t-0">
                             <table class="table table-bordered text-center">
                                 <colgroup width="20%"></colgroup>
-                                <colgroup width="30%"></colgroup>
                                 <colgroup width="20%"></colgroup>
-                                <colgroup width="30%"></colgroup>
+                                <!-- <colgroup width="20%"></colgroup> -->
+                                <colgroup width="20%"></colgroup>
+                                <colgroup width="10%"></colgroup>
+                                <thead>
+									<tr>										
+										<th class="info">포장단위별 용량(중량)</th>																				
+										<th class="info">포장단위별 수량</th>																				
+										<!-- <th class="info">수량단위 명</th>																				 -->
+										<th class="info">사용여부</th>
+                                        <th class="info">삭제</th>
+									</tr>
+								</thead>
                                 <tbody id="product_unit_add_area" >
                                     
                                     
@@ -208,6 +219,7 @@
         makeProductUnits();
     })
 
+
     /**
         삭제 버튼 동작
      */
@@ -225,7 +237,15 @@
      */
      function addProductUnitForm(){
 
-        var empty_data = [{product_unit_idx: '', product_idx: '', product_unit: '', product_unit_type: '', packaging_unit_quantity: '' }];
+        var empty_data = [{
+            product_unit_idx: ''
+            , product_idx: ''
+            , product_unit: ''
+            , product_unit_type: ''
+            , packaging_unit_quantity: ''
+            , product_unit_name: ''
+            , use_flag: ''
+         }];
 
         $('#product_unit_add_area').append( $('#tmplate_product_unit_form').tmpl( empty_data ) );
         
@@ -249,8 +269,25 @@
      /**
       * 포장단위 삭제
       */
-     function delProductUnitForm( arg_this ){
+     function delProductUnitForm( arg_this, arg_unit_idx ){
+
+        var product_unit_del_idx = $('#product_unit_del_idx').val();
+
+        if( product_unit_del_idx == '') {
+            product_unit_del_idx = [];
+        } else {
+            product_unit_del_idx = product_unit_del_idx.split(',');
+        }
+
+        if( arg_unit_idx !== '' ) {
+            product_unit_del_idx.push( arg_unit_idx );
+
+            $('#product_unit_del_idx').val( product_unit_del_idx.join(',') );
+        }
+        
+
         $( arg_this ).parent().parent().remove();
+
      }
 
      /**
@@ -280,20 +317,31 @@
 
 <script id="tmplate_product_unit_form" type="text/x-jquery-tmpl">
     <tr>
-        <th class="info">포장단위별 용량(중량)</th>
-        <td class="text-left">
-            <input class="form-control wper100 pull-left m-r-5" type="text"  name="product_unit[]" placeholder="" value="${product_unit}" style="width:100px" />
+        
+        <td >
+            <input type="hidden"  name="product_unit_idx[]" placeholder="" value="${product_unit_idx}" style="width:100px" />
+            <input class="form-control wper100  m-r-5" type="text"  name="product_unit[]" placeholder="" value="${product_unit}" style="width:100px" data-valid="blank" />
             <select class="form-control" name="product_unit_type[]" style="width:100px;margin-lfet:10px" >
-                <option value="g" {{if "g" === product_unit_type }}selected="selected"{{/if}} value="${product_unit_type}" >g</option>                                                    
-                <option value="kg" {{if "kg" === product_unit_type }}selected="selected"{{/if}} value="${product_unit_type}" >kg</option>                                                    
-                <option value="ml"{{if "ml" === product_unit_type }}selected="selected"{{/if}} value="${product_unit_type}"  >ml</option>                                                    
-                <option value="L" {{if "L" === product_unit_type }}selected="selected"{{/if}} value="${product_unit_type}" >L</option>                                                
+                <option value="g" {{if "g" === product_unit_type }}selected="selected"{{/if}} >g</option>                                                    
+                <option value="kg" {{if "kg" === product_unit_type }}selected="selected"{{/if}} >kg</option>                                                    
+                <option value="ml"{{if "ml" === product_unit_type }}selected="selected"{{/if}}  >ml</option>                                                    
+                <option value="L" {{if "L" === product_unit_type }}selected="selected"{{/if}} >L</option>                                                
+            </select> 
+        </td>        
+        <td class="text-center">
+            <input type="text" class="form-control wper100  m-r-5 "  name="packaging_unit_quantity[]"  value="${packaging_unit_quantity}"  placeholder="" style="width:50px" data-valid="num" />            
+        </td>
+        <!-- <td class="text-center">
+            <input type="text" class="form-control wper100  m-r-5 "  name="product_unit_name[]"  value="${product_unit_name}"  placeholder="봉/개" style="width:80px" data-valid="blank" />            
+        </td> -->
+        <td class="text-center">
+            <select class="form-control" name="use_flag[]" style="width:100px;margin-lfet:10px" >
+                <option value="Y" {{if "Y" === use_flag }}selected="selected"{{/if}}>사용</option>
+                <option value="N" {{if "N" === use_flag }}selected="selected"{{/if}}>미사용</option>
             </select> 
         </td>
-        <th class="info">포장단위별 수량</th>
-        <td class="text-left">
-            <input type="text" class="form-control wper100 pull-left m-r-5 "  name="packaging_unit_quantity[]"  value="${packaging_unit_quantity}"  placeholder="" style="width:50px" />
-            <button type="button" class="btn btn-sm btn-danger waves-effect waves-light" onclick="delProductUnitForm(this)">삭제</button>
+        <td class="text-center">            
+            <button type="button" class="btn btn-sm btn-danger waves-effect waves-light" onclick="delProductUnitForm(this, '${product_unit_idx}')">삭제</button>
         </td>
     </tr>
 </script>
