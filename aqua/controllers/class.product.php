@@ -767,6 +767,115 @@ class product extends baseController {
         
     }
 
+    /**
+     * 제품 재고 값 json 반환
+     */
+    public function get_stocks_json(){
+        
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # 필수값 체크
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=     
+        if( empty( $this->page_data['stock_idx'] ) ) {
+			$result['status'] = 'fail';
+			$result['msg'] = '필수값 누락 : stock_idx ';
+			jsonExit( $result );				
+        }
+
+        $list_result = $this->model->getAvailableStocks( $this->page_data['stock_idx'] );
+
+        $result['status'] = 'success';
+        $result['msg'] = '';
+        $result['stock_quantity'] = number_format( $list_result );
+        jsonExit( $result );
+        
+    }
+
+    /**
+     * 제품 작업처리 json 반환
+     */
+    public function task_stocks_json(){
+       
+        $result = [];
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # 필수값 체크
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=     
+        if( empty( $this->page_data['stock_idx'] ) ) {
+			$result['status'] = 'fail';
+			$result['msg'] = '필수값 누락 : stock_idx ';
+			jsonExit( $result );				
+        }
+
+        if( empty( $this->page_data['task_type'] ) ) {
+			$result['status'] = 'fail';
+			$result['msg'] = '필수값 누락 : task_type ';
+			jsonExit( $result );				
+        }
+
+        if( empty( $this->page_data['use_quantity'] ) ) {
+			$result['status'] = 'fail';
+			$result['msg'] = '필수값 누락 : use_quantity ';
+			jsonExit( $result );				
+        }
+
+        if( empty( $this->page_data['memo'] ) ) {
+			$result['status'] = 'fail';
+			$result['msg'] = '필수값 누락 : memo ';
+			jsonExit( $result );				
+        }
+
+        $stock_quantity = $this->model->getAvailableStocks( $this->page_data['stock_idx'] );
+
+        if( $stock_quantity >= $this->page_data['use_quantity'] ) {
+            # 정상 작업처리
+
+            #주문정보
+            $query_result = $this->model->getProductStock(" AND stock_idx = '". $this->page_data['stock_idx'] ."' " );    
+            
+            if( $query_result['num_rows'] > 0 ) {
+
+                $stock_info = $query_result['row'];
+                
+                # 생산 제품 재고등록
+                $query_result = $this->model->insertStock([
+                    'company_idx' => COMPANY_CODE
+                    ,'production_idx' => $stock_info['production_idx']
+                    ,'product_idx' => $stock_info['product_idx']                    
+                    ,'product_unit_idx' => $stock_info['product_unit_idx']
+                    ,'product_name' => $stock_info['product_name']
+                    ,'product_unit' => $stock_info['product_unit']
+                    ,'product_unit_type' => $stock_info['product_unit_type']
+                    ,'packaging_unit_quantity' => $stock_info['packaging_unit_quantity']
+                    ,'product_quantity' => $this->page_data['use_quantity']     
+                    ,'memo' => $this->page_data['memo']
+                    ,'task_type' => $this->page_data['task_type']
+                    ,'reg_idx' => getAccountInfo()['idx']
+                    ,'reg_date' => 'NOW()'
+                    ,'reg_ip' => $this->getIP()
+                ]);
+
+                $result['status'] = 'success';
+                $result['msg'] = '처리되었습니다.';
+                jsonExit( $result );
+                
+            } else {
+
+                $result['status'] = 'fail';
+                $result['msg'] = '입고 정보가 존재 하지 않습니다.';
+                jsonExit( $result );
+                
+            }
+
+        } else {
+            # 남은 수량이 입력된 값보다 작은 경우
+            $result['status'] = 'fail';
+			$result['msg'] = '남은 수량이 입력된 사용값보다 적어 작업이 불가능합니다.';
+			jsonExit( $result );
+        }
+
+        
+        
+    }
+
 
 
 }

@@ -6,6 +6,7 @@ class productModel extends baseModel {
     private $table_product_unit;
     private $table_mixing_ratio;
     private $table_product_stock;
+    private $table_production_order;
 
     function __construct() {
 
@@ -13,6 +14,7 @@ class productModel extends baseModel {
         $this->table_product_unit = ' t_product_unit_info ';        
         $this->table_mixing_ratio = ' t_mixing_ratio ';                
         $this->table_product_stock = ' t_product_stock ';                
+        $this->table_production_order = ' t_production_order ';                
         $this->db = $this->connDB('masic');
 
     }
@@ -301,6 +303,162 @@ class productModel extends baseModel {
         return $query_result['return_data'];
 
     }
+
+    /**
+     * 재고 정보를 insert 한다.
+     */
+    public function insertStock( $arg_data ){
+        return $this->db->insert( $this->table_product_stock, $arg_data );
+    }
+
+    /**
+     * 재고 정보를 update 한다.
+     */
+    public function updateStock( $arg_data, $arg_where ){
+        return $this->db->update( $this->table_product_stock, $arg_data, $arg_where );
+    }
+
+    /**
+     * 제품 재고 목록을 반환 한다.
+     */
+    public function getProductStocks( $arg_data ){
+
+        $result = [];
+
+        $join_table = "
+            (
+                SELECT  
+                    t_stock.*                   
+                    ,t_order.schedule_date
+                    ,t_order.expiration_date
+                    ,t_order.expiration_days
+                    ,t_order.food_code                    
+                FROM
+                        ". $this->table_product_stock ." AS t_stock LEFT OUTER JOIN ". $this->table_production_order ." AS t_order
+                        ON t_stock.production_idx = t_order.production_idx 
+            ) AS t_new
+            
+        ";
+
+        $query = " SELECT COUNT(*) AS cnt FROM ". $join_table ." WHERE 1=1 " . $arg_data['query_where'];
+
+        $query_result = $this->db->execute( $query );
+
+        $result['total_rs'] = $query_result['return_data']['row']['cnt'];
+
+        $query = " SELECT IFNULL( SUM( product_quantity ), 0 ) AS total_quantity FROM ". $join_table ." WHERE 1=1 " . $arg_data['query_where'];
+
+        $query_result = $this->db->execute( $query );
+
+        $result['total_quantity'] = $query_result['return_data']['row']['total_quantity'];
+
+
+        $query = " SELECT * FROM ". $join_table ." WHERE 1=1 " . $arg_data['query_where']. $arg_data['query_sort'] . $arg_data['limit'];
+        
+        $query_result = $this->db->execute( $query );
+
+        $result['rows'] = $query_result['return_data']['rows'];
+
+        return $result;
+
+    }
+
+    /**
+     * 제품 재고 정보를 반환 한다.
+     */
+    public function getProductStock( $arg_where ){
+
+        $result = [];
+
+        $join_table = "
+            (
+                SELECT  
+                    t_stock.*                   
+                    ,t_order.schedule_date
+                    ,t_order.expiration_date
+                    ,t_order.expiration_days
+                    ,t_order.food_code                    
+                FROM
+                        ". $this->table_product_stock ." AS t_stock LEFT OUTER JOIN ". $this->table_production_order ." AS t_order
+                        ON t_stock.production_idx = t_order.production_idx 
+            ) AS t_new
+            
+        ";
+
+        $query = " SELECT * FROM ". $join_table ." WHERE 1=1 " . $arg_where;
+
+        $query_result = $this->db->execute( $query );
+
+        return $query_result['return_data'];
+
+    }
+
+    
+    /**
+     * 사용가능한 제품 재고 수를 반환 한다.
+     */
+    public function getAvailableStocks( $arg_stock_idx ){
+        
+        $query = " 
+            SELECT 
+                ( product_quantity - ( SELECT IFNULL( SUM( product_quantity ), 0 )  FROM ". $this->table_product_stock ." WHERE production_idx = t_stock.production_idx AND task_type <> 'I' AND del_flag='N' ) ) AS stock_quantity
+            FROM ". $this->table_product_stock ." AS t_stock WHERE stock_idx = '". $arg_stock_idx ."' AND task_type='I' AND ( del_flag='N' )
+        ";
+
+        $query_result = $this->db->execute( $query );
+
+        return $query_result['return_data']['row']['stock_quantity'];
+
+
+    }
+
+    /**
+     * 사용가능한 제품 재고 수를 반환 한다.
+     */
+    public function getAvailableStockByExpirationDate( $arg_stock_idx ){
+
+        $query = " 
+            SELECT	stock_idx
+                    , SUM( result_quantity ) AS stock_quantity
+                    ,expiration_date
+            FROM (
+                SELECT	
+                    * 
+                    , (product_quantity - used_quantity ) AS result_quantity
+                FROM ( 
+                        SELECT 
+                            t_stock.stock_idx
+                            ,t_stock.product_name
+                            ,t_stock.product_unit_idx
+                            ,t_stock.product_unit
+                            ,t_stock.product_unit_type
+                            ,t_stock.packaging_unit_quantity
+                            ,t_stock.product_quantity
+                            ,t_order.expiration_date
+                            ,t_order.expiration_days
+                            ,t_order.production_idx
+                            , (
+                                SELECT IFNULL( SUM(product_quantity), 0 ) 
+                                FROM ". $this->table_product_stock ." 
+                                WHERE ( production_idx=t_stock.production_idx ) AND ( product_unit_idx=t_stock.product_unit_idx ) AND ( del_flag='N' ) AND ( task_type <> 'I' )
+                            ) AS used_quantity
+                        FROM ". $this->table_product_stock ." AS t_stock LEFT OUTER JOIN ". $this->table_production_order ." AS t_order
+                        ON t_stock.production_idx = t_order.production_idx 
+                        WHERE t_stock.task_type = 'I' AND t_stock.product_unit_idx = '".$arg_stock_idx."'
+                ) AS as_stock_result
+            ) AS t_state
+            group by expiration_date
+        ";
+
+        $query_result = $this->db->execute( $query );
+
+        return $query_result['return_data'];
+
+    }
+
+
+
+
     
 
 

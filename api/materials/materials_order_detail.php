@@ -45,6 +45,7 @@ if( $params['manual']  ) {
     $result .= '	msg : 처리 결과 간략글  '.PHP_EOL;
     $result .= '	,order_detail : {  '.PHP_EOL;    
     $result .= '	    ,materials_usage_idx : 자재키 	  '.PHP_EOL;    
+    $result .= '	    ,material_idx : 자재코드	  '.PHP_EOL;
     $result .= '	    ,material_kind : raw - 원자재 / sub - 부자재	  '.PHP_EOL;
     $result .= '	    ,company_name : 제품 납품업체	  '.PHP_EOL;
     $result .= '	    ,material_name : 제품명	  '.PHP_EOL;
@@ -77,13 +78,16 @@ $where = " order_idx = '". $params['order_idx'] ."' ";
 
 $query_result = $model_materals->getOrder( $where );    
 
+// echoBr( $query_result );
 
 $result['status'] = 'success';
 
 if( $query_result['num_rows'] > 0 ) {
+    $result['order_detail'] = [];
     $result['order_detail']['materials_usage_idx'] = $query_result['row']['materials_usage_idx'];        
     $result['order_detail']['material_code'] = $query_result['row']['material_code'];
     $result['order_detail']['company_name'] = $query_result['row']['company_name'];
+    $result['order_detail']['material_idx'] = $query_result['row']['material_idx'];
     $result['order_detail']['material_kind'] = $query_result['row']['material_kind'];
     $result['order_detail']['material_name'] = $query_result['row']['material_name'];
     $result['order_detail']['standard_info'] = $query_result['row']['standard_info'];

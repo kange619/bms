@@ -98,6 +98,21 @@ class clientModel extends baseModel {
     public function updateClientCompanyAddr( $arg_data, $arg_where ) {
         return $this->db->update( $this->table_client_company_addr, $arg_data, $arg_where );
     }
+
+    /**
+     * 수주정보를 insert 한다.
+     */
+    public function insertClientReceiveOrder( $arg_data ){
+        return $this->db->insert( $this->table_client_receive_order, $arg_data );
+    }
+
+    /**
+     * 수주정보를 수정한다.
+     */
+    public function updateClientReceiveOrder( $arg_data, $arg_where ) {
+        return $this->db->update( $this->table_client_receive_order, $arg_data, $arg_where );
+    }
+
     
      /**
      * 고객사 배송지 정보를 insert 한다.
@@ -158,7 +173,7 @@ class clientModel extends baseModel {
     }
 
     /**
-     * 수주 정보를 반환한다.
+     * 수주정보 목록을 반환한다.
      */
     public function getReceiveOrders( $arg_data ){
         $result = [];
@@ -191,6 +206,33 @@ class clientModel extends baseModel {
         $result['rows'] = $query_result['return_data']['rows'];
 
         return $result;
+    }
+
+    /**
+     * 수주 정보를 반환한다.
+     */
+    public function getReceiveOrder( $arg_where ){
+
+        $join_table = "
+            (
+                SELECT  
+                        as_order.*                                                  
+                        , as_client.company_name
+                        , as_client.manager_name
+                        , as_client.manager_phone_no                
+
+                FROM
+                        ". $this->table_client_receive_order ." AS as_order LEFT OUTER JOIN ". $this->table_client ." AS as_client
+                        ON as_order.client_idx = as_client.client_idx
+            ) AS t_new
+            
+        ";
+
+        $query = " SELECT * FROM ". $join_table ." WHERE " . $arg_where;
+        $query_result = $this->db->execute( $query );
+
+        return $query_result['return_data'];
+
     }
 
 

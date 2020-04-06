@@ -64,7 +64,7 @@
                                             <div class="input-daterange input-group" id="date-range">
                                                 <input type="text" class="form-control datepicker" readonly="readonly" name="sch_schedule_s_date" value="<?=$sch_schedule_s_date;?>">
                                                 <span class="input-group-addon bg-primary b-0 text-white">~</span>
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_schedule_e_date" value="<?=$sch_schedule_s_date;?>">
+                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_schedule_e_date" value="<?=$sch_schedule_e_date;?>">
                                             </div>
                                         </div>
                                     </div>

@@ -6,8 +6,8 @@
 
             <section class="content-header">                    
                 <h1>
-                    수주관리
-                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+수주등록</button>                 
+                    출하관리
+                    <!-- <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+출하등록</button>                  -->
                 </h1>                   
             </section>
 
@@ -32,7 +32,6 @@
                                                 <option value="" <?=($sch_process_state == '' ? 'selected="selected"' : '' )?> >전체</option>
                                                 <option value="O" <?=($sch_process_state == 'O' ? 'selected="selected"' : '' )?> >수주</option>
                                                 <option value="D" <?=($sch_process_state == 'D' ? 'selected="selected"' : '' )?> >출하</option>
-                                                <option value="C" <?=($sch_process_state == 'C' ? 'selected="selected"' : '' )?> >취소</option>
                                                 
                                             </select>
                                             </div>
@@ -55,7 +54,7 @@
 
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label">출하 예정일</label>
+                                        <label class="col-sm-3 control-label">출하일</label>
                                         <div class="col-sm-9">
                                             <div class="input-daterange input-group" id="date-range">
                                                 <input type="text" class="form-control datepicker" readonly="readonly" name="sch_schedule_s_date" value="<?=$sch_schedule_s_date;?>">
@@ -104,15 +103,14 @@
                                     <tr class="active">
                                         <th class="info sorting" data-order="order_idx"  style="width: 10%;">수주번호</th>
                                         <th class="info sorting" data-order="order_date"  >수주일</th>
-                                        <th class="info sorting" data-order="delivery_date" >출하예정일</th>
+                                        <th class="info sorting" data-order="delivery_date" >출하일</th>
                                         <th class="info sorting" data-order="product_name"  style="width: 10%;">제품명</th> 
                                         <th class="info sorting" data-order="quantity" >수주수량</th>
                                         <th class="info sorting" data-order="company_name" >회사명</th>
                                         <th class="info sorting" data-order="manager_name"  >담당자명</th>
                                         <th class="info sorting" data-order="manager_phone_no" >담당자연락처</th>
                                         <th class="info sorting" >상태</th>                                                                     
-                                        <th class="info" >수주수정</th>                                                                     
-                                        <th class="info" >삭제</th>                                                                     
+                                        <th class="info" >수주수정</th>                                                                                                  
                                     </tr>                                
                                 </thead>
                                 <tbody>
@@ -133,49 +131,24 @@
                                         <td><?=$process_state_arr[ $value['process_state'] ]?></td>
                                         <td>
                                             <?php
-                                                if( $value['process_state'] == 'w') {
+                                                if( $value['approval_state'] !== 'W' ) {
                                             ?>                                                                                  
-                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-light" onclick="alert('출하처리되어 변경이 불가합니다.')" >변경불가</button>
+                                            <button type="button" class="btn btn-sm btn-success waves-effect waves-light" onclick="alert('준비중입니다.')" >승인</button>
                                             <?php
-                                                } else {
+                                                } 
                                             ?>
-                                                <?php
-                                                    if( $value['process_state'] == 'O' || $value['process_state'] == 'C') {
-                                                ?>  
-                                                <a href="./<?=$page_name?>_edit?mode=edit&page=<?=$page?><?=$params?>&order_idx=<?=$value['order_idx'];?>">
-                                                    <button type="button" class="btn btn-sm btn-purple waves-effect waves-light" >수정</button>
+                                            <?php
+                                                if( $value['approval_state'] == 'W'  ) {   
+                                            ?>  
+                                                <a href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&order_idx=<?=$value['order_idx'];?>">
+                                                    <button type="button" class="btn btn-sm btn-purple waves-effect waves-light" onclick="shipmentProc('<?=$value['order_idx'];?>')" >출하확인</button>
                                                 </a>
-                                                <?php
-                                                    } else {
-                                                ?> 
-                                                <button type="button" class="btn btn-sm btn-default waves-effect waves-light" >수정불가</button>
-                                                <?php
-                                                    }
-                                                ?>
-                                                <?php
-                                                    if( $value['process_state'] == 'O') {
-                                                ?>                                             
-                                                <button type="button" class="btn btn-sm btn-custom waves-effect waves-light" onclick="cancelOrder('<?=$value['order_idx'];?>')">취소</button>      
-                                                <?php
-                                                    }
-                                                ?>
                                             <?php
+                                                    
                                                 }
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <?php
-                                                if( $value['process_state'] == 'O') {
                                             ?> 
-                                            <button type="button" class="btn btn-danger" onclick="delProc('<?=$value['order_idx'];?>')">수주삭제</button>
-                                            <?php
-                                                } else {
-                                            ?>
-                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-light" >삭제불가</button>
-                                            <?php
-                                                }
-                                            ?>
                                         </td>
+                                       
                                     </tr>
                                     <?php   
                                         }

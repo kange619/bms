@@ -34,6 +34,9 @@ class client extends baseController {
             , 'sch_keyword'
             , 'sch_s_date'
             , 'sch_e_date'
+            , 'sch_schedule_s_date'
+            , 'sch_schedule_e_date'
+            , 'sch_food_code'
             , 'sch_order_field'
             , 'sch_order_status'
         ]);
@@ -362,8 +365,8 @@ class client extends baseController {
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         $page_name = 'receive_an_order';
         $this->page_data['process_state_arr'] = [
-            'O' => '주문'
-            ,'W' => '입고'
+            'O' => '수주'
+            ,'D' => '출하'
             ,'C' => '취소'
         ];
 
@@ -382,7 +385,7 @@ class client extends baseController {
             $query_where .= " AND ( 
                                     ( company_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( order_idx LIKE '%". $this->page_data['sch_keyword'] ."%' )                                     
-                                    OR ( material_name LIKE '%". $this->page_data['sch_keyword'] ."%' )                                     
+                                    OR ( product_name LIKE '%". $this->page_data['sch_keyword'] ."%' )                                     
                                     OR ( manager_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                             ) ";
         }
@@ -398,6 +401,16 @@ class client extends baseController {
 		if($this->page_data['sch_e_date']) {
             $query_where .= " AND ( order_date <= '".$this->page_data['sch_e_date']."' ) ";
         }
+
+        if($this->page_data['sch_schedule_s_date']) {
+            $query_where .= " AND ( delivery_date >= '".$this->page_data['sch_schedule_s_date']."' ) ";
+        }
+
+		if($this->page_data['sch_schedule_e_date']) {
+            $query_where .= " AND ( delivery_date <= '".$this->page_data['sch_schedule_e_date']."' ) ";
+        }
+
+
 
         # 리스트 정보요청
         $list_result = $this->model->getReceiveOrders([            
@@ -438,7 +451,7 @@ class client extends baseController {
         // echobr( $query_result ); exit;
         
         if( $query_result['num_rows'] > 0 ){
-            $this->page_data['products'] = json_encode( $query_result['rows'] );;
+            $this->page_data['products'] = json_encode( $query_result['rows'] );
         }
 
         # 고객사 정보를 요청한다.
@@ -451,14 +464,14 @@ class client extends baseController {
         if( $query_result['num_rows'] > 0 ) {
 
             $client_addrs = [];
-            $client_addrs[0]['addr_idx'] = 0;
-            $client_addrs[0]['addr_name'] = '본점';
-
+            
             foreach( $query_result['rows'] AS $idx=>$item ) {
             
             
                 if( gettype($client_addrs[ $item['client_idx'] ]) == 'NULL' ) {
                     $client_addrs[ $item['client_idx'] ] = [];
+                    $client_addrs[ $item['client_idx'] ][0]['addr_idx'] = 0;
+                    $client_addrs[ $item['client_idx'] ][0]['addr_name'] = '본점';
                 }
                 
                 array_push( $client_addrs[ $item['client_idx'] ], $item);
@@ -471,7 +484,7 @@ class client extends baseController {
             $client_addrs['addr_name'] = '본점';
         }
 
-        $this->page_data['client_addrs'] = $client_addrs;
+        $this->page_data['client_addrs'] = json_encode( $client_addrs );
 
         $this->page_data['mode'] = 'ins';
         $this->page_data['page_work'] = '등록';
@@ -488,6 +501,442 @@ class client extends baseController {
 
         
     }
+
+    public function receive_an_order_edit(){
+
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # 필수값 체크
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        $page_name = 'receive_an_order';            
+        $this->issetParams( $this->page_data, ['order_idx']);
+        
+        $this->page_data['page_work'] = '수정';
+
+        # 기업정보를 요청한다.
+        $query_result = $this->model->getReceiveOrder( " order_idx = '". $this->page_data['order_idx'] ."' " );
+
+        if( $query_result['num_rows'] == 0 ){
+            
+            errorBack('해당 게시물이 삭제되었거나 정상적인 접근 방법이 아닙니다.');
+            
+        } else {
+            $this->page_data = array_merge( $this->page_data, $query_result['row'] );
+        }
+        
+        # 업체의 배송지 주소를 요청한다.
+        $query_result = $this->model->getClientComapnyAddr(" client_idx = '". $this->page_data['client_idx'] ."' AND del_flag='N' " );    
+        
+        if( $query_result['num_rows'] > 0 ){
+            $this->page_data['company_addrs'] = $query_result['rows'];
+        } else {
+            $this->page_data['company_addrs'] = [];
+        }
+
+        // echoBr( $this->page_data['company_addrs'] ); exit;
+        $this->page_data['mode'] = 'edit';
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/client/'. $page_name .'_edit.php';
+        $this->page_data['list'] = $list_result['rows'];
+        
+        $this->view( $this->page_data );
+
+    }
+
+    /**
+     * 수주 데이터 처리
+     */
+    public function receive_an_order_proc(){
+        # post 접근 체크
+        postCheck();
+
+        // echoBr( $this->page_data ); exit;
+
+        switch( $this->page_data['mode'] ) {
+
+            case 'ins' : {
+                
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 필수값 체크
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=                
+                $this->issetParams( $this->page_data, [
+                    'client_idx'                                        
+                    ,'order_date'                                        
+                    ,'product_idx'                                        
+                    ,'product_name'                                        
+                    ,'food_code'                                        
+                    ,'product_unit_idx'                                        
+                    ,'product_unit'                                        
+                    ,'product_unit_type'                                        
+                    ,'packaging_unit_quantity'                                        
+                    ,'addr_idx'                                        
+                    ,'delivery_date'                                        
+                    ,'quantity'                                        
+                ]);
+                
+                
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+                
+                foreach( $this->page_data['quantity'] AS $idx=>$val ){
+                    
+                    if( $val == '' ) {
+                        errorBack('수량이 입력되지 않은 주문 정보가 있습니다.');
+                    }
+
+                    if( $idx == 0 ) {
+
+                        $order_no = '';
+
+                    } else {
+
+                        $order_no = $get_insert_id;
+
+                    }
+
+                    # 수주 정보 삽입
+                    $query_result = $this->model->insertClientReceiveOrder([
+                        'company_idx' => COMPANY_CODE
+                        ,'client_idx' => $this->page_data['client_idx']                        
+                        ,'order_group' => $order_no
+                        ,'order_date' => $this->page_data['order_date']
+                        ,'addr_idx' => $this->page_data['addr_idx'][$idx]
+                        ,'product_idx' => $this->page_data['product_idx'][$idx]
+                        ,'product_name' => $this->page_data['product_name'][$idx]
+                        ,'food_code' => $this->page_data['food_code'][$idx]
+                        ,'product_unit_idx' => $this->page_data['product_unit_idx'][$idx]
+                        ,'product_unit' => $this->page_data['product_unit'][$idx]
+                        ,'product_unit_type' => $this->page_data['product_unit_type'][$idx]
+                        ,'packaging_unit_quantity' => $this->page_data['packaging_unit_quantity'][$idx]
+                        ,'quantity' => $this->page_data['quantity'][$idx]
+                        ,'delivery_date' => $this->page_data['delivery_date'][$idx]                        
+                        ,'process_state' => 'O'
+                        ,'sale_unit' => 'P'
+                        ,'reg_idx' => getAccountInfo()['idx']
+                        ,'reg_date' => 'NOW()'
+                        ,'reg_ip' => $this->getIP()                        
+                    ]);
+
+                    if( $idx == 0 ) {                        
+                        $get_insert_id =  $query_result['return_data']['insert_id'];
+                    }
+                    
+                }
+
+                # 첫번째 주문 그룹 값 업데이트
+                $this->model->updateClientReceiveOrder([ 'order_group' => $get_insert_id ], " order_idx = '" . $get_insert_id. "'" );
+
+                # 트랜잭션 종료
+                $this->model->stopTransaction();
+
+                movePage('replace', '저장되었습니다.', './'. $this->page_data['page_name'] .'_list?page=1' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            case 'edit' : {
+
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 필수값 체크
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=                
+                $this->issetParams( $this->page_data, [
+                    'order_idx'                    
+                    ,'addr_idx'                    
+                    ,'order_date'                    
+                    ,'delivery_date'                    
+                    ,'quantity'                    
+                ]);
+                
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+
+                # 수주정보 수정
+                $query_result = $this->model->updateClientReceiveOrder([
+                    'quantity' => $this->page_data['quantity']
+                    ,'addr_idx' => $this->page_data['addr_idx']
+                    ,'order_date' => $this->page_data['order_date']
+                    ,'delivery_date' => $this->page_data['delivery_date']
+                    ,'process_state' => $this->page_data['process_state']
+                    ,'edit_idx' => getAccountInfo()['idx']
+                    ,'edit_date' => 'NOW()'
+                    ,'edit_ip' => $this->getIP()
+                ] ," order_idx = '" . $this->page_data['order_idx']. "'" );
+
+                # 트랜잭션 종료
+               $this->model->stopTransaction();
+
+                movePage('replace', '저장되었습니다.', './'. $this->page_data['page_name'] .'_edit?order_idx='. $this->page_data['order_idx']. '&mode=edit' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            case 'order_cancel' : {
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 필수값 체크
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=                
+                $this->issetParams( $this->page_data, [
+                    'order_idx'                                     
+                ]);
+                
+                $query_result = $this->model->updateClientReceiveOrder( ['process_state' => 'C'] ," order_idx = '" . $this->page_data['order_idx']. "'" );
+                
+                movePage('replace', '취소처리되었습니다.', './'. $this->page_data['page_name'] .'_list?page='. $this->page_data['page'] . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            case 'del' : {
+
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 필수값 체크
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=                
+                $this->issetParams( $this->page_data, [
+                    'order_idx'                    
+                ]);
+                
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+
+                # 기업 정보 수정
+                $query_result = $this->model->updateClientReceiveOrder([
+                    'del_flag' => 'Y'
+                    ,'del_idx' => getAccountInfo()['idx']
+                    ,'del_date' => 'NOW()'
+                    ,'del_ip' => $this->getIP()
+                ] ," order_idx = '" . $this->page_data['order_idx']. "'" );
+
+                # 트랜잭션 종료
+                $this->model->stopTransaction();
+
+                movePage('replace', '삭제되었습니다.', './'. $this->page_data['page_name'] .'_list?page=1' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            default : {
+                errorBack('잘못된 접근입니다.');
+            }
+        }
+    }
+
+    /**
+     * 출하관리 목록을 구성한다.
+    */
+    public function shipment_list(){
+
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # SET Values
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        $page_name = 'shipment';
+        $this->page_data['process_state_arr'] = [
+            'O' => '수주'
+            ,'D' => '출하'
+            ,'C' => '취소'
+        ];
+
+        $query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' ) ";
+        
+        $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
+
+        if( $this->page_data['sch_order_field'] ){
+            $query_sort = ' ORDER BY '. $this->page_data['sch_order_field'] .' '.$this->page_data['sch_order_status'].' ';
+        } else {            
+            $query_sort = ' ORDER BY order_idx DESC, order_date DESC, delivery_date DESC ';
+        }
+
+
+        if( $this->page_data['sch_keyword'] ) {
+            $query_where .= " AND ( 
+                                    ( company_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                                    OR ( order_idx LIKE '%". $this->page_data['sch_keyword'] ."%' )                                     
+                                    OR ( product_name LIKE '%". $this->page_data['sch_keyword'] ."%' )                                     
+                                    OR ( manager_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                            ) ";
+        }
+        
+        if($this->page_data['sch_process_state']) {
+            $query_where .= " AND ( process_state = '".$this->page_data['sch_process_state']."' ) ";
+        }
+
+        if($this->page_data['sch_s_date']) {
+            $query_where .= " AND ( order_date >= '".$this->page_data['sch_s_date']."' ) ";
+        }
+
+		if($this->page_data['sch_e_date']) {
+            $query_where .= " AND ( order_date <= '".$this->page_data['sch_e_date']."' ) ";
+        }
+
+        if($this->page_data['sch_schedule_s_date']) {
+            $query_where .= " AND ( delivery_date >= '".$this->page_data['sch_schedule_s_date']."' ) ";
+        }
+
+		if($this->page_data['sch_schedule_e_date']) {
+            $query_where .= " AND ( delivery_date <= '".$this->page_data['sch_schedule_e_date']."' ) ";
+        }
+
+
+
+        # 리스트 정보요청
+        $list_result = $this->model->getReceiveOrders([            
+            'query_where' => $query_where
+            ,'query_sort' => $query_sort
+            ,'limit' => $limit
+        ]);
+
+        $this->paging->total_rs = $list_result['total_rs'];        
+        $this->page_data['paging'] = $this->paging; 
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/client/'. $page_name .'_list.php';
+        $this->page_data['list'] = $list_result['rows'];        
+        $this->view( $this->page_data );
+    }
+
+    /**
+     * 출하관리 출하처리 화면을 구성한다.
+    */
+    public function shipment_write(){
+
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # 필수값 체크
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        $page_name = 'shipment';            
+        $this->issetParams( $this->page_data, ['order_idx']);
+        
+        $this->page_data['page_work'] = '수정';
+
+        # 수주정보를 요청한다.
+        $query_result = $this->model->getReceiveOrder( " order_idx = '". $this->page_data['order_idx'] ."' " );
+
+        if( $query_result['num_rows'] == 0 ){
+            
+            errorBack('해당 게시물이 삭제되었거나 정상적인 접근 방법이 아닙니다.');
+            
+        } else {
+
+            $this->page_data = array_merge( $this->page_data, $query_result['row'] );
+
+            # 주문건에 해당하는 제품의 유통기한 별 재고 요청
+            $result_expiration_date = $this->model_product->getAvailableStockByExpirationDate( $query_result['row']['product_unit_idx'] );     
+
+            if( $result_expiration_date['num_rows'] > 0 ){
+                $this->page_data['quantity_expiration_date_arr'] = $result_expiration_date['rows'];
+            } else {
+                $this->page_data['quantity_expiration_date_arr'] = [];
+            }
+
+        }
+        
+        # 업체의 배송지 주소를 요청한다.
+        $query_result = $this->model->getClientComapnyAddr(" client_idx = '". $this->page_data['client_idx'] ."' AND del_flag='N' " );    
+        
+        if( $query_result['num_rows'] > 0 ){
+            $this->page_data['company_addrs'] = $query_result['rows'];
+        } else {
+            $this->page_data['company_addrs'] = [];
+        }
+
+        // echoBr( $this->page_data['company_addrs'] ); exit;
+        $this->page_data['mode'] = 'edit';
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/client/'. $page_name .'_write.php';
+        $this->page_data['list'] = $list_result['rows'];
+        
+        $this->view( $this->page_data );
+
+    }
+
+    /**
+     * 제품 재고 목록을 구성한다.
+     */
+    public function stock_list(){
+
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # SET Values
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        $page_name = 'stock';
+        $this->page_data['products'] = [];
+        
+        $query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' )  ";
+        
+        $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
+
+        if( $this->page_data['sch_order_field'] ){
+            $query_sort = ' ORDER BY '. $this->page_data['sch_order_field'] .' '.$this->page_data['sch_order_status'].' ';
+        } else {
+            $query_sort = ' ORDER BY stock_idx DESC, expiration_date DESC  ';
+        }
+
+        if($this->page_data['sch_s_date']) {
+            $query_where .= " AND ( expiration_date >= '".$this->page_data['sch_s_date']."' ) ";
+        }
+
+		if($this->page_data['sch_e_date']) {
+            $query_where .= " AND ( expiration_date <= '".$this->page_data['sch_e_date']."' ) ";
+        }
+
+    
+        if($this->page_data['sch_task_type']) {
+            $query_where .= " AND ( task_type = '".$this->page_data['sch_task_type']."' ) ";
+        }
+
+        if($this->page_data['sch_food_code']) {
+            $query_where .= " AND ( food_code = '".$this->page_data['sch_food_code']."' ) ";
+        }
+
+        if( $this->page_data['sch_keyword'] ) {
+            $query_where .= " AND ( 
+                                    ( product_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                                    OR ( production_idx LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                                    OR ( memo LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                                   
+                            ) ";
+        }
+
+        $this->page_data['task_type_arr'] = [
+            'I' => '입고'            
+            ,'U' => '사용'
+            ,'D' => '폐기'            
+        ];
+        
+        $this->page_data['food_types'] = $this->getConfig()['food_types'];
+
+        
+
+        # 생산 제품별 재고 수량을 가져온다.
+        $query_result = $this->model_product->getProdcuctStockState();    
+        
+        if( $query_result['num_rows'] > 0 ){
+            $this->page_data['products'] = $query_result['rows'];
+        }
+        
+        # 리스트 정보요청
+        $list_result = $this->model_product->getProductStocks([            
+            'query_where' => $query_where
+            ,'query_sort' => $query_sort
+            ,'limit' => $limit
+        ]);
+
+        $this->paging->total_rs = $list_result['total_rs'];        
+        $this->page_data['paging'] = $this->paging;         
+        $this->page_data['total_quantity'] = $list_result['total_quantity'];             
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/client/'. $page_name .'_list.php';
+        $this->page_data['list'] = $list_result['rows'];        
+        $this->view( $this->page_data );
+        
+    }
+
 
 }
 

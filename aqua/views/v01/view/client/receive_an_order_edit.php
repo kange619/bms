@@ -6,15 +6,16 @@
 
             <section class="content-header">                    
                 <h1>
-                    원/부자재 주문관리  > 주문 <?=$page_work?>
+                    수주/출하관리  > 수주 <?=$page_work?>
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
                 </h1>                
             </section>
 
-            <form class="form-horizontal" role="form" method="post" id="form_write" enctype="multipart/form-data"  action="./order_proc">                
+            <form class="form-horizontal" role="form" method="post" id="form_write" enctype="multipart/form-data"  action="./<?=$page_name?>_proc">                
                 <input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
                 <input type="hidden" name="order_idx" value="<?=$order_idx?>" />
                 <input type="hidden" name="page" value="<?=$page?>" />
+                <input type="hidden" name="page_name" value="<?=$page_name?>" />
                 <input type="hidden" name="top_code" value="<?=$top_code?>" />
                 <input type="hidden" name="left_code" value="<?=$left_code?>" />
                 <input type="hidden" name="ref_params" value="<?=$params?>" />
@@ -27,7 +28,7 @@
                     
                         <div class="table-responsive m-b-0">
                             <h5 class="header-title m-b-10">
-                                <b>주문 정보</b>
+                                <b>수주 정보</b>
                             </h5>
                             <hr class="m-t-0">
                             
@@ -35,7 +36,33 @@
                                 <tbody>
                                     
                                     <tr>
-                                        <th class="info middle-align">주문일</th>
+                                        <th class="info middle-align">회사명</th>
+                                        <td colspan="3">
+                                            <?=$company_name?>
+                                        </td>
+                                    </tr> 
+                                    <tr>
+                                        <th class="info middle-align">배송지</th>
+                                        <td colspan="3">
+
+                                            <select class="form-control" name="addr_idx" id="addr_idx" style="width:200px" >
+                                               
+                                                <option value="0" <?=($addr_idx == '0' ? 'selected="selected"' : '' )?> >본점</option>
+                                                <?php
+                                                    foreach( $company_addrs AS $idx=>$item ){
+                                                ?>                                                
+                                                <option value="<?=$item['addr_idx']?>" <?=($addr_idx == $item['addr_idx'] ? 'selected="selected"' : '' )?> ><?=$item['addr_name']?></option>                                                
+                                                <?php
+                                                    }
+                                                ?>
+                                                
+                                                
+                                            </select>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="info middle-align">수주일</th>
                                         <td colspan="3">
                                             <div class="form-group">                                            
                                                 <div class="col-sm-4">
@@ -48,12 +75,12 @@
                                     </tr>
 
                                     <tr>
-                                        <th class="info middle-align">입고예정일</th>
+                                        <th class="info middle-align">출하예정일</th>
                                         <td colspan="3">
                                             <div class="form-group">                                            
                                                 <div class="col-sm-4">
                                                     <div class="input-daterange input-group">
-                                                        <input type="text" class="form-control datepicker " name="receipt_date" id="receipt_date" value="<?=$receipt_date?>"  readonly="readonly" style="width:100px !important" >  
+                                                        <input type="text" class="form-control datepicker " name="delivery_date" id="delivery_date" value="<?=$delivery_date?>"  readonly="readonly" style="width:100px !important" >  
                                                     </div>
                                                 </div>
                                             </div>
@@ -73,42 +100,21 @@
                                         </td>
                                     </tr>
 
+                                     
                                     <tr>
-                                        <th class="info middle-align">회사명</th>
+                                        <th class="info middle-align">제품명</th>
                                         <td colspan="3">
-                                            <?=$company_name?>
+                                            <?=$product_name?>
                                         </td>
-                                    </tr>  
+                                    </tr>                    
+                                   
                                     <tr>
-                                        <th class="info middle-align">자재명</th>
+                                        <th class="info middle-align">제품정보</th>
                                         <td colspan="3">
-                                            <?=$material_name?>
-                                        </td>
-                                    </tr>                                    
-                                    <tr>
-                                        <th class="info middle-align">자재종류</th>
-                                        <td colspan="3">
-                                            <?=( $material_kind == 'raw') ? '원자재' : '부자재';?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="info middle-align">단위</th>
-                                        <td colspan="3">
-                                            <?=$material_unit?>
+                                            <?=$product_unit?><?=$product_unit_type?> X <?=$packaging_unit_quantity?>
                                         </td>
                                     </tr> 
-                                    <tr>
-                                        <th class="info middle-align">규격</th>
-                                        <td colspan="3">
-                                            <?=$standard_info?>
-                                        </td>
-                                    </tr>  
-                                    <tr>
-                                        <th class="info middle-align">단가(원)</th>
-                                        <td colspan="3">
-                                            <?=$material_unit_price?>
-                                        </td>
-                                    </tr>  
+                                   
                                     <tr>
                                         <th class="info middle-align">수량</th>
                                         <td colspan="3">

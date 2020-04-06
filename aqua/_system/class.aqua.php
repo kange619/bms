@@ -479,7 +479,7 @@ class aqua {
      */
     public function issetParams( $arg_params, $arg_check_info ){
         foreach( $arg_check_info AS $check_item ) {            
-            if( empty( $arg_params[ $check_item ] ) ) {
+            if( isset( $arg_params[ $check_item ] ) == false ) {
                 errorBack('잘못된 접근입니다.');
             }
         }

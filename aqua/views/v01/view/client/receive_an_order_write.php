@@ -11,16 +11,18 @@
                 </h1>                
             </section>
 
-            <form class="form-horizontal" role="form" method="post" id="form_write" enctype="multipart/form-data"  action="./order_proc">                
+            <form class="form-horizontal" role="form" method="post" id="form_write" enctype="multipart/form-data"  action="./<?=$page_name?>_proc">                
                 <input type="hidden" name="mode" value="<?=$mode?>" />
                 <input type="hidden" name="order_idx" value="<?=$order_idx?>" />
                 <input type="hidden" name="page" value="<?=$page?>" />
+                <input type="hidden" name="page_name" value="<?=$page_name?>" />
                 <input type="hidden" name="top_code" value="<?=$top_code?>" />
                 <input type="hidden" name="left_code" value="<?=$left_code?>" />
                 <input type="hidden" name="ref_params" value="<?=$params?>" />
-                <input type="hidden" name="client_idx" value="<?=$client_idx?>" />
+                <input type="hidden" name="client_idx" id="client_idx" value="<?=$client_idx?>" />
                 <input type="hidden" id="products" value="<?=preg_replace( '/\"/', "'", $products)?>" />
                 <input type="hidden" id="client_addrs" value="<?=preg_replace( '/\"/', "'", $client_addrs)?>" />
+                <input type="hidden" name="order_del_idx" id="order_del_idx" value="" />
             
 
 
@@ -46,9 +48,18 @@
                                             <?=$company_name?>
                                         </td>
                                     </tr>
+
+                                    <tr>
+                                        <th class="info middle-align">                                            
+                                            회사주소
+                                        </th>
+                                        <td colspan="3" id="client_company_addr_area" >
+                                            
+                                        </td>
+                                    </tr>
                                     
                                     <tr>
-                                        <th class="info middle-align">주문일</th>
+                                        <th class="info middle-align">수주일</th>
                                         <td colspan="3">
                                             <div class="form-group">                                            
                                                 <div class="col-sm-4">
@@ -65,7 +76,7 @@
                                         <td colspan="3">
                                             <input type="text" class="form-control datepicker " name="delivery_date" id="delivery_date" value="<?=$delivery_date?>"  readonly="readonly" style="width:100px !important" >  
                                             <span>
-                                                <input type="checkbox" id="sync_delivery_date" value="Y"  style="width: 20px !important;margin-left:10px" > 
+                                                <input type="checkbox" id="sync_delivery_date" value="Y"  style="width: 20px !important;margin-left:10px" checked="checked" > 
                                                 <label for="sync_delivery_date" style="cursor:pointer">출하일 일치</label>
                                             </span>
                                         </td>
@@ -224,29 +235,69 @@
 
 <script>
 
-    $(function(){
-        
+    $(function(){        
         makeProductsState();
+
+        jqueryAddEvent({
+            selector : '#sync_delivery_date'
+            ,event : 'click'
+            ,fn : syncDeliveryDateHandler
+        });
     })
+    /**
+        출하일 일치 체크박스 클릭 이벤트처리 
+    */
+    function syncDeliveryDateHandler(){
+
+        var checked_status = $(this).prop('checked');
+
+        $.each( $('#tmplate_material_choice_area').find('input[name="delivery_date[]"]'), function(){
+
+            if( checked_status == true ) {
+                $(this).val( $('#delivery_date').val() );
+            } 
+            
+        });
+    }
 
     /**
         제품 선택 버튼 동작
      */
      function choiceProduct( arg_this, arg_product_unit_idx){ 
 
+        if( $('#client_idx').val() == '' ) {
+            alert('업체를 선택해주세요');            
+            return;
+        }
+
         var data = [];
 
         products_obj[arg_product_unit_idx]['order_idx'] = ''; //#  order_idx 공백값으로 추가하여 insert 되게끔 한다.
-        products_obj[arg_product_unit_idx]['client_addrs'] = [{addr_idx : 112, addr_name : 'test'}]; 
-        products_obj[arg_product_unit_idx]['delivery_date'] = ''; 
+        products_obj[arg_product_unit_idx]['client_addrs'] = current_client_company_addr; 
+        
+        if( $('#sync_delivery_date').prop('checked') == true ) {
+            products_obj[arg_product_unit_idx]['delivery_date'] = $('#delivery_date').val(); 
+        } else {
+            products_obj[arg_product_unit_idx]['delivery_date'] = ''; 
+        }
+
+        
         data = [products_obj[arg_product_unit_idx]];
         products_obj[arg_product_unit_idx].element = arg_this;
-
-        console.log( data );
 
         // $( arg_this ).hide();
 
         $('#tmplate_material_choice_area').append( $('#tmplate_product_choice_area_form').tmpl( data ) );
+        
+        $('.datepicker').datepicker({
+            calendarWeeks: false,
+            todayHighlight: true,
+            autoclose: true,
+            toggleActive: true,
+            format: "yyyy-mm-dd",
+            language: "kr",
+            clearBtn: true
+        });
         
      }
 
@@ -274,11 +325,28 @@ console.log( products_arr );
       * 선택 제품 삭제
       */
      function delForm( arg_this, arg_product_unit_idx ){
+        
+
+        var order_del_idx = $('#order_del_idx').val();
+
+        if( order_del_idx == '') {
+            order_del_idx = [];
+        } else {
+            order_del_idx = order_del_idx.split(',');
+        }
+
+        if( arg_product_unit_idx !== '' ) {
+            order_del_idx.push( arg_product_unit_idx );
+
+            $('#order_del_idx').val( order_del_idx.join(',') );
+        }
+
+        
         $( arg_this ).parent().parent().remove();
 
-        $( materials_obj[arg_product_unit_idx].element ).show();
+        // $( materials_obj[arg_product_unit_idx].element ).show();
 
-        materials_obj[arg_product_unit_idx].element = '';
+        products_obj[arg_product_unit_idx].element = '';
 
      }
 
@@ -292,16 +360,19 @@ console.log( products_arr );
         수주업체 선택
     */
     var current_client_company = {};
-
+    var current_client_company_addr = {};
     function choiceClient( arg_this ){
 
         var data = JSON.parse( $(arg_this).data('material').replace(/'/g, '"') );
+        var client_addrs = JSON.parse( $('#client_addrs').val().replace(/'/g, '"') );
 
         current_client_company = data;
+        current_client_company_addr = client_addrs[ data.client_idx ];
         
-
+        console.log(  data );
+        $('#client_idx').val( data.client_idx );
         $('#client_company_name_area').html( data.company_name );
-
+        $('#client_company_addr_area').html( data.client_addr +' '+ data.client_addr_detail );
         $('#search_client_modal').modal('hide');
     }
     /**
@@ -311,6 +382,17 @@ console.log( products_arr );
 
         viewFormValid.alert_type = 'add';        
         if( viewFormValid.run( 'form_write' ) === true ) {
+
+            if( $('#client_idx').val() == '' ) {
+                alert('수주회사를 선택해주세요.');
+                return;
+            }
+
+            if( $('input[name="product_unit_idx[]"]').length == 0 ){
+                alert('주문 제품을 하나 이상 선택해주세요.');
+                return;
+            }
+
             // submit
             $('#form_write').submit();
         }
@@ -376,7 +458,7 @@ console.log( products_arr );
         <input type="text" class="form-control datepicker" name="delivery_date[]"  value="${delivery_date}" style="min-width:100px" placeholder="yyyy-mm-dd" data-valid="blank" >
     </td>    
     <td><input type="text" name="quantity[]" class="form-control " value="${quantity}" style="min-width:100px" data-valid="num" ></td> 
-    <td><button type="button" class="btn btn-sm btn-purple waves-effect waves-light" onclick="delForm(this, '${product_unit_idx}')">삭제</button></td>     
+    <td><button type="button" class="btn btn-sm btn-danger waves-effect waves-light" onclick="delForm(this, '${order_idx}')">삭제</button></td>     
 </tr>
 </script>
 <script type="text/javascript" src="<?=$aqua_view_path;?>/public/js/view.form.valid.js"></script>
