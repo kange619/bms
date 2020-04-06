@@ -415,7 +415,7 @@ class productModel extends baseModel {
     /**
      * 사용가능한 제품 재고 수를 반환 한다.
      */
-    public function getAvailableStockByExpirationDate( $arg_stock_idx ){
+    public function getAvailableStockByExpirationDate( $arg_product_unit_idx ){
 
         $query = " 
             SELECT	stock_idx
@@ -444,10 +444,49 @@ class productModel extends baseModel {
                             ) AS used_quantity
                         FROM ". $this->table_product_stock ." AS t_stock LEFT OUTER JOIN ". $this->table_production_order ." AS t_order
                         ON t_stock.production_idx = t_order.production_idx 
-                        WHERE t_stock.task_type = 'I' AND t_stock.product_unit_idx = '".$arg_stock_idx."'
+                        WHERE t_stock.task_type = 'I' AND t_stock.product_unit_idx = '".$arg_product_unit_idx."'
                 ) AS as_stock_result
             ) AS t_state
             group by expiration_date
+        ";
+
+        $query_result = $this->db->execute( $query );
+
+        return $query_result['return_data'];
+
+    }
+
+
+    /**
+     * 사용가능한 제품 재고 수를 반환 한다.
+     */
+    public function getAvailableStockByExpirationDates( $arg_product_unit_idx,  $arg_expiration_date ){
+
+        $query = " 
+            SELECT	
+                * 
+                , (product_quantity - used_quantity ) AS result_quantity
+            FROM ( 
+                    SELECT 
+                        t_stock.stock_idx
+                        ,t_stock.product_name
+                        ,t_stock.product_unit_idx
+                        ,t_stock.product_unit
+                        ,t_stock.product_unit_type
+                        ,t_stock.packaging_unit_quantity
+                        ,t_stock.product_quantity
+                        ,t_order.expiration_date
+                        ,t_order.expiration_days
+                        ,t_order.production_idx
+                        , (
+                            SELECT IFNULL( SUM(product_quantity), 0 ) 
+                            FROM ". $this->table_product_stock ." 
+                            WHERE ( production_idx=t_stock.production_idx ) AND ( product_unit_idx=t_stock.product_unit_idx ) AND ( del_flag='N' ) AND ( task_type <> 'I' )
+                        ) AS used_quantity
+                    FROM ". $this->table_product_stock ." AS t_stock LEFT OUTER JOIN ". $this->table_production_order ." AS t_order
+                    ON t_stock.production_idx = t_order.production_idx 
+                    WHERE t_stock.task_type = 'I' AND t_stock.product_unit_idx = '".$arg_product_unit_idx."' AND t_order.expiration_date = '". $arg_expiration_date ."'
+            ) AS as_stock_result
         ";
 
         $query_result = $this->db->execute( $query );

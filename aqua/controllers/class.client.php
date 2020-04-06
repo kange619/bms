@@ -818,11 +818,23 @@ class client extends baseController {
 
             $this->page_data = array_merge( $this->page_data, $query_result['row'] );
 
+            $quantity = (int)$query_result['row']['quantity'];
+
+            // $quantity = '161';
             # 주문건에 해당하는 제품의 유통기한 별 재고 요청
             $result_expiration_date = $this->model_product->getAvailableStockByExpirationDate( $query_result['row']['product_unit_idx'] );     
-
+            // echoBr( $result_expiration_date['rows'] );
             if( $result_expiration_date['num_rows'] > 0 ){
+
                 $this->page_data['quantity_expiration_date_arr'] = $result_expiration_date['rows'];
+
+                $prediction_info = $this->predictionUseStock([
+                    'quantity' => $quantity
+                    ,'expiration_date_arr' => $result_expiration_date['rows']
+                ]);
+
+                $this->page_data['prediction_info'] = $prediction_info;
+                $this->page_data['product_stock_idxs'] = $prediction_info['prediction_stock_idxs'];
             } else {
                 $this->page_data['quantity_expiration_date_arr'] = [];
             }
@@ -850,6 +862,253 @@ class client extends baseController {
         
         $this->view( $this->page_data );
 
+    }
+
+    /**
+     * 유통기한별 재고수 배열과 이용 수량을 입력받아 수량에 해당하는 유통기한 정보를 반환
+     */
+    public function predictionUseStock( $arg_data ){
+
+        $quantity = $arg_data['quantity'];
+        $day_quantity = 0;
+        $prediction_day = [];
+        $prediction_day_stock_idx = [];
+        $total_sum = 0;
+        foreach( $arg_data['expiration_date_arr'] AS $idx=>$item ) {
+
+            $day_quantity += (int)$item['stock_quantity'];
+        
+            if( $quantity <= (int)$item['stock_quantity'] ) {
+
+                $day_info = [
+                    'stock_idx'=>$item['stock_idx']
+                    ,'expiration_date'=>$item['expiration_date']
+                    ,'stock_quantity'=>$item['stock_quantity']
+                ];
+
+                $prediction_day[] = $day_info;
+                $prediction_day_stock_idx[] = $item['stock_idx'];
+                $total_sum += $item['stock_quantity'];
+
+                break;
+            } else {
+
+                $day_info = [
+                    'stock_idx'=>$item['stock_idx']
+                    ,'expiration_date'=>$item['expiration_date']
+                    ,'stock_quantity'=>$item['stock_quantity']
+                ];
+
+                $prediction_day[] = $day_info;
+                $prediction_day_stock_idx[] = $item['stock_idx'];
+                $total_sum += $item['stock_quantity'];
+            }
+            
+        }
+
+        return [
+            'prediction_day_arr'=>$prediction_day
+            ,'prediction_stock_idxs'=>join(',', $prediction_day_stock_idx)
+            ,'total_stock_sum'=>$total_sum
+        ];
+    }
+
+    /**
+     * 수주 데이터 처리 
+     */
+    public function shipment_proc(){
+        # post 접근 체크
+        postCheck();
+
+        // echoBr( $this->page_data ); exit;
+
+        switch( $this->page_data['mode'] ) {
+
+            case 'ins' : {
+                
+
+                movePage('replace', '저장되었습니다.', './'. $this->page_data['page_name'] .'_list?page=1' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            case 'edit' : {
+
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 필수값 체크
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=                
+                $this->issetParams( $this->page_data, [
+                    'order_idx'                    
+                    ,'addr_idx'                    
+                    ,'order_date'                    
+                    ,'delivery_date'                    
+                    ,'quantity'
+                ]);
+                
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+
+                # 수주정보 수정
+                $query_result = $this->model->updateClientReceiveOrder([
+                    'quantity' => $this->page_data['quantity']
+                    ,'addr_idx' => $this->page_data['addr_idx']
+                    ,'order_date' => $this->page_data['order_date']
+                    ,'delivery_date' => $this->page_data['delivery_date']                    
+                    ,'edit_idx' => getAccountInfo()['idx']
+                    ,'edit_date' => 'NOW()'
+                    ,'edit_ip' => $this->getIP()
+                ] ," order_idx = '" . $this->page_data['order_idx']. "'" );
+
+                # 트랜잭션 종료
+               $this->model->stopTransaction();
+
+                movePage('replace', '저장되었습니다.', './'. $this->page_data['page_name'] .'_write?order_idx='. $this->page_data['order_idx']. '&mode=edit' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            case 'approval_request' : {
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 필수값 체크
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=                
+                $this->issetParams( $this->page_data, [
+                    'order_idx'                    
+                    ,'addr_idx'                    
+                    ,'order_date'                    
+                    ,'delivery_date'                    
+                    ,'quantity'                                 
+                    ,'product_stock_idxs'                                 
+                ]);
+
+                $product_stock_idxs = $this->productUseProc( explode(',', $this->page_data['product_stock_idxs']), $this->page_data['quantity']);
+                // echoBr( $product_stock_idxs );
+
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+                
+
+                # 수주정보 수정
+                $query_result = $this->model->updateClientReceiveOrder([
+                    'quantity' => $this->page_data['quantity']
+                    ,'addr_idx' => $this->page_data['addr_idx']
+                    ,'order_date' => $this->page_data['order_date']
+                    ,'delivery_date' => $this->page_data['delivery_date']                    
+                    ,'product_stock_idxs' => $product_stock_idxs               
+                    ,'approval_state' => 'R'
+                    ,'process_state' => 'D'
+                    ,'edit_idx' => getAccountInfo()['idx']
+                    ,'edit_date' => 'NOW()'
+                    ,'edit_ip' => $this->getIP()
+                ] ," order_idx = '" . $this->page_data['order_idx']. "'" );
+
+                # 트랜잭션 종료
+                $this->model->stopTransaction();
+                
+                movePage('replace', '출하처리되었습니다.', './'. $this->page_data['page_name'] .'_list?page='. $this->page_data['page'] . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            
+            default : {
+                errorBack('잘못된 접근입니다.');
+            }
+        }
+    }
+
+    /**
+     * 재고 사용등록
+     */
+    public function productUseProc( $product_stock_idxs, $quantity ){
+
+        $use_stock_idx = [];
+
+        $this->model_product->runTransaction();
+
+        foreach( $product_stock_idxs AS $idx=>$val ){
+            # 해당 재고 정보에 사용 수량을 확인한다.
+            
+            $result_stock = $this->model_product->getProductStock( " AND stock_idx='" . $val ."' " );
+
+            // echoBr( $result_stock['row'] );
+
+            $result_stock_dates = $this->model_product->getAvailableStockByExpirationDates( $result_stock['row']['product_unit_idx'],  $result_stock['row']['expiration_date'] );
+            
+            foreach( $result_stock_dates['rows'] AS $stock_idx=>$stock_val ){
+
+                // echoBr( $stock_val );
+
+                // echoBr( $available_stock_quantity );
+
+                if( $quantity > 0 ){
+                    
+                    if( $quantity >= $stock_val['result_quantity'] ) {
+                        # 현재 재고 정보로 사용처리 등록
+
+                        # $quantity 에서 $available_stock_quantity 만큼 제한다.
+                        $quantity = $quantity - $stock_val['result_quantity'];
+
+                        // echoBR('stock_dix : ' . $stock_val['stock_idx'] . '에서 ' . $stock_val['result_quantity'] . ' 만큼 사용' );
+                        // echoBR('1.남은수 : ' . $quantity );
+
+                        # 생산 제품 재고등록
+                        $query_result = $this->model_product->insertStock([
+                            'company_idx' => COMPANY_CODE
+                            ,'production_idx' => $stock_val['production_idx']
+                            ,'product_idx' => $stock_val['product_idx']                    
+                            ,'product_unit_idx' => $stock_val['product_unit_idx']
+                            ,'product_name' => $stock_val['product_name']
+                            ,'product_unit' => $stock_val['product_unit']
+                            ,'product_unit_type' => $stock_val['product_unit_type']
+                            ,'packaging_unit_quantity' => $stock_val['packaging_unit_quantity']
+                            ,'product_quantity' => $stock_val['result_quantity']
+                            ,'memo' => '수주번호 [ ' . $this->page_data['order_idx'] . ' ] 에 출하처리됨 '
+                            ,'task_type' => 'U'
+                            ,'reg_idx' => getAccountInfo()['idx']
+                            ,'reg_date' => 'NOW()'
+                            ,'reg_ip' => $this->getIP()
+                        ]);
+                        
+                        $use_stock_idx[] = $stock_val['stock_idx'];
+
+                    } else {
+
+                        echoBR('stock_dix : ' . $stock_val['stock_idx'] . '에서 ' . $quantity . ' 만큼 사용' );
+                        
+                        # 생산 제품 재고등록
+                        $query_result = $this->model_product->insertStock([
+                            'company_idx' => COMPANY_CODE
+                            ,'production_idx' => $stock_val['production_idx']
+                            ,'product_idx' => $stock_val['product_idx']                    
+                            ,'product_unit_idx' => $stock_val['product_unit_idx']
+                            ,'product_name' => $stock_val['product_name']
+                            ,'product_unit' => $stock_val['product_unit']
+                            ,'product_unit_type' => $stock_val['product_unit_type']
+                            ,'packaging_unit_quantity' => $stock_val['packaging_unit_quantity']
+                            ,'product_quantity' => $quantity
+                            ,'memo' => '수주번호 [ ' . $this->page_data['order_idx'] . ' ] 에 출하처리됨 '
+                            ,'task_type' => 'U'
+                            ,'reg_idx' => getAccountInfo()['idx']
+                            ,'reg_date' => 'NOW()'
+                            ,'reg_ip' => $this->getIP()
+                        ]);
+                        
+                        $use_stock_idx[] = $stock_val['stock_idx'];
+                        
+                        $quantity = 0;
+
+                        // echoBR('2.남은수 : ' . $quantity );
+                        
+                    }
+
+                    
+                } else {
+                    break;
+                }
+
+            }
+        }
+
+        $this->model_product->stopTransaction();
+
+        return $use_stock_idx;
     }
 
     /**
@@ -935,6 +1194,154 @@ class client extends baseController {
         $this->page_data['list'] = $list_result['rows'];        
         $this->view( $this->page_data );
         
+    }
+
+    
+
+    /**
+     * 출하관리 목록을 구성한다.
+    */
+    public function release_list(){
+
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # SET Values
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        $page_name = 'release';
+        $this->page_data['process_state_arr'] = [
+            'O' => '수주'
+            ,'D' => '출하'
+            ,'C' => '취소'
+        ];
+
+        $query_where = " AND ( del_flag='N' ) AND ( process_state = 'D' ) AND ( company_idx = '". COMPANY_CODE ."' ) ";
+        
+        $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
+
+        if( $this->page_data['sch_order_field'] ){
+            $query_sort = ' ORDER BY '. $this->page_data['sch_order_field'] .' '.$this->page_data['sch_order_status'].' ';
+        } else {            
+            $query_sort = ' ORDER BY order_idx DESC, order_date DESC, delivery_date DESC ';
+        }
+
+
+        if( $this->page_data['sch_keyword'] ) {
+            $query_where .= " AND ( 
+                                    ( company_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                                    OR ( order_idx LIKE '%". $this->page_data['sch_keyword'] ."%' )                                     
+                                    OR ( product_name LIKE '%". $this->page_data['sch_keyword'] ."%' )                                     
+                                    OR ( manager_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                            ) ";
+        }
+        
+        if($this->page_data['sch_process_state']) {
+            $query_where .= " AND ( process_state = '".$this->page_data['sch_process_state']."' ) ";
+        }
+
+        if($this->page_data['sch_s_date']) {
+            $query_where .= " AND ( order_date >= '".$this->page_data['sch_s_date']."' ) ";
+        }
+
+		if($this->page_data['sch_e_date']) {
+            $query_where .= " AND ( order_date <= '".$this->page_data['sch_e_date']."' ) ";
+        }
+
+        if($this->page_data['sch_schedule_s_date']) {
+            $query_where .= " AND ( delivery_date >= '".$this->page_data['sch_schedule_s_date']."' ) ";
+        }
+
+		if($this->page_data['sch_schedule_e_date']) {
+            $query_where .= " AND ( delivery_date <= '".$this->page_data['sch_schedule_e_date']."' ) ";
+        }
+
+
+
+        # 리스트 정보요청
+        $list_result = $this->model->getReceiveOrders([            
+            'query_where' => $query_where
+            ,'query_sort' => $query_sort
+            ,'limit' => $limit
+        ]);
+
+        $this->paging->total_rs = $list_result['total_rs'];        
+        $this->page_data['paging'] = $this->paging; 
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/client/'. $page_name .'_list.php';
+        $this->page_data['list'] = $list_result['rows'];        
+        $this->view( $this->page_data );
+    }
+
+    /**
+     * 출하관리 출하처리 화면을 구성한다.
+    */
+    public function release_view(){
+
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # 필수값 체크
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        $page_name = 'release';            
+        $this->issetParams( $this->page_data, ['order_idx']);
+        
+        $this->page_data['page_work'] = '수정';
+
+        # 수주정보를 요청한다.
+        $query_result = $this->model->getReceiveOrder( " order_idx = '". $this->page_data['order_idx'] ."' " );
+
+        if( $query_result['num_rows'] == 0 ){
+            
+            errorBack('해당 게시물이 삭제되었거나 정상적인 접근 방법이 아닙니다.');
+            
+        } else {
+
+            $this->page_data = array_merge( $this->page_data, $query_result['row'] );
+
+            $quantity = (int)$query_result['row']['quantity'];
+
+            // $quantity = '161';
+            # 주문건에 해당하는 제품의 유통기한 별 재고 요청
+            $result_expiration_date = $this->model_product->getAvailableStockByExpirationDate( $query_result['row']['product_unit_idx'] );     
+            // echoBr( $result_expiration_date['rows'] );
+            if( $result_expiration_date['num_rows'] > 0 ){
+
+                $this->page_data['quantity_expiration_date_arr'] = $result_expiration_date['rows'];
+
+                $prediction_info = $this->predictionUseStock([
+                    'quantity' => $quantity
+                    ,'expiration_date_arr' => $result_expiration_date['rows']
+                ]);
+
+                $this->page_data['prediction_info'] = $prediction_info;
+                $this->page_data['product_stock_idxs'] = $prediction_info['prediction_stock_idxs'];
+            } else {
+                $this->page_data['quantity_expiration_date_arr'] = [];
+            }
+
+        }
+        
+        # 업체의 배송지 주소를 요청한다.
+        $query_result = $this->model->getClientComapnyAddr(" client_idx = '". $this->page_data['client_idx'] ."' AND del_flag='N' " );    
+        
+        if( $query_result['num_rows'] > 0 ){
+            $this->page_data['company_addrs'] = $query_result['rows'];
+        } else {
+            $this->page_data['company_addrs'] = [];
+        }
+
+        // echoBr( $this->page_data['company_addrs'] ); exit;
+        $this->page_data['mode'] = 'edit';
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/client/'. $page_name .'_view.php';
+        $this->page_data['list'] = $list_result['rows'];
+        
+        $this->view( $this->page_data );
+
     }
 
 

@@ -659,7 +659,7 @@ class production extends baseController {
 
                     foreach(  $req_result['rows'] AS $stock_idx=>$stock_item ){
 
-                        echoBr( $stock_item['material_idx'] .' | '. $stock_item['receipt_date'] .' | '. $stock_item['stock_quantity'] );
+                        // echoBr( $stock_item['material_idx'] .' | '. $stock_item['receipt_date'] .' | '. $stock_item['stock_quantity'] );
                         // echoBr( $stock_item['receipt_date'] );
                         // echoBr( $stock_item['stock_quantity'] );
                         

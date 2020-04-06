@@ -220,6 +220,9 @@ class clientModel extends baseModel {
                         , as_client.company_name
                         , as_client.manager_name
                         , as_client.manager_phone_no                
+                        , as_client.client_zip_code                
+                        , as_client.client_addr                
+                        , as_client.client_addr_detail                
 
                 FROM
                         ". $this->table_client_receive_order ." AS as_order LEFT OUTER JOIN ". $this->table_client ." AS as_client

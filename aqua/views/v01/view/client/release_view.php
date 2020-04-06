@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    수주/출하관리  > 출하
+                    출하이력 상세보기
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
                 </h1>                
             </section>
@@ -30,7 +30,7 @@
                     
                         <div class="table-responsive m-b-0">
                             <h5 class="header-title m-b-10">
-                                <b>수주 정보</b>
+                                <b>출하 정보</b>
                             </h5>
                             <hr class="m-t-0">
                             
@@ -47,19 +47,29 @@
                                         <th class="info middle-align">배송지</th>
                                         <td colspan="3">
 
-                                            <select class="form-control" name="addr_idx" id="addr_idx" style="width:200px" >
-                                               
-                                                <option value="0" <?=($addr_idx == '0' ? 'selected="selected"' : '' )?> >본점</option>
+                                            <?php
+                                                if( $addr_idx == 0 ) {
+
+                                                
+                                            ?>
+                                            본점( <?=$client_addr?> <?=$client_addr_detail?> )
+                                            <?php
+                                                } else {
+                                            ?>
                                                 <?php
                                                     foreach( $company_addrs AS $idx=>$item ){
+                                                        if( $addr_idx == $item['addr_idx'] ) {
                                                 ?>                                                
-                                                <option value="<?=$item['addr_idx']?>" <?=($addr_idx == $item['addr_idx'] ? 'selected="selected"' : '' )?> ><?=$item['addr_name']?></option>                                                
+                                                <?=$item['addr_name']?>( <?=$item['addr']?> <?=$item['addr_detail']?> )
                                                 <?php
+                                                        }
                                                     }
                                                 ?>
+
+                                            <?php
+                                                }
+                                            ?>
                                                 
-                                                
-                                            </select>
 
                                         </td>
                                     </tr>
@@ -69,7 +79,7 @@
                                             <div class="form-group">                                            
                                                 <div class="col-sm-4">
                                                     <div class="input-daterange input-group">
-                                                        <input type="text" class="form-control datepicker " name="order_date" id="order_date" value="<?=$order_date?>" data-valid="blank" readonly="readonly" style="width:100px !important">  
+                                                        <?=$order_date?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -82,7 +92,7 @@
                                             <div class="form-group">                                            
                                                 <div class="col-sm-4">
                                                     <div class="input-daterange input-group">
-                                                        <input type="text" class="form-control datepicker " name="delivery_date" id="delivery_date" value="<?=$delivery_date?>"  readonly="readonly" style="width:100px !important" >  
+                                                        <?=$delivery_date?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -104,9 +114,9 @@
                                     </tr> 
                                    
                                     <tr>
-                                        <th class="info middle-align">수량</th>
+                                        <th class="info middle-align">수량(Box)</th>
                                         <td colspan="3">
-                                            <input type="text" class="form-control " name="quantity" id="quantity"  value="<?=$quantity?>" style="min-width:100px" data-valid="num" >
+                                            <?=$quantity?>
                                         </td>
                                     </tr>
 
@@ -114,30 +124,22 @@
                                         <th class="info middle-align">유통기한</th>
                                         <td colspan="3">
 
-                                            <select class="form-control" name="expiration_dates" id="expiration_dates" style="width:200px" >
-                                                <option value="">선택하세요</option>
-                                                <?php
-                                                    foreach( $quantity_expiration_date_arr AS $idx=>$item ){
-                                                ?>                                                
-                                                <option value="<?=$item['stock_idx']?>"><?=$item['expiration_date']?> ( <?=number_format( $item['stock_quantity'] )?> )</option>                                                
-                                                <?php
-                                                    }
-                                                ?>
-                                                
-                                                
-                                            </select>
-
                                             <div id="selected_expiration_date_area" >
                                                 <?php
                                                     foreach( $prediction_info['prediction_day_arr'] AS $idx=>$item ) {
                                                 ?>
-                                                <button type="button" class="btn expiration_date_selected_btn" data-stock_idx="<?=$item['stock_idx']?>" data-stock_quantity="<?=$item['stock_quantity']?>" style="margin:5px"  ><?=$item['expiration_date']?>( <?=$item['stock_quantity']?> )</button>                                               
+                                                <button type="button" class="btn expiration_date_selected_btn" data-stock_idx="<?=$item['stock_idx']?>" data-stock_quantity="<?=$item['stock_quantity']?>" style="margin:5px"  ><?=$item['expiration_date']?></button>                                               
                                                 <?php
                                                     }
                                                 ?>
                                             </div>
 
                                         </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="info">출고검수표</th>
+                                        <td><button class="btn btn-default"><a href="http://sandle.localhost.com/doc/doc_14.php">상세보기</a></button></td>
                                     </tr>
 
 
@@ -159,8 +161,6 @@
             <div class="row"> 
                 <div class="col-lg-12">                    
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
-                    <button type="button" class="pull-left btn btn-success waves-effect w-md m-l-5" onclick="register('approval_request')">출하확인</button>
-                    <button type="button" class="pull-right btn btn-primary waves-effect w-md m-l-5" onclick="register('<?=$mode?>')">저장</button>
                </div>
             </div>
 
@@ -172,122 +172,6 @@
 
 <script>
 
-    $(document).ready(function(){
-        
-        jqueryAddEvent({
-            selector : '#expiration_dates'
-            ,event : 'change'
-            ,fn : expirationDatesHandler
-        });
-
-        jqueryAddEvent({
-            selector : '.expiration_date_selected_btn'
-            ,event : 'click'
-            ,fn : expirationDateSelectedHandler
-        });
- 
-    });
-
-    /**
-        유통기한 선택 이벤트
-     */
-    function expirationDatesHandler(){
-        
-        var product_stock_idxs = [];
-
-        if( $('#product_stock_idxs').val() != '' ){            
-            product_stock_idxs = $('#product_stock_idxs').val().split(',');
-        }
-
-        var text_data = this.options[this.selectedIndex].text;
-        var text_data_quantity = Number( text_data.match(/\((.*?)\)/gi,'')[0].replace(/[^0-9]/gi, '') );
-        var total_stock_sum = Number( $('#total_stock_sum').val() );
-
-        if( !( product_stock_idxs.indexOf( $(this).val() ) > -1 ) ) {
-
-            product_stock_idxs.push( $(this).val() );
-
-            $('#product_stock_idxs').val(product_stock_idxs.join(','));
-            $('#total_stock_sum').val( text_data_quantity + total_stock_sum );
-
-            $('#selected_expiration_date_area').append( '<button type="button" class="btn expiration_date_selected_btn" data-stock_idx="'+ $(this).val() +'" data-stock_quantity="'+ text_data_quantity +'" style="margin:5px" >'+text_data+'</button>' );
-
-            jqueryAddEvent({
-                selector : '.expiration_date_selected_btn'
-                ,event : 'click'
-                ,fn : expirationDateSelectedHandler
-            });
-
-        }
-
-    }
-    /**
-        유통기한 버튼 클릭 이벤트
-     */
-    function expirationDateSelectedHandler(){
-
-        var this_stock_idx = $(this).data('stock_idx');
-        var stock_quantity = Number( $(this).data('stock_quantity') );
-        var product_stock_idxs = $('#product_stock_idxs').val().split(',');
-        var total_stock_sum = Number( $('#total_stock_sum').val() );
-
-        product_stock_idxs.splice( product_stock_idxs.indexOf( this_stock_idx ), 1 );
-
-        $('#product_stock_idxs').val(product_stock_idxs.join(','));
-        $('#total_stock_sum').val( total_stock_sum - stock_quantity );
-        
-        $(this).remove();
-
-    }
-
-    /**
-        삭제 버튼 동작
-     */
-    function delProc(){
-
-        if(confirm('해당 정보를 삭제하시겠습니까?') == true ){
-            $('#mode').val('del');            
-            $('#form_write').submit();
-        }
-
-    }
-    
-
-    /**
-     * 저장 버튼 동작
-     */
-    function register( arg_method ){
-
-        viewFormValid.alert_type = 'add';        
-        if( viewFormValid.run( 'form_write' ) === true ) {
-
-            if( arg_method == 'approval_request' ) {
-                
-                if( confirm('출하 확인 승인 요청을 하시겠습니까?') == false ) {
-                    return;
-                } 
-                
-                if( $('#product_stock_idxs').val() == '' ) {
-                    alert('유통기한을 선택해주세요.');
-                    $('#expiration_dates').focus();
-                    return;
-                }
-
-                if( Number( $('#quantity').val() ) > Number( $('#total_stock_sum').val() ) ) {
-                    alert('재고 수량('+ $('#total_stock_sum').val() +') 보다 더 큰 값을 입력하였습니다.\n수량을 확인해주세요.');
-                    $('#quantity').focus();
-                    return;
-                }
-
-                
-           } 
-
-            // submit
-            $('#mode').val( arg_method );
-            $('#form_write').submit();
-        }
-
-    }
 
 </script>
 

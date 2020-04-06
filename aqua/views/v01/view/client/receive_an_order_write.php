@@ -308,7 +308,7 @@
      function makeProductsState(){
 
          var products_arr = JSON.parse( $('#products').val().replace(/'/g, '"') );
-console.log( products_arr );
+// console.log( products_arr );
         $.each(products_arr, function(idx, val){            
             products_obj[val.product_unit_idx] = val;
         });
