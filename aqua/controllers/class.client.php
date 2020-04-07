@@ -978,8 +978,8 @@ class client extends baseController {
                     ,'product_stock_idxs'                                 
                 ]);
 
-                $product_stock_idxs = $this->productUseProc( $this->page_data['order_idx'], explode(',', $this->page_data['product_stock_idxs']), $this->page_data['quantity']);
-                // echoBr( $product_stock_idxs );
+                $product_stock_used_info = $this->productUseProc( $this->page_data['order_idx'], explode(',', $this->page_data['product_stock_idxs']), $this->page_data['quantity']);
+                // echoBr( $product_stock_used_info );
 
                 # 트랜잭션 시작
                 $this->model->runTransaction();
@@ -991,7 +991,7 @@ class client extends baseController {
                     ,'addr_idx' => $this->page_data['addr_idx']
                     ,'order_date' => $this->page_data['order_date']
                     ,'delivery_date' => $this->page_data['delivery_date']                    
-                    ,'product_stock_idxs' => $product_stock_idxs               
+                    ,'product_stock_used_info' => jsonReturn( $product_stock_used_info )
                     ,'approval_state' => 'R'
                     ,'process_state' => 'D'
                     ,'edit_idx' => getAccountInfo()['idx']

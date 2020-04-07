@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    식품위생서류 등록
+                    품목제조보고서 등록
                     <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="documentWrite('add', '')" >+등록</button>                 
                 </h1>                   
             </section>
@@ -64,7 +64,7 @@
                 <div class="col-lg-12">
                     <div class="card-box">
                         <h5 class="header-title m-t-0">
-                            <b>식품위생서류</b>
+                            <b>품목제조보고서</b>
                             <!-- <button type="button" class="btn btn-sm btn-primary waves-effect waves-light m-l-5 fright" onclick="tableToExcel('excelTable', '기업회원');">엑셀다운로드</button> -->
                         </h5>
                         <hr class="m-t-0">
@@ -73,6 +73,7 @@
                                 <thead>
                                     <tr class="active">
                                         <th class="info " style="width: 3%;">NO</th>
+                                        <th class="info sorting" data-order="df_item_name"  style="width: 10%;">품목명</th>                                         
                                         <th class="info sorting" data-order="df_title"  style="width: 30%;">기준서명</th>                                         
                                         <th class="info " style="width: 40%;" >첨부파일</th>
                                         <th class="info " >변경</th>
@@ -86,6 +87,7 @@
                                     ?>
                                     <tr>
                                         <td><?=( ( $paging->total_rs - ( $page-1 ) * $list_rows - $key ) );?></td>
+                                        <td><?=$value['df_item_name'];?></td>
                                         <td><?=$value['df_title'];?></td>
                                         <td>
                                             <a href="/file_down.php?key=<?=$value['file_idx'];?>" ><?=$value['origin_name'];?></a>
@@ -99,7 +101,7 @@
                                         }
                                     } else {
                                     ?>                                
-                                        <tr><td colspan="4">데이터가 없습니다</td></tr>
+                                        <tr><td colspan="5">데이터가 없습니다</td></tr>
                                     <?php
                                     }
                                     ?>
@@ -141,7 +143,7 @@
             <div class="panel panel-color panel-inverse">
                 <div class="panel-heading">
                     <button type="button" class="close m-t-5" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 class="panel-title">식품위생서류</h3>
+                    <h3 class="panel-title">품목제조보고서</h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -161,6 +163,12 @@
 
                             <table class="table table-bordered text-left">
                                 <tbody>
+                                    <tr>
+                                        <td class="info text-center wper20">품목명</td>
+                                        <td class="wper80">
+                                            <input type="text" class="form-control" id="df_item_name" name="df_item_name" placeholder="품목명" data-valid="blank" >
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td class="info text-center wper20">서류명</td>
                                         <td class="wper80">
@@ -210,7 +218,7 @@
         $('#write_layer_form').find('code').text('');
         $('#file_idx').val('');
         $('#layer_df_idx').val('');
-        $('#df_title').val('');
+        $('#df_item_name').val('');
         $('#df_sort').val('');
         
         switch( arg_type ) {
@@ -227,6 +235,7 @@
                 $('#file_idx').val(data.file_idx);
                 $('#layer_df_idx').val(data.df_idx);
                 $('#df_title').val(data.df_title);
+                $('#df_item_name').val(data.df_item_name);
                 $('#layer_df_group').val(data.df_group);
                 $('#df_sort').val(data.df_sort);
                 $('#write_layer_form').find('code').text( data.origin_name );
@@ -269,6 +278,7 @@
 
         $('#write_layer').modal('hide');
         $('#df_title').val('');
+        $('#df_item_name').val('');
 
     }
 

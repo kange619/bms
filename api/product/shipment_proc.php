@@ -112,7 +112,7 @@ if( $query_result['num_rows'] == 0 ){
 
         # 수주정보 수정
         $query_result = $model->updateClientReceiveOrder([                         
-            'product_stock_used_info' => $product_stock_used_info               
+            'product_stock_used_info' => jsonReturn( $product_stock_used_info )
             ,'approval_state' => 'R'
             ,'process_state' => 'D'
             ,'edit_idx' => getAccountInfo()['idx']

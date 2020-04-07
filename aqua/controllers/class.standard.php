@@ -335,6 +335,7 @@ class standard extends baseController {
                 $insert_data = [
                     'df_type' => $this->page_data['df_type']
                     ,'company_idx' => COMPANY_CODE
+                    ,'df_item_name' => $this->page_data['df_item_name']                        
                     ,'df_title' => $this->page_data['df_title']                        
                     ,'df_apply_date' => $this->page_data['df_apply_date']                        
                     ,'df_contents' => $this->page_data['df_contents']                        
@@ -403,6 +404,7 @@ class standard extends baseController {
                 $insert_data = [
                     'df_type' => $this->page_data['df_type']
                     ,'company_idx' => COMPANY_CODE
+                    ,'df_item_name' => $this->page_data['df_item_name']                        
                     ,'df_title' => $this->page_data['df_title']                        
                     ,'df_group' => $this->page_data['df_group']
                     ,'df_apply_date' => $this->page_data['df_apply_date']                        

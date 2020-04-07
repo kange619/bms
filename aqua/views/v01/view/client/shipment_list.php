@@ -98,15 +98,15 @@
                         </h5>
                         <hr class="m-t-0">
                         <div class="table-responsive m-b-0">
-                            <table class="table table-bordered text-center dataTable" id="excelTable">
+                            <table class="table table-bordered text-center dataTable" id="excelTable" style="width:1900px">
                                 <thead>
                                     <tr class="active">
                                         <th class="info sorting" data-order="order_idx"  style="width: 10%;">수주번호</th>
                                         <th class="info sorting" data-order="order_date"  >수주일</th>
                                         <th class="info sorting" data-order="delivery_date" >출하일</th>
                                         <th class="info sorting" data-order="product_name"  style="width: 10%;">제품명</th> 
-                                        <th class="info sorting" data-order="quantity" >수주수량</th>
-                                        <th class="info sorting" data-order="company_name" >회사명</th>
+                                        <th class="info sorting" data-order="quantity" >출하수량</th>
+                                        <th class="info sorting" data-order="company_name" >회사명(배송지)</th>
                                         <th class="info sorting" data-order="manager_name"  >담당자명</th>
                                         <th class="info sorting" data-order="manager_phone_no" >담당자연락처</th>
                                         <th class="info sorting" >상태</th>                                                                     
@@ -125,7 +125,7 @@
                                         <td><?=$value['delivery_date'];?></td>
                                         <td><?=$value['product_name'];?></td>
                                         <td><?=number_format($value['quantity']);?></td>
-                                        <td><?=$value['company_name'];?></td>                                        
+                                        <td><?=$value['company_name'];?>(<?=$value['branch_name']?>)</td>                                        
                                         <td><?=$value['manager_name'];?></td>
                                         <td><?=$value['manager_phone_no'];?></td>
                                         <td><?=$process_state_arr[ $value['process_state'] ]?></td>

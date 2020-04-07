@@ -185,10 +185,12 @@ class clientModel extends baseModel {
                         , as_client.company_name
                         , as_client.manager_name
                         , as_client.manager_phone_no                
-
+                        , IFNULL( as_branch.addr_name, '본점' )  AS branch_name              
                 FROM
                         ". $this->table_client_receive_order ." AS as_order LEFT OUTER JOIN ". $this->table_client ." AS as_client
                         ON as_order.client_idx = as_client.client_idx
+                        LEFT OUTER JOIN ". $this->table_client_company_addr ." AS as_branch
+                        ON as_order.addr_idx = as_branch.addr_idx
             ) AS t_new
             
         ";
@@ -223,10 +225,12 @@ class clientModel extends baseModel {
                         , as_client.client_zip_code                
                         , as_client.client_addr                
                         , as_client.client_addr_detail                
-
+                        , IFNULL( as_branch.addr_name, '본점' )  AS branch_name              
                 FROM
                         ". $this->table_client_receive_order ." AS as_order LEFT OUTER JOIN ". $this->table_client ." AS as_client
                         ON as_order.client_idx = as_client.client_idx
+                        LEFT OUTER JOIN ". $this->table_client_company_addr ." AS as_branch
+                        ON as_order.addr_idx = as_branch.addr_idx
             ) AS t_new
             
         ";
