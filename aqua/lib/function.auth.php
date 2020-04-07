@@ -5,7 +5,7 @@
      */
     function loginState(){
 
-        if( isset( $_SESSION[ 'account_info' ] ) == false ){
+        if( isset( $_SESSION[ 'account_info' ] ) == false && ( empty( apache_request_headers()['access_id'] ) == true ) ){
 
             $rtn_page = urlencode( $_SERVER['REQUEST_URI'] );
 

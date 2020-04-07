@@ -238,6 +238,42 @@ class clientModel extends baseModel {
 
     }
 
+    /**
+     * 날짜 기준 지점별 수주 정보 확인
+     */
+    public function getReceveOrderbyBranch( $arg_company_idx, $arg_search_date ){
+
+        $join_table = "
+            (
+                SELECT  
+                        as_order.*                                                  
+                        , as_client.company_name
+                        , as_client.manager_name
+                        , as_client.manager_phone_no                
+                        , as_client.client_zip_code                
+                        , as_client.client_addr                
+                        , as_client.client_addr_detail                
+                        , IFNULL( as_branch.addr_name, '본점' )  AS branch_name              
+                FROM
+                        ". $this->table_client_receive_order ." AS as_order LEFT OUTER JOIN ". $this->table_client ." AS as_client
+                        ON as_order.client_idx = as_client.client_idx
+                        LEFT OUTER JOIN ". $this->table_client_company_addr ." AS as_branch
+                        ON as_order.addr_idx = as_branch.addr_idx
+                WHERE  ( as_order.company_idx = '". $arg_company_idx ."' ) AND ( delivery_date = '". $arg_search_date ."' ) AND ( process_state = 'O')
+                GROUP BY as_order.addr_idx 
+            ) AS t_new
+            
+        ";
+
+        $query = " SELECT * FROM ". $join_table;
+        $query_result = $this->db->execute( $query );
+
+        return $query_result['return_data'];
+
+    }
+
+    
+
 
 }
 

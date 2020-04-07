@@ -978,7 +978,7 @@ class client extends baseController {
                     ,'product_stock_idxs'                                 
                 ]);
 
-                $product_stock_idxs = $this->productUseProc( explode(',', $this->page_data['product_stock_idxs']), $this->page_data['quantity']);
+                $product_stock_idxs = $this->productUseProc( $this->page_data['order_idx'], explode(',', $this->page_data['product_stock_idxs']), $this->page_data['quantity']);
                 // echoBr( $product_stock_idxs );
 
                 # 트랜잭션 시작
@@ -1016,9 +1016,9 @@ class client extends baseController {
     /**
      * 재고 사용등록
      */
-    public function productUseProc( $product_stock_idxs, $quantity ){
+    public function productUseProc( $arg_order_idx, $product_stock_idxs, $quantity ){
 
-        $use_stock_idx = [];
+        $use_stock_info = [];
 
         $this->model_product->runTransaction();
 
@@ -1033,7 +1033,7 @@ class client extends baseController {
             
             foreach( $result_stock_dates['rows'] AS $stock_idx=>$stock_val ){
 
-                // echoBr( $stock_val );
+                // echoBr( $stock_val ); exit;
 
                 // echoBr( $available_stock_quantity );
 
@@ -1059,18 +1059,18 @@ class client extends baseController {
                             ,'product_unit_type' => $stock_val['product_unit_type']
                             ,'packaging_unit_quantity' => $stock_val['packaging_unit_quantity']
                             ,'product_quantity' => $stock_val['result_quantity']
-                            ,'memo' => '수주번호 [ ' . $this->page_data['order_idx'] . ' ] 에 출하처리됨 '
+                            ,'memo' => '수주번호 [ ' . $arg_order_idx . ' ] 에 출하처리됨 '
                             ,'task_type' => 'U'
                             ,'reg_idx' => getAccountInfo()['idx']
                             ,'reg_date' => 'NOW()'
                             ,'reg_ip' => $this->getIP()
                         ]);
                         
-                        $use_stock_idx[] = $stock_val['stock_idx'];
+                        $use_stock_info[] = $stock_val;
 
                     } else {
 
-                        echoBR('stock_dix : ' . $stock_val['stock_idx'] . '에서 ' . $quantity . ' 만큼 사용' );
+                        // echoBR('stock_dix : ' . $stock_val['stock_idx'] . '에서 ' . $quantity . ' 만큼 사용' );
                         
                         # 생산 제품 재고등록
                         $query_result = $this->model_product->insertStock([
@@ -1083,14 +1083,14 @@ class client extends baseController {
                             ,'product_unit_type' => $stock_val['product_unit_type']
                             ,'packaging_unit_quantity' => $stock_val['packaging_unit_quantity']
                             ,'product_quantity' => $quantity
-                            ,'memo' => '수주번호 [ ' . $this->page_data['order_idx'] . ' ] 에 출하처리됨 '
+                            ,'memo' => '수주번호 [ ' . $arg_order_idx . ' ] 에 출하처리됨 '
                             ,'task_type' => 'U'
                             ,'reg_idx' => getAccountInfo()['idx']
                             ,'reg_date' => 'NOW()'
                             ,'reg_ip' => $this->getIP()
                         ]);
                         
-                        $use_stock_idx[] = $stock_val['stock_idx'];
+                        $use_stock_info[] = $stock_val;
                         
                         $quantity = 0;
 
@@ -1108,7 +1108,7 @@ class client extends baseController {
 
         $this->model_product->stopTransaction();
 
-        return $use_stock_idx;
+        return $use_stock_info;
     }
 
     /**
@@ -1194,6 +1194,61 @@ class client extends baseController {
         $this->page_data['list'] = $list_result['rows'];        
         $this->view( $this->page_data );
         
+    }
+
+
+    /**
+     * 고객기업 정보 데이터를 처리한다.
+     */
+    public function stock_proc(){
+
+        # post 접근 체크
+        postCheck();
+
+        // echoBr( $this->page_data );
+
+        switch( $this->page_data['mode'] ) {
+
+            case 'ins' : {
+              
+
+                break;
+            }
+            case 'edit' : {
+
+                break;
+            }
+            case 'del' : {
+
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 필수값 체크
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=                
+                $this->issetParams( $this->page_data, [
+                    'stock_idx'                    
+                ]);
+                
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+
+                # 기업 정보 수정
+                $query_result = $this->model_product->updateStock([
+                    'del_flag' => 'Y'
+                    ,'del_idx' => getAccountInfo()['idx']
+                    ,'del_date' => 'NOW()'
+                    ,'del_ip' => $this->getIP()
+                ] ," stock_idx = '" . $this->page_data['stock_idx']. "'" );
+
+                # 트랜잭션 종료
+                $this->model->stopTransaction();
+
+                movePage('replace', '삭제되었습니다.', './'. $this->page_data['page_name'] .'_list?page=1' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            default : {
+                errorBack('잘못된 접근입니다.');
+            }
+        }
     }
 
     

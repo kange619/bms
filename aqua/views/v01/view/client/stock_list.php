@@ -234,6 +234,7 @@
                                 <input type="hidden" name="mode" id="mode" />
                                 <input type="hidden" name="stock_idx" id="stock_idx" />
                                 <input type="hidden" name="page" value="<?=$page?>">
+                                <input type="hidden" name="page_name" value="<?=$page_name?>">
                                 <input type="hidden" name="list_rows" value="<?=$list_rows?>">                                                        
                                 <input type="hidden" name="top_code" value="<?=$top_code?>">
                                 <input type="hidden" name="left_code" value="<?=$left_code?>">
