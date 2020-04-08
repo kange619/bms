@@ -100,6 +100,7 @@ class haccp extends baseController {
         
         $storage_result = $this->model->getStorage( " AND storage_idx = '" . $this->page_data['storage_idx'] . "' " );
         
+        
         if( $storage_result['num_rows'] == 0 ) {
             errorBack('해당 게시물이 삭제되었거나 정상적인 접근 방법이 아닙니다.');
         } 
@@ -108,9 +109,9 @@ class haccp extends baseController {
 
         # 저장소 데이터 요청        
         $list_result = $this->model->getStorageLogs([
-            'query_where' => " AND storage_code = '" . $this->page_data['storage_code'] . "' "
+            'query_where' => " AND ( storage_code = '" . $this->page_data['storage_code'] . "' ) AND ( date_format(reg_date, '%Y-%m-%d') = '". date('Y-m-d') ."' ) "
             ,'query_sort' => ' ORDER BY temp_log_idx DESC '
-            ,'limit' => ' LIMIT 50 '
+            ,'limit' => ' LIMIT 1000 '
         ]);
         
         $this->page_data['storage_data'] = $list_result['rows'];

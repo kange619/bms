@@ -76,6 +76,7 @@ class standard extends baseController {
         if( $this->page_data['sch_keyword'] ) {
             $query_where .= " AND ( 
                                     ( df_title LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                                    OR ( df_item_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( df_contents LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( df_reason LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                             ) ";

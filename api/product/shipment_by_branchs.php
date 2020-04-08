@@ -31,7 +31,6 @@ $result = [];
 
 $result['status'] = "success";
 $result['msg'] = '';
-$result['shipment_list'] = [];
 
 $model = $_aqua->new('clientModel');
 
@@ -63,7 +62,7 @@ if( $params['manual']  ) {
 # 필수값 체크
 #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
 
-if( empty( $params['branch_no'] ) == true ) {
+if( isset( $params['branch_no'] ) == false ) {
 	$result['status'] = 'fail';
 	$result['msg'] = '필수값 누락 : branch_no';
 	jsonExit( $result );

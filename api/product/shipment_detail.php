@@ -47,6 +47,7 @@ if( $params['manual']  ) {
     $result .= '	,order_info : {  '.PHP_EOL;
     $result .= '	    ,order_no : 수주번호	  '.PHP_EOL;    
     $result .= '	    ,company_name : 고객사명	  '.PHP_EOL;    
+    $result .= '	    ,branch_name : 지점명	  '.PHP_EOL;    
     $result .= '	    ,product_name : 제품명	  '.PHP_EOL;    
     $result .= '	    ,product_unit : 용량/중량	  '.PHP_EOL;    
     $result .= '	    ,product_unit_type : g/kg/ml/L	  '.PHP_EOL;    
@@ -79,6 +80,8 @@ if( empty( $params['order_no'] ) == true ) {
 # 수주정보를 요청한다.
 $query_result = $model->getReceiveOrder( " order_idx = '". $params['order_no'] ."' " );
 
+// echoBr( $query_result );
+
 if( $query_result['num_rows'] == 0 ){
     
     $result['status'] = 'fail';
@@ -92,6 +95,7 @@ if( $query_result['num_rows'] == 0 ){
 
     $result['order_info']['order_no'] = $query_result['row']['order_idx'];
     $result['order_info']['company_name'] = $query_result['row']['company_name'];
+    $result['order_info']['branch_name'] = $query_result['row']['branch_name'];
     $result['order_info']['product_name'] = $query_result['row']['product_name'];
     $result['order_info']['product_unit'] = $query_result['row']['product_unit'];
     $result['order_info']['product_unit_type'] = $query_result['row']['product_unit_type'];

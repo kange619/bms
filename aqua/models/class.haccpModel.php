@@ -65,7 +65,10 @@ class haccpModel extends baseModel {
 
         $result['total_rs'] = $query_result['return_data']['row']['cnt'];
 
-        $query = " SELECT * FROM ". $this->table_storage_status ." WHERE 1=1 " . $arg_data['query_where']. $arg_data['query_sort'] . $arg_data['limit'];
+        $query = "  SELECT  *
+                            ,( SELECT temp_state FROM t_storage_temp_log WHERE storage_idx = t_storage.storage_idx ORDER BY temp_log_idx DESC limit 1 ) AS temp_state
+                            ,( SELECT temperature FROM t_storage_temp_log WHERE storage_idx = t_storage.storage_idx ORDER BY temp_log_idx DESC limit 1 ) AS temperature
+                    FROM ". $this->table_storage_status ." AS t_storage WHERE 1=1 " . $arg_data['query_where']. $arg_data['query_sort'] . $arg_data['limit'];
         
         $query_result = $this->db->execute( $query );
 
@@ -77,7 +80,10 @@ class haccpModel extends baseModel {
 
     public function getStorage( $arg_where ){
 
-        $query = " SELECT * FROM ". $this->table_storage_status ." WHERE 1=1 " . $arg_where;
+        $query = "  SELECT   * 
+                            ,( SELECT temp_state FROM t_storage_temp_log WHERE storage_idx = t_storage.storage_idx ORDER BY temp_log_idx DESC limit 1 ) AS temp_state
+                            ,( SELECT temperature FROM t_storage_temp_log WHERE storage_idx = t_storage.storage_idx ORDER BY temp_log_idx DESC limit 1 ) AS temperature
+                    FROM ". $this->table_storage_status ." AS t_storage WHERE 1=1 " . $arg_where;
         $query_result = $this->db->execute( $query );
 
         return $query_result['return_data'];

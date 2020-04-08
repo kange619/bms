@@ -28,7 +28,7 @@
         errorBack('잘못된 접근입니다.');
     }
 
-    $result = $filer->dbGetFile( " idx = '". $prams['key'] ."' " );
+    $result = $filer->dbGetFile( " idx = '". $prams['key'] ."' AND (( del_flag = 'Y' ) OR ( del_flag = 'N' ) ) " );
     
     if( $result['num_rows'] > 0 ) {
         # 파일 존재

@@ -50,7 +50,7 @@ log_data = log_data.reverse();
 // console.log( log_data );
 
 for(var item of log_data ) {    
-    chart_data.push([item.reg_date.substr(5,11), parseFloat( item.temperature ), parseFloat(item.max_temperature), parseFloat(item.min_temperature)]);
+    chart_data.push([item.reg_date.substr(11,5), parseFloat( item.temperature ), parseFloat(item.max_temperature), parseFloat(item.min_temperature)]);
 }
 
 console.log( chart_data );

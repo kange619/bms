@@ -444,7 +444,13 @@ class fileUploadHandler extends aqua {
         # 데이터베이스 연결
         $this->dbconn();
 
-        $query = " SELECT * FROM " . $this->use_table . " WHERE " . $arg_where . " AND del_flag='N' ORDER BY idx ASC ";        
+        if( strpos( $arg_where, 'del_flag' ) === false ) {
+
+            $arg_where .= " AND del_flag='N' ";
+
+        } 
+
+        $query = " SELECT * FROM " . $this->use_table . " WHERE " . $arg_where . "  ORDER BY idx ASC ";        
 
         $query_result = $this->db->execute( $query );
 

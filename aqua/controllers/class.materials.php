@@ -159,6 +159,27 @@ class materials extends baseController {
                 $this->page_data['materials'] = json_encode( $query_result['rows'] );;
             }
 
+            # 사용 파일 정보            
+            $file_result = $this->file_manager->dbGetFile("
+                tb_key = '". $this->page_data['material_company_idx'] ."'
+                AND where_used = 'material_specification'
+                AND tb_name = 't_materials_usage'
+            ");
+
+            $this->page_data['material_specification_info'] = jsonReturn( $file_result['rows'] );
+
+            # 사용하지 않는 파일정보
+            $file_result = $this->file_manager->dbGetFile("
+                tb_key = '". $this->page_data['material_company_idx'] ."'
+                AND where_used = 'material_specification'
+                AND tb_name = 't_materials_usage'
+                AND del_flag = 'Y'
+            ");
+
+            $this->page_data['material_specification_log'] = $file_result['rows'];
+
+
+
         } else {
 
             $this->page_data['mode'] = 'ins';
@@ -238,19 +259,29 @@ class materials extends baseController {
                 # 기업정보 삽입 완료된 기본키를 가져온다.
                 $new_company_idx = $query_result['return_data']['insert_id'];
                 
+                
+                
                 # 납품 자재 정보 처리
-                $this->materialProc( 
-                    $new_company_idx
-                    , $this->page_data['material_idx'] 
-                    , $this->page_data['material_kind'] 
-                    , $this->page_data['material_name'] 
-                    , $this->page_data['product_name'] 
-                    , $this->page_data['standard_info'] 
-                    , $this->page_data['material_unit'] 
-                    , $this->page_data['country_of_origin'] 
-                    , $this->page_data['material_unit_price'] 
-                );
+                $this->materialProc( $new_company_idx);
 
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 파일 업로드
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=  
+                $this->file_manager->path = UPLOAD_MATERIALS_SPECIFICATION;
+                $this->file_manager->file_element = 'doc_file';
+                $this->file_manager->table_data = [
+                    'insert'=> [
+                        'tb_name' => 't_materials_usage'                        
+                        ,'where_used' => 'material_specification'
+                        ,'tb_key' => $new_company_idx
+                    ]
+                ];
+                $this->file_manager->set_file_title = $this->page_data['file_title'];
+                $this->file_manager->fileUpload();
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # // 파일 업로드
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+               
                 # 트랜잭션 종료
                 $this->model->stopTransaction();
 
@@ -293,17 +324,31 @@ class materials extends baseController {
 
 
                 # 납품 자재 정보 처리
-                $this->materialProc( 
-                    $this->page_data['material_company_idx']
-                    , $this->page_data['material_idx'] 
-                    , $this->page_data['material_kind'] 
-                    , $this->page_data['material_name'] 
-                    , $this->page_data['product_name'] 
-                    , $this->page_data['standard_info'] 
-                    , $this->page_data['material_unit'] 
-                    , $this->page_data['country_of_origin'] 
-                    , $this->page_data['material_unit_price'] 
-                );
+                $this->materialProc( $this->page_data['material_company_idx'] );
+                
+
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 파일 업로드
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=  
+                $this->file_manager->path = UPLOAD_MATERIALS_SPECIFICATION;
+                $this->file_manager->file_element = 'doc_file';
+                $this->file_manager->table_data = [
+                    'insert'=> [
+                        'tb_name' => 't_materials_usage'                        
+                        ,'where_used' => 'material_specification'
+                        ,'tb_key' => $this->page_data['material_company_idx']
+                    ]
+                ];
+                $this->file_manager->set_file_title = $this->page_data['file_title'];
+                $this->file_manager->fileUpload();
+
+                if( $this->page_data['del_file_idx'] ){
+                    $this->file_manager->dbDeleteHandler( " idx IN ( ". $this->page_data['del_file_idx'] ." ) " );
+                }
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # // 파일 업로드
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=  
+
 
                 # 트랜잭션 종료
                $this->model->stopTransaction();
@@ -345,35 +390,64 @@ class materials extends baseController {
     /**
      * 납품 자재 정보 데이터 처리
      */
-    private function materialProc(  
-        $arg_material_company_idx
-        , $arg_material_idx
-        , $arg_material_kind
-        , $arg_material_name
-        , $arg_product_name
-        , $arg_standard_info
-        , $arg_material_unit                
-        , $arg_country_of_origin  
-        , $arg_material_unit_price  
-    ){
-        # company_idx 에 해당하는 기존 데이터 삭제처리
-        $this->model->updateMaterial([
-            'del_flag' => 'Y'
-        ], " material_company_idx  = '" . $arg_material_company_idx. "'"  );
+    private function materialProc( $arg_material_company_idx ){
 
-        # 신규 insert 처리
-        return $this->model->insertMaterial(  
-            $arg_material_company_idx
-            , $arg_material_idx
-            , $arg_material_kind
-            , $arg_material_name
-            , $arg_product_name
-            , $arg_standard_info
-            , $arg_material_unit                
-            , $arg_country_of_origin  
-            , $arg_material_unit_price
-            , COMPANY_CODE 
-        );
+        if( gettype( $this->page_data['materials_usage_idx'] ) == 'array' ) {
+
+            foreach( $this->page_data['materials_usage_idx'] AS $idx=>$val){
+
+                if( $val == '' ){
+
+                    $query_result = $this->model->insertMaterial([
+                        'material_company_idx' => $arg_material_company_idx
+                        ,'company_idx' => COMPANY_CODE
+                        ,'material_idx' => $this->page_data['material_idx'][$idx]
+                        ,'material_kind' => $this->page_data['material_kind'][$idx]
+                        ,'material_name' => $this->page_data['material_name'][$idx]
+                        ,'product_name' => $this->page_data['product_name'][$idx]
+                        ,'standard_info' => $this->page_data['standard_info'][$idx]
+                        ,'material_unit' => $this->page_data['material_unit'][$idx]
+                        ,'country_of_origin' => $this->page_data['country_of_origin'][$idx]
+                        ,'material_unit_price' => $this->page_data['material_unit_price'][$idx]
+                        ,'reg_idx' => getAccountInfo()['idx']
+                        ,'reg_ip' => $this->getIP()
+                        ,'reg_date' => 'NOW()'
+                    ]);
+
+                } else {
+
+                    # 업데이트
+                    $query_result = $this->model->updateMaterial([
+                        'material_idx' => $this->page_data['material_idx'][$idx]
+                        ,'material_kind' => $this->page_data['material_kind'][$idx]
+                        ,'material_name' => $this->page_data['material_name'][$idx]
+                        ,'product_name' => $this->page_data['product_name'][$idx]
+                        ,'standard_info' => $this->page_data['standard_info'][$idx]
+                        ,'material_unit' => $this->page_data['material_unit'][$idx]
+                        ,'country_of_origin' => $this->page_data['country_of_origin'][$idx]
+                        ,'material_unit_price' => $this->page_data['material_unit_price'][$idx]
+                        ,'edit_idx' => getAccountInfo()['idx']
+                        ,'edit_date' => 'NOW()'
+                        ,'edit_ip' => $this->getIP()
+                    ]," materials_usage_idx = '" . $this->page_data['materials_usage_idx'][$idx] . "'" );
+
+                }
+
+            }
+        }
+
+        if( empty( $this->page_data['materials_usage_del_idx'] ) == false ){
+
+            # company_idx 에 해당하는 기존 데이터 삭제처리
+            $this->model->updateMaterial([
+                'del_flag' => 'Y'
+                ,'del_idx' => getAccountInfo()['idx']
+                ,'del_date' => 'NOW()'
+                ,'del_ip' => $this->getIP()
+            ], " materials_usage_idx  IN (" . $this->page_data['materials_usage_del_idx']. ") "  );
+            
+        }
+        
 
     }
 

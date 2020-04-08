@@ -984,7 +984,6 @@ class client extends baseController {
                 # 트랜잭션 시작
                 $this->model->runTransaction();
                 
-
                 # 수주정보 수정
                 $query_result = $this->model->updateClientReceiveOrder([
                     'quantity' => $this->page_data['quantity']

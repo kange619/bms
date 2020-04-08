@@ -374,7 +374,34 @@
 				var filename = $(arg_this).val().split('/').pop().split('\\').pop();  // 파일명만 추출
 			}
             
-            $(arg_this).parent().find('code').text(filename);   
+            $(arg_this).parent().find('code').text(filename);  
+
+            if( $(arg_this).data('fild_idx') !== '') {
+
+                var get_del_file_idx = $('#del_file_idx').val();
+                var del_file_idx_arr, result_val;
+
+                if( get_del_file_idx == '' ) {
+
+                    $('#del_file_idx').val( $(arg_this).data('fild_idx') );
+
+                    } else {
+
+                    if( get_del_file_idx.indexOf(',') > -1 ) {
+                        
+                        del_file_idx_arr = get_del_file_idx.split(',');
+                        del_file_idx_arr.push( $(arg_this).data('fild_idx') );
+                        result_val = del_file_idx_arr.join(',');
+
+                    } else {
+                        result_val = get_del_file_idx+','+$(arg_this).data('fild_idx');
+                    }
+
+                    $('#del_file_idx').val(result_val);
+
+                }
+            }
+             
         }
     }
 
@@ -468,7 +495,7 @@
         <div class="form-group">                                                
             <div class="upload-btn-wrapper">
                 <button type="button" class="btn btn-primary">업로드</button>
-                <input type="file" name="doc_file[]" onchange="readFile(this);" style="width:120px !important;height:50px" >                                                    
+                <input type="file" name="doc_file[]" onchange="readFile(this);" style="width:120px !important;height:50px" data-fild_idx="${file_idx}" >                                                    
                 <br/><br/><code class="control-label m-l-10"></code>
             </div>
 

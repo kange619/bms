@@ -65,7 +65,7 @@
                                         </td>
 
                                     </tr>
-                                    <tr>
+                                    <!-- <tr>
                                         <td class="info">측정일자</td>
                                         <td colspan="3">                                            
                                             <div class="form-group">                                            
@@ -78,7 +78,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                 </tbody>
                             </table>
                             <h5 class="header-title m-t-40">

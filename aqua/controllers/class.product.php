@@ -305,37 +305,39 @@ class product extends baseController {
         // echoBr( $this->page_data['product_unit_idx'] ); 
         // echoBr( $this->page_data['product_unit'] ); 
         // echoBr( $this->page_data['product_unit_type'] ); exit;
+        if( gettype( $this->page_data['product_unit_idx'] ) == 'array' ) {
+            
+            foreach( $this->page_data['product_unit_idx'] AS $idx=>$val){
 
-        foreach( $this->page_data['product_unit_idx'] AS $idx=>$val){
+                if( $val == '' ){
 
-            if( $val == '' ){
+                    # 삽입
+                    $query_result = $this->model->insertProductUnit([
+                        'company_idx' => COMPANY_CODE
+                        ,'product_idx' => $arg_product_idx
+                        ,'product_unit' => $this->page_data['product_unit'][$idx]
+                        ,'product_unit_type' => $this->page_data['product_unit_type'][$idx]
+                        ,'packaging_unit_quantity' => $this->page_data['packaging_unit_quantity'][$idx]
+                        ,'product_unit_name' => $this->page_data['product_unit_name'][$idx]
+                        ,'use_flag' => $this->page_data['use_flag'][$idx]
+                        ,'reg_idx' => getAccountInfo()['idx']
+                        ,'reg_date' => 'NOW()'
+                        ,'reg_ip' => $this->getIP()
+                    ]);
 
-                # 삽입
-                $query_result = $this->model->insertProductUnit([
-                    'company_idx' => COMPANY_CODE
-                    ,'product_idx' => $arg_product_idx
-                    ,'product_unit' => $this->page_data['product_unit'][$idx]
-                    ,'product_unit_type' => $this->page_data['product_unit_type'][$idx]
-                    ,'packaging_unit_quantity' => $this->page_data['packaging_unit_quantity'][$idx]
-                    ,'product_unit_name' => $this->page_data['product_unit_name'][$idx]
-                    ,'use_flag' => $this->page_data['use_flag'][$idx]
-                    ,'reg_idx' => getAccountInfo()['idx']
-                    ,'reg_date' => 'NOW()'
-                    ,'reg_ip' => $this->getIP()
-                ]);
-
-            } else {
-                # 업데이트
-                $query_result = $this->model->updateProductUnit([
-                    'product_unit' => $this->page_data['product_unit'][$idx]
-                    ,'product_unit_type' => $this->page_data['product_unit_type'][$idx]
-                    ,'packaging_unit_quantity' => $this->page_data['packaging_unit_quantity'][$idx]
-                    ,'product_unit_name' => $this->page_data['product_unit_name'][$idx]
-                    ,'use_flag' => $this->page_data['use_flag'][$idx]
-                    ,'edit_idx' => getAccountInfo()['idx']
-                    ,'edit_date' => 'NOW()'
-                    ,'edit_ip' => $this->getIP()
-                ]," product_unit_idx = '" . $this->page_data['product_unit_idx'][$idx] . "'" );
+                } else {
+                    # 업데이트
+                    $query_result = $this->model->updateProductUnit([
+                        'product_unit' => $this->page_data['product_unit'][$idx]
+                        ,'product_unit_type' => $this->page_data['product_unit_type'][$idx]
+                        ,'packaging_unit_quantity' => $this->page_data['packaging_unit_quantity'][$idx]
+                        ,'product_unit_name' => $this->page_data['product_unit_name'][$idx]
+                        ,'use_flag' => $this->page_data['use_flag'][$idx]
+                        ,'edit_idx' => getAccountInfo()['idx']
+                        ,'edit_date' => 'NOW()'
+                        ,'edit_ip' => $this->getIP()
+                    ]," product_unit_idx = '" . $this->page_data['product_unit_idx'][$idx] . "'" );
+                }
             }
         }
 

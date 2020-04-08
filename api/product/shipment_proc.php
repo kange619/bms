@@ -70,6 +70,30 @@ if( empty( $params['member_no'] ) == true ) {
 # 회원 로그인 처리
 $login_state = $model_auth->loginApp( $params['member_no'] );
 
+
+if( $login_state['return_data']['num_rows'] > 0 ) {
+    # 로그인 처리
+
+    $set_info['idx'] = $login_state['return_data']['row']['company_member_idx'];
+    $set_info['name'] = $login_state['return_data']['row']['member_name'];
+    $set_info['work_auth'] = $login_state['return_data']['row']['work_auth'];
+    $set_info['menu_auth'] = $login_state['return_data']['row']['menu_auth'];
+    $set_info['approval_auth'] = $login_state['return_data']['row']['approval_auth'];
+    $set_info['phone_no'] = $login_state['return_data']['row']['phone_no'];
+    $set_info['email'] = $login_state['return_data']['row']['email'];
+    $set_info['root_page'] = $root_page;
+
+    # 세션등록처리
+    setAccountSession( $set_info );
+
+} else {
+
+    $result['status'] = 'success'; 
+    $result['msg'] = '일치하는 회원정보가 존재하지 않습니다.'; 
+    jsonExit( $result );
+
+}
+
 # 수주정보를 요청한다.
 $query_result = $model->getReceiveOrder( " order_idx = '". $params['order_no'] ."' " );
 

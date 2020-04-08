@@ -243,71 +243,8 @@ class materialsModel extends baseModel {
     /**
      * 배합비율 정보를 insert 한다.
      */ 
-    public function insertMaterial( 
-        $arg_material_company_idx
-        , $arg_material_idx
-        , $arg_material_kind
-        , $arg_material_name
-        , $arg_product_name
-        , $arg_standard_info
-        , $arg_material_unit                
-        , $arg_country_of_origin  
-        , $arg_material_unit_price
-        , $arg_company_idx
-     ){
-
-        $insert_query = ' INSERT INTO '. $this->table_materials_usage . ' 
-                        (   
-                            material_company_idx
-                            , company_idx
-                            , material_idx
-                            , material_kind
-                            , material_name
-                            , product_name
-                            , standard_info
-                            , material_unit
-                            , country_of_origin
-                            , material_unit_price
-                            , reg_idx
-                            , reg_ip
-                            , reg_date 
-                        ) VALUES ';
-
-        $insert_add_query = [];
-
-        foreach( $arg_material_name AS $idx=>$val ){            
-
-            if( ( empty( $val ) == false )  ) {
-                $insert_add_query[] = " ( 
-                    '". $arg_material_company_idx ."'
-                    ,'". $arg_company_idx ."'
-                    ,'". $arg_material_idx[$idx] ."'
-                    ,'". $arg_material_kind[$idx] ."'
-                    ,'". $val ."'
-                    , '". $arg_product_name[ $idx ] ."'
-                    , '". $arg_standard_info[ $idx ] ."'
-                    , '". $arg_material_unit[ $idx ] ."'
-                    , '". $arg_country_of_origin[ $idx ] ."'
-                    , '". $arg_material_unit_price[ $idx ] ."'
-                    , '". getAccountInfo()['idx'] ."'
-                    , '". $this->getIP() ."'
-                    , NOW() 
-                ) ";
-            }
-
-        }
-        
-        if( count($insert_add_query) > 0 ) {
-
-            $insert_query .= join( ', ', $insert_add_query );
-            $return_data = $this->db->execute( $insert_query );
-
-        } else {
-            $return_data['state'] = true;
-        }
-        
-
-        return $return_data;
+    public function insertMaterial( $arg_data ){
+        return $this->db->insert( $this->table_materials_usage, $arg_data );
     }
 
     /**

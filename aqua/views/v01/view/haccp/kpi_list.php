@@ -81,7 +81,7 @@
 										<th rowspan="2" class="info">번호</th>
 										<th rowspan="2" class="info sorting" data-order="product_name" >제품명</th>
 										<th rowspan="2" class="info sorting" data-order="production_date" >생산일자</th>
-										<th rowspan="2" class="info sorting" data-order="check_date" >측정일자</th>
+										<!-- <th rowspan="2" class="info sorting" data-order="check_date" >측정일자</th> -->
 										<th colspan="4" class="info">KPI</th>
 										<th rowspan="2" class="info">변경</th>
                                     </tr>
@@ -106,7 +106,7 @@
                                             </a>
                                         </td>
                                         <td><?=$value['production_start_date'];?>~<?=$value['production_end_date'];?></td>
-                                        <td><?=$value['check_start_date'];?>~<?=$value['check_end_date'];?></td>
+                                        <!-- <td><?=$value['check_start_date'];?>~<?=$value['check_end_date'];?></td> -->
                                         <td><?=$value['kpi_p'];?></td>
                                         <td><?=$value['kpi_q'];?></td>
                                         <td><?=$value['kpi_c'];?></td>
@@ -119,7 +119,7 @@
                                         }
                                     } else {
                                     ?>                                
-                                        <tr><td colspan="9">데이터가 없습니다</td></tr>
+                                        <tr><td colspan="8">데이터가 없습니다</td></tr>
                                     <?php
                                     }
                                     ?>
