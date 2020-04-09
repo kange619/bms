@@ -95,7 +95,7 @@
                                         <th class="info sorting" data-order="manager_name" >담당자명</th>
                                         <th class="info sorting" data-order="manager_phone_no" >담당자연락처</th>
                                         <th class="info sorting" data-order="process_state" >상태</th>                                                                     
-                                        <th class="info" >수정</th>                                                                     
+                                        <th class="info" >작업</th>                                                                     
                                     </tr>                                
                                 </thead>
                                 <tbody>
@@ -117,15 +117,18 @@
                                         <td>
                                             <?php
                                                 if( $value['approval_state'] == 'R' ) {
-                                            ?>                                                                                  
-                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-light" onclick="alert('준비중입니다.')" >육안검사일지확인</button>
-                                            <?php
-                                                } 
                                             ?>
                                             <?php
-                                                if( $value['approval_state'] !== 'W' ) {
+                                                    if( $value['doc_exist'] > 0 ) {
                                             ?>                                                                                  
-                                            <button type="button" class="btn btn-sm btn-success waves-effect waves-light" onclick="alert('준비중입니다.')" >승인</button>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-light" onclick="docmentHandler('35','t_materials_order','<?=$value['order_idx'];?>')" >육안검사일지승인</button>
+                                            <?php
+                                                    } else {
+                                            ?>
+                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-light" onclick="docmentHandler('35','t_materials_order','<?=$value['order_idx'];?>')" >육안검사일지작성</button>
+                                            <?php
+                                                    } 
+                                            ?>
                                             <?php
                                                 } 
                                             ?>

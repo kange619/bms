@@ -117,6 +117,8 @@ class materials extends baseController {
         $this->page_data['materials'] = json_encode([]); # 제품 단위 빈 값
         $this->page_data['added_food_types'] = [];
         $this->page_data['company_members'] = [];
+        $this->page_data['material_specification_info'] = [];
+        $this->page_data['material_specification_log'] = [];
 
         $this->page_data['raw_materials'] = $this->model->getMaterialStd(
             " company_idx='". COMPANY_CODE ."' AND material_kind='raw' AND use_flag='Y' AND del_flag='N' "

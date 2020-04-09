@@ -74,6 +74,48 @@
             }
         ?>
 
+        <!-- 전자문서 양식 레이어 -->
+        <div id="document_handle_layer" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog" style="width: 900px;">
+                <div class="modal-content p-0 b-0">
+                    <div class="panel panel-color panel-inverse">
+                        <div class="panel-heading">
+                            <button type="button" class="close m-t-5" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h3 class="panel-title" id="document_title_area" ></h3>
+                        </div>
+                        <form class="form-horizontal" role="doc_layer_form" method="post" id="doc_layer_form" enctype="multipart/form-data"  action="">                
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-lg-12 table-responsive m-b-0" id="document_form_area" >
+                                    
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-success waves-effect waves-light m-t-10 doc_write_mode " onclick="saveDoc()" >
+                                        임시저장
+                                    </button>
+                                    <button type="button" class="btn btn-primary waves-effect waves-light m-t-10 m-l-15 doc_write_mode" onclick="requestApprovalDoc()" >
+                                        승인요청
+                                    </button>
+                                    <button type="button" class="btn btn-inverse waves-effect waves-light m-t-10 m-l-15 doc_write_mode " data-dismiss="modal" >
+                                        취소
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary waves-effect waves-light m-t-10 m-l-15 doc_approval_mode" >
+                                        승인
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- //전자문서 양식 레이어 -->
+        
         
         
         <script src="<?=$aqua_view_path;?>/public/js/commfunc.js"></script>
@@ -92,6 +134,8 @@
         <script src="<?=$aqua_view_path;?>/public/js/waves.js"></script>
         <script src="<?=$aqua_view_path;?>/public/js/jquery.nicescroll.js"></script>
         <script src="<?=$aqua_view_path;?>/public/js/jquery.scrollTo.min.js"></script>
+        <script src="<?=$aqua_view_path;?>/public/js/imasic.doc.rw.js"></script>
+        <script src="<?=$aqua_view_path;?>/public/js/view.form.valid.js"></script>
 
         <!-- Plugins Js -->
         <script src="<?=$aqua_view_path;?>/public/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
@@ -101,7 +145,7 @@
 
         <script type="text/javascript">
             
-            $(function () {
+            $(function (){
                 
                 $('.datepicker').datepicker({
                     calendarWeeks: false,
@@ -196,12 +240,177 @@
                         }
                     }
                 });
+            }
 
+            
+
+            /**
+                문서 작업 처리 함수
+             */
+            var doc_current_task = {};
+            function docmentHandler( arg_doc_usage_idx, arg_task_type, arg_task_table_idx ) {
+                
+                doc_current_task = {
+                    doc_usage_idx : arg_doc_usage_idx
+                    ,task_type : arg_task_type
+                    ,task_table_idx : arg_task_table_idx
+                }
+
+                if( arg_doc_usage_idx == '' ){
+                    console.error('문서 키가 필요합니다.'); 
+                    return;
+                }
+
+                if( arg_task_type == '' ){
+                    console.error('작업 유형값이 필요합니다.'); 
+                    return;
+                }
+
+                if( arg_task_table_idx == '' ){
+                    console.error('작업 테이블 기본키가 필요합니다.'); 
+                    return;
+                }
+
+                //# 문서 정보 요청
+                // ajaxProcessing('open');
+
+                jqueryAjaxCall({
+                    type : "post",
+                    url : '/doc/getDocForm',
+                    dataType : "json",
+                    paramData : {
+                        doc_usage_idx : arg_doc_usage_idx
+                        ,task_type : arg_task_type
+                        ,task_table_idx : arg_task_table_idx
+                    } ,
+                    callBack : function( arg_result ){
+                        
+                        // ajaxProcessing('close');
+                        console.log( arg_result );
+
+                        var work = '';
+                        var table_data = '';
+                        var data = '';
+                        var writer_name = '';
+                        
+                        if( Object.keys(arg_result.document_form).length > 0 ){
+                            
+                            work = 'w';
+                            table_data = arg_result.document_form.doc_table_style_data;
+                            data = arg_result.document_form.doc_data;
+                            writer_name = arg_result.writer_name;
+
+                            approval_data = arg_result.document_form;
+                            
+                        }
+
+                        if( Object.keys(arg_result.document_usage_info).length > 0 ){
+                            
+                            table_data = arg_result.document_usage_info.doc_table_style_data;
+                            data = arg_result.document_usage_info.doc_data;
+
+                            if( arg_result.document_usage_info.approval_state == 'D' ) {
+                                work = 'r';
+                            } else {
+                                work = 'w';
+                                
+                            }
+
+                            approval_data = arg_result.document_form;
+                            
+                        }
+
+                        $('#document_title_area').html( arg_result.document_form.doc_title );
+
+
+                        //# 문서 생성 함수 호출
+
+                        doc.init({
+                            work : work
+                            , element : 'document_form_area'                            
+                            , table_data : table_data
+                            , data : data
+                        });
+
+                        $.each($('#document_form_area').find('td'), function(){                            
+                            if( ( $(this).text() == '__reporter_qr__' ) || ( $(this).text() == '__approval_qr__' ) ) {
+                                $(this).text('');
+                            } 
+                        });
+
+                        $.each($('#document_form_area').find('input'), function(){                            
+                            $(this).attr('data-valid', 'blank');
+                        });
+
+                    }
+                });
+
+
+                //# 문서 레이어 노출
+                $('#document_handle_layer').modal();
+
+                console.log( doc_current_task );
+            }
+            
+            function saveDoc() {
+                // console.log( doc.doc_obj );
+
+                viewFormValid.alert_type = 'add';     
+                
+
+                // if( viewFormValid.run( 'doc_layer_form' ) === true ) {
+
+                    
+
+                    var param_data = {};
+
+                    approval_data['doc_data'] = JSON.stringify( doc.doc_obj );
+                    
+                    param_data['doc_usage_idx'] = doc_current_task.doc_usage_idx;
+                    param_data['task_type'] = doc_current_task.task_type;
+                    param_data['task_table_idx'] = doc_current_task.task_table_idx;
+                    param_data['mode'] = 'save';
+
+                    for( var item in approval_data ) {                    
+                        param_data[ item ] = approval_data[item];
+                    }
+                    
+                    console.log( param_data );
+
+                    jqueryAjaxCall({
+                        type : "post",
+                        url : '/doc/docApprovalDocProc',
+                        dataType : "json",
+                        paramData : param_data ,
+                        callBack : function( arg_result ){
+                            
+
+                            console.log( arg_result );
+                            // ajaxProcessing('close');
+                            
+
+                        }
+                    });
+                // }
+
+            }
+
+            function requestApprovalDoc(){
+
+                viewFormValid.alert_type = 'add';        
+                if( viewFormValid.run( 'doc_layer_form' ) === true ) {
+                    
+                }
 
             }
             
+            // docmentHandler('35','t_materials_order','10000000000084');
+            
+            
         </script>
 
+        
+        
 
     </body>
 </html>

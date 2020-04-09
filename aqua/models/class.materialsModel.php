@@ -7,6 +7,7 @@ class materialsModel extends baseModel {
     private $table_materials_order;    
     private $table_materials_stock;    
     private $table_materials;    
+    private $table_doc_approval;    
 
     function __construct() {
 
@@ -15,6 +16,7 @@ class materialsModel extends baseModel {
         $this->table_materials_order = ' t_materials_order ';
         $this->table_materials_stock = ' t_materials_stock ';
         $this->table_materials = ' t_materials ';
+        $this->table_doc_approval = ' t_document_approval ';
         
         $this->db = $this->connDB('masic');
 
@@ -271,7 +273,7 @@ class materialsModel extends baseModel {
                         , as_company.company_name
                         , as_company.manager_name
                         , as_company.manager_phone_no                
-
+                        , ( SELECT doc_approval_idx FROM ". $this->table_doc_approval ." WHERE ( task_table_idx = as_order.order_idx ) AND (del_flag = 'N') AND ( task_type = '". trim( $this->table_materials_order ) ."' ) ) AS doc_exist
                 FROM
                         ". $this->table_materials_order ." AS as_order LEFT OUTER JOIN ". $this->table_materials_usage ." AS as_materials
                         ON as_order.materials_usage_idx = as_materials.materials_usage_idx

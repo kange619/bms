@@ -53,6 +53,28 @@
      */
     function hash_conv($value) {
 		return hash('sha256', $value);
-	}
+    }
+    
+    /**
+     * 작업 권한 확인
+     */
+    function checkWorkAuth( $arg_work ){
+        if( strpos( getAccountInfo()['work_auth'], $arg_work ) ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 작업 승인 권한 확인
+     */
+    function checkApprovalAuth( $arg_work ){        
+        if( ( strpos( getAccountInfo()['work_auth'], $arg_work ) ) && ( ( getAccountInfo()['approval_auth'] === 'leader' ) || ( getAccountInfo()['approval_auth'] === 'ceo' ) ) ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 ?>

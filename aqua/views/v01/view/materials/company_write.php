@@ -402,7 +402,7 @@
                                         } else {
                                     ?>
                                     <tr style="cursor: pointer;" >
-                                        <td colspan="4" class="text-center">
+                                        <td colspan="2" class="text-center">
                                             이력이 없습니다.
                                         </td>
                                     </tr>
@@ -567,7 +567,7 @@
         var files = <?=$material_specification_info?>;
         var file_idx = [];
         var data = [];
-
+        
         $.each(files, function(idx, item){
 
             file_idx.push(item.idx);
