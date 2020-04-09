@@ -81,6 +81,7 @@ class QRcodeHandler extends aqua {
             ,'origin_name' => $file_name
             ,'server_name' => $file_name
             ,'path' => $db_insert_path
+            ,'company_idx' => COMPANY_CODE
             , 'reg_idx' => getAccountInfo()['idx']
             , 'reg_ip' => $this->getIP()
             , 'reg_date' => 'NOW()'

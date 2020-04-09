@@ -274,6 +274,7 @@ class materialsModel extends baseModel {
                         , as_company.manager_name
                         , as_company.manager_phone_no                
                         , ( SELECT doc_approval_idx FROM ". $this->table_doc_approval ." WHERE ( task_table_idx = as_order.order_idx ) AND (del_flag = 'N') AND ( task_type = '". trim( $this->table_materials_order ) ."' ) ) AS doc_exist
+                        , ( SELECT approval_state FROM ". $this->table_doc_approval ." WHERE ( task_table_idx = as_order.order_idx ) AND (del_flag = 'N') AND ( task_type = '". trim( $this->table_materials_order ) ."' ) ) AS doc_approval_state                        
                 FROM
                         ". $this->table_materials_order ." AS as_order LEFT OUTER JOIN ". $this->table_materials_usage ." AS as_materials
                         ON as_order.materials_usage_idx = as_materials.materials_usage_idx

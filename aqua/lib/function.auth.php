@@ -59,22 +59,36 @@
      * 작업 권한 확인
      */
     function checkWorkAuth( $arg_work ){
-        if( strpos( getAccountInfo()['work_auth'], $arg_work ) ) {
-            return true;
+
+        if( AUTH_USE == true ) {
+
+            if( strpos( getAccountInfo()['work_auth'], strtoupper($arg_work) ) > -1 ) {
+                return true;
+            } else {
+                return false;
+            }
+
         } else {
-            return false;
+            return true;
         }
+        
     }
 
     /**
      * 작업 승인 권한 확인
      */
-    function checkApprovalAuth( $arg_work ){        
-        if( ( strpos( getAccountInfo()['work_auth'], $arg_work ) ) && ( ( getAccountInfo()['approval_auth'] === 'leader' ) || ( getAccountInfo()['approval_auth'] === 'ceo' ) ) ) {
-            return true;
+    function checkApprovalAuth( $arg_work ){    
+
+        if( AUTH_USE == true ) {
+            if( ( strpos( getAccountInfo()['work_auth'], strtoupper($arg_work) ) > -1  ) && ( ( strpos( getAccountInfo()['approval_auth'] ,'leader') > -1 ) || ( strpos( getAccountInfo()['approval_auth'], 'ceo') > -1 ) ) ) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            return true;
         }
+
     }
 
 ?>

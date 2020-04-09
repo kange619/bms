@@ -92,18 +92,20 @@
                             </div>
                             <div class="form-group">
                                 <div class="text-center">
-                                    <button type="button" class="btn btn-success waves-effect waves-light m-t-10 doc_write_mode " onclick="saveDoc()" >
+                                    <button type="button" class="btn btn-success waves-effect waves-light m-t-10 doc_write_mode " onclick="saveDoc('save')" style="display:none" >
                                         임시저장
                                     </button>
-                                    <button type="button" class="btn btn-primary waves-effect waves-light m-t-10 m-l-15 doc_write_mode" onclick="requestApprovalDoc()" >
+                                    <button type="button" class="btn btn-primary waves-effect waves-light m-t-10 m-l-15 doc_write_mode" onclick="saveDoc('request_approval')" style="display:none"  >
                                         승인요청
                                     </button>
-                                    <button type="button" class="btn btn-inverse waves-effect waves-light m-t-10 m-l-15 doc_write_mode " data-dismiss="modal" >
-                                        취소
+                                    
+
+                                    <button type="button" class="btn btn-primary waves-effect waves-light m-t-10 m-l-15 doc_approval_mode" onclick="saveDoc('approval')" style="display:none" >
+                                        승인
                                     </button>
 
-                                    <button type="button" class="btn btn-primary waves-effect waves-light m-t-10 m-l-15 doc_approval_mode" >
-                                        승인
+                                    <button type="button" class="btn btn-inverse waves-effect waves-light m-t-10 m-l-15 " data-dismiss="modal" >
+                                        취소
                                     </button>
 
                                 </div>
@@ -122,7 +124,7 @@
         <script src="<?=$aqua_view_path;?>/public/js/sweetalert.min.js"></script>
         <script src="<?=$aqua_view_path;?>/public/js/modernizr.min.js"></script>
         <script src="<?=$aqua_view_path;?>/public/js/jquery.form.js"></script>
-        <script src="<?=$aqua_view_path;?>/public/js/lee.lib.js"></script>
+        <script src="<?=$aqua_view_path;?>/public/js/lee.lib.js"></script>        
         <script src="<?=$aqua_view_path;?>/public/js/template/jquery.tmpl.min.js"></script>
         <script src="<?=$aqua_view_path;?>/public/js/template/jquery.tmplPlus.min.js"></script>
 
@@ -136,6 +138,7 @@
         <script src="<?=$aqua_view_path;?>/public/js/jquery.scrollTo.min.js"></script>
         <script src="<?=$aqua_view_path;?>/public/js/imasic.doc.rw.js"></script>
         <script src="<?=$aqua_view_path;?>/public/js/view.form.valid.js"></script>
+        
 
         <!-- Plugins Js -->
         <script src="<?=$aqua_view_path;?>/public/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
@@ -248,8 +251,13 @@
                 문서 작업 처리 함수
              */
             var doc_current_task = {};
-            function docmentHandler( arg_doc_usage_idx, arg_task_type, arg_task_table_idx ) {
+            function docmentHandler( arg_doc_usage_idx, arg_task_type, arg_task_table_idx, arg_task_auth_flag ) {
                 
+                if( arg_task_auth_flag == false ) {
+                    alert('작업 권한이 없습니다.');
+                    return;
+                }
+
                 doc_current_task = {
                     doc_usage_idx : arg_doc_usage_idx
                     ,task_type : arg_task_type
@@ -292,36 +300,57 @@
                         var table_data = '';
                         var data = '';
                         var writer_name = '';
+                        var today = '';
+                        var work_mode = '';
+                        var approver = '';
                         
                         if( Object.keys(arg_result.document_form).length > 0 ){
                             
                             work = 'w';
+                            work_mode = 'ins';
                             table_data = arg_result.document_form.doc_table_style_data;
                             data = arg_result.document_form.doc_data;
                             writer_name = arg_result.writer_name;
+                            today = arg_result.today;
 
                             approval_data = arg_result.document_form;
                             
                         }
 
-                        if( Object.keys(arg_result.document_usage_info).length > 0 ){
+                        if( Object.keys(arg_result.document_approval_info).length > 0 ){
                             
-                            table_data = arg_result.document_usage_info.doc_table_style_data;
-                            data = arg_result.document_usage_info.doc_data;
-
-                            if( arg_result.document_usage_info.approval_state == 'D' ) {
+                            work_mode = 'edit';
+                            table_data = arg_result.document_approval_info.doc_table_style_data;
+                            data = arg_result.document_approval_info.doc_data;
+                            writer_name = '<img src="'+ arg_result.document_approval_info.reporter_qrcode_path + '" >';
+                            approver = '<img src="'+ arg_result.document_approval_info.approver_qrcode_path + '" >';
+                            if( arg_result.document_approval_info.approval_state == 'D' ) {
                                 work = 'r';
                             } else {
                                 work = 'w';
-                                
                             }
 
-                            approval_data = arg_result.document_form;
+                            approval_data = arg_result.document_approval_info;
                             
                         }
+                        
+                        /********************************* 레이어 컨트롤 **********************************/
+                        $('#document_title_area').html( approval_data.doc_title );
+                        
+                        switch( approval_data.approval_state ){
+                            case 'W' : {
 
-                        $('#document_title_area').html( arg_result.document_form.doc_title );
-
+                            }
+                            case undefined : {
+                                $('.doc_write_mode').show();
+                                break;
+                            }
+                            case 'R' : {
+                                $('.doc_approval_mode').show();
+                                break;
+                            }
+                            
+                        }
 
                         //# 문서 생성 함수 호출
 
@@ -331,16 +360,44 @@
                             , table_data : table_data
                             , data : data
                         });
+                        
+                        $.each($('#document_form_area').find('th'), function(){                            
 
-                        $.each($('#document_form_area').find('td'), function(){                            
-                            if( ( $(this).text() == '__reporter_qr__' ) || ( $(this).text() == '__approval_qr__' ) ) {
-                                $(this).text('');
+                            if( ( $(this).text() == '작성일자' )  ) {
+
+                                // $($(this).parent().find('input')[0]).val( today ).trigger('keyup');                     
+                                $($(this).parent().find('input')[0]).val( today );                     
+                                $(this).parent().find('input')[0].dispatchEvent(new KeyboardEvent('keyup', {key: 'e'}));                     
+                                
+
+                                if( work_mode == 'ins' ) {
+                                    $($(this).parent().find('input')[1]).val( writer_name );
+                                    $(this).parent().find('input')[1].dispatchEvent(new KeyboardEvent('keyup', {key: 'e'}));        
+                                    $($(this).parent().find('input')[1]).attr('readonly', 'readonly');
+                                }
                             } 
+
                         });
 
+                        $.each($('#document_form_area').find('td'), function(){     
+
+                            if( ( $(this).text() == '__reporter_qr__' )  ) {
+                                $(this).html( writer_name ) ;
+                            } 
+
+                            if( ( $(this).text() == '__approval_qr__' ) ) {
+                                $(this).html(approver);
+                            }
+
+                        });
+
+                        
                         $.each($('#document_form_area').find('input'), function(){                            
                             $(this).attr('data-valid', 'blank');
                         });
+
+                        /********************************* 레이어 컨트롤 **********************************/
+
 
                     }
                 });
@@ -349,49 +406,71 @@
                 //# 문서 레이어 노출
                 $('#document_handle_layer').modal();
 
-                console.log( doc_current_task );
+                // console.log( doc_current_task );
             }
             
-            function saveDoc() {
+            function saveDoc( arg_mode ) {
                 // console.log( doc.doc_obj );
 
                 viewFormValid.alert_type = 'add';     
                 
-
-                // if( viewFormValid.run( 'doc_layer_form' ) === true ) {
-
-                    
+                if( viewFormValid.run( 'doc_layer_form' ) === true ) {
 
                     var param_data = {};
 
-                    approval_data['doc_data'] = JSON.stringify( doc.doc_obj );
-                    
+                    approval_data['doc_data'] = JSON.stringify( doc.doc_obj );                    
+               
                     param_data['doc_usage_idx'] = doc_current_task.doc_usage_idx;
                     param_data['task_type'] = doc_current_task.task_type;
                     param_data['task_table_idx'] = doc_current_task.task_table_idx;
-                    param_data['mode'] = 'save';
+                    param_data['mode'] = arg_mode;
 
                     for( var item in approval_data ) {                    
                         param_data[ item ] = approval_data[item];
                     }
-                    
-                    console.log( param_data );
+
+                    if( arg_mode == 'request_approval' ) {
+                        if(confirm('승인요청 하시겠습니까?\n승인 요청 후에는 수정이 불가능합니다.') == false ) {
+                            return;
+                        }
+                    }
+
+                    if( arg_mode == 'approval' ) {
+                        if(confirm('승인 처리하시겠습니까?\n승인 후에는 수정이 불가능합니다.') == false ) {
+                            return;
+                        }
+                    }
 
                     jqueryAjaxCall({
                         type : "post",
-                        url : '/doc/docApprovalDocProc',
+                        url : '/doc/docApprovalHandler',
                         dataType : "json",
                         paramData : param_data ,
                         callBack : function( arg_result ){
                             
-
-                            console.log( arg_result );
                             // ajaxProcessing('close');
-                            
+                            if( arg_result.status == 'success' ) {
+                                if( arg_mode == 'save' ) {
+                                    alert('저장되었습니다.');
+                                }
 
+                                if( arg_mode == 'request_approval' ) {
+                                    alert('승인 요청되었습니다.');
+                                }
+
+                                if( arg_mode == 'approval' ) {
+                                    alert('승인 되었습니다.');
+                                }
+                                
+                                location.reload();
+
+                            } else {
+                                alert( arg_result.msg );
+                            }
+                            
                         }
                     });
-                // }
+                }
 
             }
 
@@ -400,6 +479,38 @@
                 viewFormValid.alert_type = 'add';        
                 if( viewFormValid.run( 'doc_layer_form' ) === true ) {
                     
+                    var param_data = {};
+
+                    param_data['mode'] = 'save';
+
+                    approval_data['doc_data'] = JSON.stringify( doc.doc_obj );               
+                    param_data['doc_usage_idx'] = doc_current_task.doc_usage_idx;
+                    param_data['task_type'] = doc_current_task.task_type;
+                    param_data['task_table_idx'] = doc_current_task.task_table_idx;
+                    
+
+                    for( var item in approval_data ) {                    
+                        param_data[ item ] = approval_data[item];
+                    }
+
+                    jqueryAjaxCall({
+                        type : "post",
+                        url : '/doc/docApprovalDocProc',
+                        dataType : "json",
+                        paramData : param_data ,
+                        callBack : function( arg_result ){
+                            
+                            // ajaxProcessing('close');
+                            if( arg_result.status == 'success' ) {
+                                alert('저장되었습니다.');
+                                location.reload();
+                            } else {
+                                alert( arg_result.msg );
+                            }
+                            
+                        }
+                    });
+
                 }
 
             }

@@ -45,6 +45,7 @@ class doc extends baseController {
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         $this->page_data['doc_list'] = $this->getConfig()['doc_state'][ $this->page_data['left_code'] ];
 
+        // echoBr( $this->page_data['doc_list'] ); exit;
         switch( $this->page_data['left_code'] ){
             case 'ccp' : {
                 $this->page_data['task_title'] = 'CCP 문서승인 관리';
@@ -148,6 +149,92 @@ class doc extends baseController {
     }
 
     /**
+     * 문서 qrcode 내용을 보여준다.
+     */
+    public function qr_result(){
+
+        $this->page_data['use_top'] = false;
+        $this->page_data['use_left'] = false;
+        $this->page_data['use_footer'] = false;        
+        $this->page_data['contents_path'] = '/doc/qr_result.php';
+
+        $this->view( $this->page_data );    
+
+    }
+    /**
+     * 문서 보기
+     */
+    public function doc_view(){
+
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        # 필수값 체크
+        #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+        
+        $this->issetParams( $this->page_data, ['key']);
+
+        $result = [];
+        $doc_approval_idx = $this->page_data['key'];
+
+        $doc_result = $this->model->getApprovalDocument( " 
+            AND ( doc_approval_idx = '". $doc_approval_idx ."' ) 
+            AND del_flag = 'N'
+        " );
+
+
+        if( $doc_result['num_rows'] > 0  ) {
+            
+            foreach( $doc_result['row'] AS $key=>$val ) {
+
+                if( ( $key == 'doc_table_style_data' ) || ( $key == 'doc_data' ) ) {
+                    // $val = htmlspecialchars_decode( $val );
+                } 
+
+                $result[ $key ] = $val;
+            }
+
+            $qrcode_result = $this->qrcode->getQRcode([
+                'purpose' => 'reporter'
+                ,'tb_name' => 't_document_approval'                
+                ,'tb_key' => $doc_result['row']['doc_approval_idx']
+            ]);
+            
+            if( $qrcode_result['num_rows'] > 0 ){
+                
+                $result['reporter_qrcode_path'] = $qrcode_result['row']['path'].'/'.$qrcode_result['row']['server_name'];
+                $result['reporter_qrcode_idx'] = $qrcode_result['row']['idx'];
+                
+            }
+
+            $qrcode_result = $this->qrcode->getQRcode([
+                'purpose' => 'approver'
+                ,'tb_name' => 't_document_approval'                
+                ,'tb_key' => $doc_result['row']['doc_approval_idx']
+            ]);
+            
+            if( $qrcode_result['num_rows'] > 0 ){
+                
+                $result['approver_qrcode_path'] = $qrcode_result['row']['path'].'/'.$qrcode_result['row']['server_name'];
+                $result['approver_qrcode_idx'] = $qrcode_result['row']['idx'];
+                
+            }
+
+
+            
+        }
+
+
+        $this->page_data['meta_title'] = $result['doc_title'];
+        $this->page_data['doc_result'] = $result;
+        $this->page_data['use_top'] = false;
+        $this->page_data['use_left'] = false;
+        $this->page_data['use_footer'] = false;        
+        $this->page_data['contents_path'] = '/doc/qr_view.php';
+
+        $this->view( $this->page_data );
+
+    }
+
+    /**
      * 문서 양식을 반환 한다.
      */
     public function getDocForm() {
@@ -177,7 +264,7 @@ class doc extends baseController {
         # SET Values
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         $result['document_form'] = [];
-        $result['document_usage_info'] = [];
+        $result['document_approval_info'] = [];
 
         $form_result = $this->model->getDocumentForm( " AND ( doc_usage_idx = '". $this->page_data['doc_usage_idx'] ."' ) " );
         
@@ -206,20 +293,49 @@ class doc extends baseController {
         
         if( $doc_result['num_rows'] > 0  ) {
             
-            foreach( $form_result['row'] AS $key=>$val ) {
+            foreach( $doc_result['row'] AS $key=>$val ) {
 
                 if( ( $key == 'doc_table_style_data' ) || ( $key == 'doc_data' ) ) {
                     $val = htmlspecialchars_decode( $val );
                 } 
 
-                $result['document_usage_info'][ $key ] = $val;
+                $result['document_approval_info'][ $key ] = $val;
             }
+
+            $qrcode_result = $this->qrcode->getQRcode([
+                'purpose' => 'reporter'
+                ,'tb_name' => 't_document_approval'                
+                ,'tb_key' => $doc_result['row']['doc_approval_idx']
+            ]);
+            
+            if( $qrcode_result['num_rows'] > 0 ){
+                
+                $result['document_approval_info']['reporter_qrcode_path'] = $qrcode_result['row']['path'].'/'.$qrcode_result['row']['server_name'];
+                $result['document_approval_info']['reporter_qrcode_idx'] = $qrcode_result['row']['idx'];
+                
+            }
+
+            $qrcode_result = $this->qrcode->getQRcode([
+                'purpose' => 'approver'
+                ,'tb_name' => 't_document_approval'                
+                ,'tb_key' => $doc_result['row']['doc_approval_idx']
+            ]);
+            
+            if( $qrcode_result['num_rows'] > 0 ){
+                
+                $result['document_approval_info']['approver_qrcode_path'] = $qrcode_result['row']['path'].'/'.$qrcode_result['row']['server_name'];
+                $result['document_approval_info']['approver_qrcode_idx'] = $qrcode_result['row']['idx'];
+                
+            }
+
+
             
         }
 
         $result['status'] = 'success';
         $result['msg'] = '';
         $result['writer_name'] = getAccountInfo()['name'];
+        $result['today'] = date('Y-m-d');
       
         jsonExit( $result );
 
@@ -229,7 +345,7 @@ class doc extends baseController {
     /**
      * 문서 승인 테이블 데이터 처리
      */
-    public function docApprovalDocProc(){
+    public function docApprovalHandler(){
 
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         # 필수값 체크
@@ -267,24 +383,48 @@ class doc extends baseController {
         switch( $this->page_data['mode'] ) {
 
             case 'save' : {
-                // doc_approval_idx
-
+                
                 if( isset( $this->page_data['doc_approval_idx'] ) == true ) {
                     # update
+        
+                    # 트랜잭션 시작
+                    $this->model->runTransaction();
+        
+                    # 승인문서 수정
+                    $query_result = $this->model->updateApprovalDoc([
+                        'doc_data' => $this->page_data['doc_data']
+                        ,'edit_idx' => getAccountInfo()['idx']
+                        ,'edit_date' => 'NOW()'
+                        ,'edit_ip' => $this->getIP()
+                    ] ," doc_approval_idx = '" . $this->page_data['doc_approval_idx']. "'" );
+        
+                    # QRcode 데이터베이스에 적재
+                    $this->qrcode->renewQRcode([
+                        'purpose' => 'reporter'
+                        ,'qrcode_val' => SITE_DOMAIN . '/doc/qr_result?key=' . $this->page_data['doc_approval_idx']
+                        ,'file_name' => $this->page_data['doc_approval_idx'].'_reporter_'.getAccountInfo()['idx']
+                        ,'tb_name' => 't_document_approval'             
+                        ,'tb_key' => $this->page_data['doc_approval_idx']
+                        ,'fild_key' => $this->page_data['reporter_qrcode_idx']
+                    ]);
+        
+                    # 트랜잭션 종료
+                    $this->model->stopTransaction();
+                
                 } else {
                     # insert
-
+        
                     # 트랜잭션 시작
                     $this->model->runTransaction();
                     // echoBr( $this->page_data );
-
+        
                     # QrCode 생성
                     // $this->page_data['doc_data'] = htmlspecialchars_decode( $this->page_data['doc_data'] );
-
+        
                     // $doc_data = json_decode( $this->page_data['doc_data'], true );
-
+        
                     // __reporter_qr__
-
+        
                     // jsonExit( $this->page_data['doc_data'] );
                     // htmlspecialchars_decode
                     
@@ -295,30 +435,157 @@ class doc extends baseController {
                         ,'task_type' => $this->page_data['task_type']
                         ,'task_table_idx' => $this->page_data['task_table_idx']
                         ,'item_code' => $this->page_data['item_code']
+                        ,'doc_title' => $this->page_data['doc_title']
                         ,'doc_table_style_data' => $this->page_data['doc_table_style_data']
                         ,'doc_data' => $this->page_data['doc_data']
                         ,'writer_idx' => getAccountInfo()['idx']         
                         ,'reg_date' => 'NOW()'
                         ,'reg_ip' => $this->getIP()
                     ]);
-
+        
                     $new_doc_approval_idx = $query_result['return_data']['insert_id'];
-
+        
                     # QRcode 데이터베이스에 적재
                     $this->qrcode->createQRcode([
-                        'purpose' => 'mesa'
-                        ,'qrcode_val' => '//sandle.dreamofway.com/doc/qr_result?key=' . $new_doc_approval_idx
+                        'purpose' => 'reporter'
+                        ,'qrcode_val' => SITE_DOMAIN . '/doc/qr_result?key=' . $new_doc_approval_idx
                         ,'file_name' => $new_doc_approval_idx.'_reporter_'.getAccountInfo()['idx']
                         ,'tb_name' => 't_document_approval'             
                         ,'tb_key' => $new_doc_approval_idx
                     ]);
                     
+        
+                    # 트랜잭션 종료
+                    $this->model->stopTransaction();
+                    
+                }
+
+                break;
+            }
+            case 'request_approval' : {
+
+                if( isset( $this->page_data['doc_approval_idx'] ) == true ) {
+                    # update
+        
+                    # 트랜잭션 시작
+                    $this->model->runTransaction();
+        
+                    # 승인문서 수정
+                    $query_result = $this->model->updateApprovalDoc([
+                        'doc_data' => $this->page_data['doc_data']
+                        ,'approval_state' => 'R'
+                        ,'edit_idx' => getAccountInfo()['idx']
+                        ,'request_date' => 'NOW()'
+                        ,'edit_date' => 'NOW()'
+                        ,'edit_ip' => $this->getIP()
+                    ] ," doc_approval_idx = '" . $this->page_data['doc_approval_idx']. "'" );
+        
+                    # QRcode 데이터베이스에 적재
+                    $this->qrcode->renewQRcode([
+                        'purpose' => 'reporter'
+                        ,'qrcode_val' => SITE_DOMAIN . '/doc/qr_result?key=' . $this->page_data['doc_approval_idx']
+                        ,'file_name' => $this->page_data['doc_approval_idx'].'_reporter_'.getAccountInfo()['idx']
+                        ,'tb_name' => 't_document_approval'             
+                        ,'tb_key' => $this->page_data['doc_approval_idx']
+                        ,'fild_key' => $this->page_data['reporter_qrcode_idx']
+                    ]);
+
+                    $this->model->updateTaskTable( $this->page_data['task_type'], $this->page_data['task_table_idx'], 'R');
+        
+                    # 트랜잭션 종료
+                    $this->model->stopTransaction();
+                
+                } else {
+                    # insert
+        
+                    # 트랜잭션 시작
+                    $this->model->runTransaction();
+                    // echoBr( $this->page_data );
+        
+                    # QrCode 생성
+                    // $this->page_data['doc_data'] = htmlspecialchars_decode( $this->page_data['doc_data'] );
+        
+                    // $doc_data = json_decode( $this->page_data['doc_data'], true );
+        
+                    // __reporter_qr__
+        
+                    // jsonExit( $this->page_data['doc_data'] );
+                    // htmlspecialchars_decode
+                    
+                    # 승인문서 등록
+                    $query_result = $this->model->insertApprovalDoc([
+                        'company_idx' => COMPANY_CODE
+                        ,'approval_state' => 'R'
+                        ,'doc_usage_idx' => $this->page_data['doc_usage_idx']
+                        ,'task_type' => $this->page_data['task_type']
+                        ,'task_table_idx' => $this->page_data['task_table_idx']
+                        ,'item_code' => $this->page_data['item_code']
+                        ,'doc_title' => $this->page_data['doc_title']
+                        ,'doc_table_style_data' => $this->page_data['doc_table_style_data']
+                        ,'doc_data' => $this->page_data['doc_data']
+                        ,'writer_idx' => getAccountInfo()['idx']     
+                        ,'request_date' => 'NOW()'    
+                        ,'reg_date' => 'NOW()'
+                        ,'reg_ip' => $this->getIP()
+                    ]);
+        
+                    $new_doc_approval_idx = $query_result['return_data']['insert_id'];
+        
+                    # QRcode 데이터베이스에 적재
+                    $this->qrcode->createQRcode([
+                        'purpose' => 'reporter'
+                        ,'qrcode_val' => SITE_DOMAIN . '/doc/qr_result?key=' . $new_doc_approval_idx
+                        ,'file_name' => $new_doc_approval_idx.'_reporter_'.getAccountInfo()['idx']
+                        ,'tb_name' => 't_document_approval'             
+                        ,'tb_key' => $new_doc_approval_idx
+                    ]);
+                    
+                    $this->model->updateTaskTable( $this->page_data['task_type'], $this->page_data['task_table_idx'], 'R');
 
                     # 트랜잭션 종료
                     $this->model->stopTransaction();
                     
                 }
 
+                break;
+            }
+
+            case 'approval' : {
+
+
+                if( empty( $this->page_data['doc_approval_idx'] ) ) {
+                    $result['status'] = 'fail';
+                    $result['msg'] = '필수값 누락 : doc_approval_idx ';
+                    jsonExit( $result );				
+                }
+
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+        
+                # 승인문서 승인처리
+                $query_result = $this->model->updateApprovalDoc([
+                    'doc_data' => $this->page_data['doc_data']
+                    ,'approval_state' => 'D'
+                    ,'approver_idx' => getAccountInfo()['idx']
+                    ,'edit_idx' => getAccountInfo()['idx']
+                    ,'edit_date' => 'NOW()'
+                    ,'approval_date' => 'NOW()'
+                    ,'edit_ip' => $this->getIP()
+                ] ," doc_approval_idx = '" . $this->page_data['doc_approval_idx']. "'" );
+                
+                $this->model->updateTaskTable( $this->page_data['task_type'], $this->page_data['task_table_idx'], 'D');
+
+                # QRcode 승인자 qrcode 생성
+                $this->qrcode->createQRcode([
+                    'purpose' => 'approver'
+                    ,'qrcode_val' => SITE_DOMAIN . '/doc/qr_result?key=' . $this->page_data['doc_approval_idx']
+                    ,'file_name' => $this->page_data['doc_approval_idx'].'_approver_'.getAccountInfo()['idx']
+                    ,'tb_name' => 't_document_approval'             
+                    ,'tb_key' => $this->page_data['doc_approval_idx']
+                ]);
+    
+                # 트랜잭션 종료
+                $this->model->stopTransaction();
                 break;
             }
         
@@ -329,6 +596,9 @@ class doc extends baseController {
         
 
     }
+
+   
+    
 
    
 }

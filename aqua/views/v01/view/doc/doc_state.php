@@ -24,7 +24,7 @@
                                 <thead>
                                     <tr class="active">                                        
                                         <th class="info" >문서명</th>                                                                
-                                        <th class="info" style="width: 20%" >승인대기</th>                                                                
+                                        <!-- <th class="info" style="width: 20%" >승인대기</th>                                                                 -->
                                     </tr>                                
                                 </thead>
                                 <tbody>
@@ -38,7 +38,7 @@
                                                 <?=$val['title']?>
                                             </a>
                                         </td>
-                                        <td >0</td>
+                                        <!-- <td >0</td> -->
                                     </tr>
                                     <?php
                                         }

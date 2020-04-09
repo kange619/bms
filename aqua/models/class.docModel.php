@@ -111,6 +111,39 @@ class docModel extends baseModel {
         return $this->db->update( $this->table_doc_approval, $arg_data, $arg_where );
     }
 
+    /**
+     * 문서처리 작업 연관 테이블 업데이트
+     */
+    public function updateTaskTable( $arg_table, $arg_idx, $arg_task_val ){
+
+        $query = " SHOW TABLES LIKE '". trim( $arg_table ) ."'; ";
+        $table_result = $this->db->execute( $query );
+
+        if( $table_result['return_data']['num_rows'] > 0 ){
+            # 기본키 확인
+            $query = " DESC ". trim( $arg_table ) ."; ";
+            $desc_result = $this->db->execute( $query );
+
+            if( $desc_result['return_data']['num_rows'] > 0 ){
+
+                foreach( $desc_result['return_data']['rows'] AS $idx=>$item ) {
+                    if( $item['Key'] == 'PRI') {
+                        $table_idx_fild = $item['Field'];
+                        break;
+                    }
+                }
+            }
+            
+            $update_data['approval_state'] = $arg_task_val;
+            if( $arg_task_val == 'D' ) {
+                // $update_data['approval_final_date'] = 'NOW()';
+            }
+            $this->db->update( trim( $arg_table ), $update_data, $table_idx_fild."='".$arg_idx."'" );
+
+        }
+
+    }
+
     function __destruct() {
 
         # db close

@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    원/부자재 입고관리
+                    원/부자재 입고관리 <?php checkWorkAuth('mesa'); ?>
                     <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+입고등록</button>                 
                 </h1>                   
             </section>
@@ -115,34 +115,30 @@
                                         <td><?=$value['manager_phone_no'];?></td>
                                         <td><?=$process_state_arr[ $value['process_state'] ]?></td>
                                         <td>
-                                            <?php
-                                                if( $value['approval_state'] == 'R' ) {
-                                            ?>
-                                            <?php
-                                                    if( $value['doc_exist'] > 0 ) {
-                                            ?>                                                                                  
-                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-light" onclick="docmentHandler('35','t_materials_order','<?=$value['order_idx'];?>')" >육안검사일지승인</button>
-                                            <?php
-                                                    } else {
-                                            ?>
-                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-light" onclick="docmentHandler('35','t_materials_order','<?=$value['order_idx'];?>')" >육안검사일지작성</button>
-                                            <?php
-                                                    } 
-                                            ?>
-                                            <?php
-                                                } 
-                                            ?>
-                                            <?php
-                                                if( $value['approval_state'] == 'W'  ) {   
-                                            ?>  
+                                            <?php if( $value['approval_state'] == 'R' ) { ?>
+                                            <?php   if( $value['doc_exist'] > 0 ) { ?>                                     
+                                            <?php       if( $value['doc_approval_state'] == 'R' ) { ?>
+                                                            <button type="button" class="btn btn-sm btn-default waves-effect waves-light" onclick="docmentHandler('35','t_materials_order','<?=$value['order_idx'];?>' ,'<?=checkApprovalAuth('mesa');?>')" >육안검사일지승인</button>                                     
+                                            <?php       } else { ?>  
+
+                                                            <button type="button" class="btn btn-sm btn-info waves-effect waves-light" onclick="docmentHandler('35','t_materials_order','<?=$value['order_idx'];?>' ,'<?=checkWorkAuth('mesa');?>')" >육안검사일지작성</button>    
+             
+                                            <?php       } ?>
+                                            <?php   } else { ?>
+                                                        <button type="button" class="btn btn-sm btn-default waves-effect waves-light" onclick="docmentHandler('35','t_materials_order','<?=$value['order_idx'];?>' ,'<?=checkWorkAuth('mesa');?>')" >육안검사일지작성</button>
+                                            <?php   } ?>
+                                            <?php } ?>
+                                            <?php if( $value['approval_state'] == 'W'  ) { ?>  
                                                 <a href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&order_idx=<?=$value['order_idx'];?>">
                                                     <button type="button" class="btn btn-sm btn-purple waves-effect waves-light" onclick="warehouseProc('<?=$value['order_idx'];?>')" >입고확인</button>
                                                 </a>
-                                            <?php
-                                                    
-                                                }
-                                            ?> 
-                                          
+                                            <?php }?> 
+
+                                            <?php if( $value['approval_state'] == 'D'  ) { ?>  
+                                                <button type="button" class="btn btn-sm btn-success waves-effect waves-light" onclick="window.open('/doc/doc_view?key=<?=$value['doc_exist']?>')" >육안검사일지확인</button>
+                                            <?php }?> 
+
+                                            
                                         </td>
                                     </tr>
                                     <?php   
