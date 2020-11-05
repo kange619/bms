@@ -1,5 +1,6 @@
 <?php 
 # 세팅될 설정파일
+
 $_aqua_config = [];
 
 # 설정 파일을 읽어드린다. 
@@ -9,7 +10,7 @@ $masic_solution_init_path = $_SERVER['DOCUMENT_ROOT']. "/init.json";
 $get_file = @fopen( $masic_solution_init_path, "r");
 
 if( $get_file ) {
-
+    
     $get_file_content = fread( $get_file, filesize( $masic_solution_init_path ));
     
     fclose($get_file);
@@ -93,7 +94,7 @@ if( $get_file ) {
 
     $_aqua_config = $init_file_arr['config'];
     
-    foreach( $init_file_arr['define'] AS $key=>$val ){
+    foreach( $init_file_arr['define'] AS $key=>$val ){        
         define($key, $val);
     }
     

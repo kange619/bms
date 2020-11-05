@@ -52,7 +52,7 @@ class company extends baseController {
         
         
         $this->page_data['food_types'] = $this->getConfig()['food_types'];
-        $this->page_data['company_members'] = [];
+        $this->page_data['company_members'] = [];                
 
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         # 필수값 체크
@@ -116,7 +116,7 @@ class company extends baseController {
     public function company_proc(){
 
         # post 접근 체크
-        postCheck();
+        postCheck();       
 
         // echoBr( $this->page_data ); exit;
 
@@ -128,7 +128,7 @@ class company extends baseController {
             ,'registration_no'
             ,'ceo_name'
             ,'company_tel'
-        ]);
+        ]);       
         
         # 트랜잭션 시작
         $this->model->runTransaction();
@@ -479,7 +479,22 @@ class company extends baseController {
 
     }
 
-    
+    /**
+     * 생산 담당자 등록 페이지를 생성한다.
+     */
+
+    public function prodMember_list(){      
+ 
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = 'member';
+        $this->page_data['contents_path'] = '/company/prodmember_list.php';        
+        $this->view( $this->page_data );        
+
+    } 
+
+
 
 }
 

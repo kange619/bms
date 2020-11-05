@@ -101,7 +101,7 @@
                     
                         <div class="table-responsive m-b-0">
                             <h5 class="header-title m-b-10">
-                                <b>담당자 정보 </b>
+                                <b>HACCP 팀장정보 </b>
                                 <button type="button" class="pull-right btn btn-sm btn-purple waves-effect w-md m-l-5" style="top:-4px;" onclick="changePartner()" >담당자 변경</button> 
                             </h5>
                             <hr class="m-t-0">
@@ -151,7 +151,7 @@
                     
                         <div class="table-responsive m-b-0">
                             <h5 class="header-title m-b-10">
-                                <b>취급 식품유형</b>                                
+                                <b>HACCP 적용품목류</b>                                
                             </h5>
                             <hr class="m-t-0">
 
