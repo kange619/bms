@@ -488,11 +488,23 @@ class company extends baseController {
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
-        $this->page_data['page_name'] = 'member';
+        $this->page_data['page_name'] = 'prodmember';
         $this->page_data['contents_path'] = '/company/prodmember_list.php';        
         $this->view( $this->page_data );        
 
     } 
+
+    /**
+     * 생산 담당자 수정 페이지를 생성한다
+     */
+    public function prodMember_write(){
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = 'prodmember';
+        $this->page_data['contents_path'] = '/company/prodmember_write.php';        
+        $this->view( $this->page_data );        
+    }
 
 
 

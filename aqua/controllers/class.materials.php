@@ -1505,6 +1505,8 @@ class materials extends baseController {
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         $page_name = 'stock';
         
+        // 쿼리에러가 나서 주석처리함 11/06/2020 kange
+        /*
         $query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' )  ";
         
         $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
@@ -1569,7 +1571,9 @@ class materials extends baseController {
         $this->paging->total_rs = $list_result['total_rs'];        
         $this->page_data['paging'] = $this->paging;         
         $this->page_data['total_quantity'] = $list_result['total_quantity'];             
-        
+        */
+
+
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        

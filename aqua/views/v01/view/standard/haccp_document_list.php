@@ -207,6 +207,21 @@
                                             </select>
                                         </td>
                                     </tr>
+
+                                    <!-- 11/06/2020 kange start -->
+                                    <tr>
+                                        <th class="info text-center wper20">업무처리유형</th>
+                                        <td colspan="3">
+                                            <input type="radio" name="workProcessType" id="workProcessType_day"  value="Y"  data-valid="blank"/> 
+                                            <label class="m-r-15" for="workProcessType_day">매일</label> 
+                                            <input type="radio" name="workProcessType" id="workProcessType_week"  value="N"  data-valid="blank"/>  
+                                            <label class="m-r-15" for="workProcessType_week">주1회</label> 
+                                            <input type="radio" name="workProcessType" id="workProcessType_month"  value="N"  data-valid="blank"/>  
+                                            <label class="m-r-15" for="workProcessType_month">월1회</label> 
+                                        </td>
+                                    </tr>
+                                    <!-- 11/06/2020 kange end -->
+
                                     <tr>
                                         <td class="info text-center wper20">업무처리 일정</td>
                                         <td class="text-center wper80">
@@ -222,6 +237,17 @@
                                             <input class="form-control schedule1" type="hidden" name="df_work_schedule_weeks" id="df_work_schedule_weeks" value="">
                                         </td>
                                     </tr>
+
+
+                                    <tr>
+                                        <td class="info text-center wper20">업무담당자</td>
+                                        <td class="wper80">
+                                            <select class="form-control" name="person_in_charge" id="person_in_charge" data-valid="blank" >
+                                                <option value="">업무담당자를 선택하세요</option>                                                                                              
+                                            </select>
+                                        </td>
+                                    </tr>
+
                                     <!-- <tr>
                                         <td class="info text-center wper20">첨부파일</td>
                                         <td class="wper80">

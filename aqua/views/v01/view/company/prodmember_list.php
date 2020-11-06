@@ -7,16 +7,16 @@
             <section class="content-header">                    
                 <h1>
                     생산담당자 관리 
-                    <!-- <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+회원등록</button> -->                
+                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">추가</button>                
                 </h1>                   
             </section>
 
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card-box">
+
                         <h5 class="header-title m-t-0">
-                            <b>목록</b>
-                            
+                            <b>목록</b>                            
                         </h5>
                         <hr class="m-t-0">
                         <div class="table-responsive m-b-0">

@@ -66,12 +66,18 @@ class production extends baseController {
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         # SET Values
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+
+        
         $this->page_data['production_status_arr'] = [
             'S'=>'예정'
             ,'I'=>'진행중'
             ,'D'=>'완료'
         ];
         $page_name = 'production';
+        
+
+        // 쿼리에러가 발생해서 주석처리했음. 미래의내가수정해야함 11/06/2020 kange 
+        /*
         $query_where = " AND del_flag='N' AND company_idx = '". COMPANY_CODE ."' ";
         
         $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
@@ -119,6 +125,7 @@ class production extends baseController {
             ,'limit' => $limit
         ]);
         
+        
         if( $list_result['total_rs'] > 0 ) {
             $this->page_data['total_schedule_quantity'] = $list_result['rows'][0]['total_schedule_quantity'];
             $this->page_data['total_pouch_quantity'] = $list_result['rows'][0]['total_pouch_quantity'];
@@ -129,9 +136,12 @@ class production extends baseController {
             $this->page_data['total_box_quantity'] = 0;
         }
         
+
         $this->paging->total_rs = $list_result['total_rs'];        
         $this->page_data['paging'] = $this->paging; 
         
+        */
+
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
@@ -1047,6 +1057,9 @@ class production extends baseController {
             ,'D'=>'완료'
         ];
         $page_name = 'production_record';
+
+        // 쿼리에러가나서 주석처리함 나중에 해야함 11/06/20 kange
+        /* 
         $query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' ) AND ( production_status='D' ) ";
         
         $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
@@ -1106,6 +1119,7 @@ class production extends baseController {
 
         $this->paging->total_rs = $list_result['total_rs'];        
         $this->page_data['paging'] = $this->paging; 
+        */
         
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;

@@ -35,7 +35,7 @@
                 "top_menu": [
                     {
                         "title": "정보관리",
-                        "link": "\/company\/member_list?top_code=SI003&left_code=SF034",
+                        "link": "\/company\/member_list?top_code=SI003&left_code=SF310",
                         "code": "SI003"
                     },
                     {
@@ -44,7 +44,7 @@
                         "code": "SI012"
                     },
                     {
-                        "title": "생산정보관리",
+                        "title": "생산정보관리(삭제예정)",
                         "link": "\/product\/product_list?top_code=SI009&left_code=SF054",
                         "code": "SI009"
                     },
@@ -77,30 +77,64 @@
                 "left_menu": {
                     "SI003": [
                         {
-                            "title": "업무담당자관리",
-                            "link": "\/company\/member_list?top_code=SI003&left_code=SF034",
-                            "code": "SF034"
-                        },
-                        {
                             "title": "회사정보등록",
-                            "link": "\/company\/company_info?top_code=SI003&left_code=SF035",
-                            "code": "SF035"
-                        },  
+                            "link": "\/company\/company_info?top_code=SI003&left_code=SF310",
+                            "code": "SF310"
+                        }, 
                         {
                             "title": "생산담당자등록",
-                            "link": "\/company\/prodMember_list?top_code=SI003&left_code=SF037",
-                            "code": "SF037"
-                        },   
+                            "link": "\/company\/prodMember_list?top_code=SI003&left_code=SF320",
+                            "code": "SF320"
+                        },                                                 
                         {
                             "title": "HACCP담당자등록",
-                            "link": "\/company\/company_info?top_code=SI003&left_code=SF038",
-                            "code": "SF038"
+                            "link": "\/company\/member_list?top_code=SI003&left_code=SF330",
+                            "code": "SF330"
                         },                                                                          
                         {
+                            "title": "HACCP 기준서 등록",
+                            "link": "\/standard\/haccp_standard_list?top_code=SI003&left_code=SF340",
+                            "code": "SF340"
+                        },
+                        {
+                            "title": "HACCP 이행점검표",
+                            "link": "\/standard\/haccp_document_list?top_code=SI003&left_code=SF341",
+                            "code": "SF341"
+                        },
+                        {
+                            "title": "원\/부자재 기준 관리",
+                            "link": "\/materials\/materials_list?top_code=SI003&left_code=SF350",
+                            "code": "SF350"
+                        },
+                        {
+                            "title": "원료배합비율1",
+                            "link": "\/product\/product_list?top_code=SI003&left_code=SF360",
+                            "code": "SF360"
+                        },
+                        {
+                            "title": "원료배합비율2",
+                            "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF361",
+                            "code": "SF361"
+                        },
+                        {
+                            "title": "공정순서관리",
+                            "code" : "SF370"
+                        },                        
+                        {
+                            "title": "구매기업정보등록",
+                            "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF380",
+                            "code": "SF380"
+                        },
+                        {
+                            "title": "납품기업정보등록",
+                            "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF390",
+                            "code": "SF390"
+                        },
+                        {
                             "title": "정보보호관리",
-                            "link": "\/security\/security_list?top_code=SI003&left_code=SF036",
-                            "code": "SF036"
-                        }                        
+                            "link": "\/security\/security_list?top_code=SI003&left_code=SF400",
+                            "code": "SF400"
+                        }                                                                                                                                                                                                          
                  
                     ],
                     "SI012": [
@@ -110,32 +144,12 @@
                             "code": "SF072"
                         },
                         {
-                            "title": "HACCP 기준서 등록",
-                            "link": "\/standard\/haccp_standard_list?top_code=SI012&left_code=SF073",
-                            "code": "SF073"
-                        },
-                        {
                             "title": "HACCP 개정이력 관리",
                             "link": "\/standard\/haccp_update_record_list?top_code=SI012&left_code=SF074",
                             "code": "SF074"
-                        },
-                        {
-                            "title": "HACCP 이행점검표",
-                            "link": "\/standard\/haccp_document_list?top_code=SI012&left_code=SF075",
-                            "code": "SF075"
                         }
                     ],
                     "SI009": [
-                        {
-                            "title": "제품정보관리",
-                            "link": "\/product\/product_list?top_code=SI009&left_code=SF054",
-                            "code": "SF054"
-                        },
-                        {
-                            "title": "배합비율 정보관리",
-                            "link": "\/product\/mixing_ratios?top_code=SI009&left_code=SF060",
-                            "code": "SF060"
-                        }
                     ],
                     "SI005": [
                         {
@@ -157,11 +171,6 @@
                             "title": "원\/부자재 재고관리",
                             "link": "\/materials\/stock_list?top_code=SI005&left_code=SF040",
                             "code": "SF040"
-                        },
-                        {
-                            "title": "원\/부자재 기준 관리",
-                            "link": "\/materials\/materials_list?top_code=SI005&left_code=SF065",
-                            "code": "SF065"
                         }
                     ],
                     "SI006": [

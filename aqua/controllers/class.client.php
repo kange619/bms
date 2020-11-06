@@ -1119,6 +1119,9 @@ class client extends baseController {
         # SET Values
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         $page_name = 'stock';
+
+        // 쿼리에러가 나서 주석처리함 나중에 해야함 11/06/20 kange
+        /*
         $this->page_data['products'] = [];
         
         $query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' )  ";
@@ -1185,6 +1188,8 @@ class client extends baseController {
         $this->page_data['paging'] = $this->paging;         
         $this->page_data['total_quantity'] = $list_result['total_quantity'];             
         
+        */
+
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
