@@ -23,7 +23,8 @@
                                 <input type="hidden" name="sch_order_field" id="sch_order_field" value="<?=$sch_order_field?>">
                                 <input type="hidden" name="sch_order_status" id="sch_order_status" value="<?=$sch_order_status?>">
 
-                                <div class="col-sm-4">
+                                <!-- 원본 주석처리 11/09/20 kange --> 
+                                <!-- <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label">등록일</label>
                                         <div class="col-sm-9">
@@ -50,10 +51,51 @@
                                         <div class="col-sm-offset-5 col-sm-7 m-t-15">
                                             <button type="button" class="btn btn-primary waves-effect waves-light" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>'">기본설정</button>
                                             <!-- <button type="reset" class="btn btn-primary waves-effect waves-light">기본설정</button> -->
+                                            <!-- <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
+                                        </div>
+                                    </div>
+                                </div>  --> 
+                                <!-- 원본 주석처리 11/09/20 kange --> 
+ 
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">등록일</label>
+                                        
+                                            <div class="input-daterange input-group" id="date-range">
+                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
+                                                <span class="input-group-addon bg-primary b-0 text-white">~</span>
+                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
+                                            </div>
+                                        
+                                    </div>
+                                </div>      
+                                      
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">검색</label>
+                                        <div class="col-sm-2">
+                                            <select class="form-control" name="workFilter" id="workFilter" >                                        
+                                                <option value="workFilter1">전체</option>
+                                                <option value="workFilter2">업무종류</option>
+                                                <option value="workFilter">업무내용</option>                                                                                        
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="업무종류">
+                                        </div>
+                                    </div>
+                                </div>     
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-5 col-sm-7 m-t-15">
+                                            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>'">기본설정</button>
+                                            <!-- <button type="reset" class="btn btn-primary waves-effect waves-light">기본설정</button> -->
                                             <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                                                                                        
+
                             </form>
                         </div>
                     </div>

@@ -23,7 +23,8 @@
                                 <input type="hidden" name="sch_order_field" id="sch_order_field" value="<?=$sch_order_field?>">
                                 <input type="hidden" name="sch_order_status" id="sch_order_status" value="<?=$sch_order_status?>">
 
-                                <div class="col-sm-4">
+                                <!-- 원본 주석처리 11/09/20 kange --> 
+                                <!-- <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label">등록일</label>
                                         <div class="col-sm-9">
@@ -50,10 +51,52 @@
                                         <div class="col-sm-offset-5 col-sm-7 m-t-15">
                                             <button type="button" class="btn btn-primary waves-effect waves-light" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>'">기본설정</button>
                                             <!-- <button type="reset" class="btn btn-primary waves-effect waves-light">기본설정</button> -->
+                                            <!-- <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <!-- 원본 주석처리 11/09/20 kange --> 
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">등록일</label>
+                                        
+                                            <div class="input-daterange input-group" id="date-range">
+                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
+                                                <span class="input-group-addon bg-primary b-0 text-white">~</span>
+                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
+                                            </div>
+                                        
+                                    </div>
+                                </div>      
+                                      
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">검색</label>
+                                        <div class="col-sm-2">
+                                            <select class="form-control" name="documentType" id="documentType" >                                        
+                                                <option value="documentType1">전체</option>
+                                                <option value="documentType2">품목명</option>
+                                                <option value="documentType3">문서명</option>                                                                                        
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="품목명, 문서명">
+                                        </div>
+                                    </div>
+                                </div>     
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-5 col-sm-7 m-t-15">
+                                            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>'">기본설정</button>
+                                            <!-- <button type="reset" class="btn btn-primary waves-effect waves-light">기본설정</button> -->
                                             <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                                   
+
+
                             </form>
                         </div>
                     </div>
@@ -73,9 +116,11 @@
                                 <thead>
                                     <tr class="active">
                                         <th class="info " style="width: 3%;">NO</th>
+                                        <th class="info sorting" data-order="df_title"  style="width: 30%;">문서명</th>                                         
                                         <th class="info sorting" data-order="df_item_name"  style="width: 10%;">품목명</th>                                         
-                                        <th class="info sorting" data-order="df_title"  style="width: 30%;">기준서명</th>                                         
-                                        <th class="info " style="width: 40%;" >첨부파일</th>
+                                        <th class="info sorting" data-order="prod_title"  style="width: 10%;">제품명</th>
+                                        
+                                        <th class="info " style="width: 30%;" >첨부파일</th>
                                         <th class="info " >변경</th>
                                     </tr>                                
                                 </thead>
@@ -87,8 +132,10 @@
                                     ?>
                                     <tr>
                                         <td><?=( ( $paging->total_rs - ( $page-1 ) * $list_rows - $key ) );?></td>
-                                        <td><?=$value['df_item_name'];?></td>
                                         <td><?=$value['df_title'];?></td>
+                                        <td><?=$value['df_item_name'];?></td>
+                                        <td><?=$value['prod_title'];?></td>
+                                        
                                         <td>
                                             <a href="/file_down.php?key=<?=$value['file_idx'];?>" ><?=$value['origin_name'];?></a>
                                         </td>    
@@ -163,18 +210,28 @@
 
                             <table class="table table-bordered text-left">
                                 <tbody>
+
+                                    <tr>
+                                        <td class="info text-center wper20">문서명</td>
+                                        <td class="wper80">
+                                            <input type="text" class="form-control" id="df_title" name="df_title" placeholder="문서명" data-valid="blank" >
+                                        </td>
+                                    </tr>                                
+
                                     <tr>
                                         <td class="info text-center wper20">품목명</td>
                                         <td class="wper80">
                                             <input type="text" class="form-control" id="df_item_name" name="df_item_name" placeholder="품목명" data-valid="blank" >
                                         </td>
                                     </tr>
+
                                     <tr>
-                                        <td class="info text-center wper20">서류명</td>
+                                        <td class="info text-center wper20">제품명</td>
                                         <td class="wper80">
-                                            <input type="text" class="form-control" id="df_title" name="df_title" placeholder="기준서명" data-valid="blank" >
+                                            <input type="text" class="form-control" id="prod_title" name="prod_title" placeholder="제품명" data-valid="blank" >
                                         </td>
                                     </tr>
+                                    
 									<tr>
                                         <td class="info text-center wper20">첨부파일</td>
                                         <td class="wper80">

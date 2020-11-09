@@ -97,9 +97,14 @@
                             "code": "SF340"
                         },
                         {
-                            "title": "HACCP 이행점검표",
-                            "link": "\/standard\/haccp_document_list?top_code=SI003&left_code=SF341",
+                            "title": "식품위생서류 등록",
+                            "link": "\/standard\/sanitation_standard_list?top_code=SI003&left_code=SF341",
                             "code": "SF341"
+                        },                        
+                        {
+                            "title": "HACCP 이행점검표",
+                            "link": "\/standard\/haccp_document_list?top_code=SI003&left_code=SF342",
+                            "code": "SF342"
                         },
                         {
                             "title": "원\/부자재 기준 관리",
@@ -137,12 +142,7 @@
                         }                                                                                                                                                                                                          
                  
                     ],
-                    "SI012": [
-                        {
-                            "title": "품목 제조보고서",
-                            "link": "\/standard\/sanitation_standard_list?top_code=SI012&left_code=SF072",
-                            "code": "SF072"
-                        },
+                    "SI012": [                        
                         {
                             "title": "HACCP 개정이력 관리",
                             "link": "\/standard\/haccp_update_record_list?top_code=SI012&left_code=SF074",

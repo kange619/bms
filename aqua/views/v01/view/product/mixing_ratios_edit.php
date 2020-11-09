@@ -40,7 +40,13 @@
                                         <td class="text-left" colspan="3">
                                             <?=$food_types[$food_code]?>
 										</td>
-									</tr>
+                                    </tr>
+                                    
+                                    <tr>
+										<th class="info">품목</th>
+                                        <td class="text-left" colspan="3"></td>
+									</tr>                                    
+
                                     <tr>
                                         <th class="info middle-align">제품명</th>
                                         <td colspan="3">
@@ -54,6 +60,11 @@
                                             <?=$item_report_no?>
                                         </td>
                                     </tr>
+
+                                    <tr>
+										<th class="info">중량</th>
+                                        <td class="text-left" colspan="3"></td>
+									</tr>                                     
                                    
                                 </tbody>
                             </table>
@@ -79,12 +90,21 @@
                             <table class="table table-bordered text-center" style="table-layout:fixed;">
 								<thead>
 									<tr>
-										<th class="info" style="width:150px">찾아보기</th>
+                                        <!-- 주석처리함. 아래에서 원재료/배합비는 원래 주석처리 된 코드임 11/09/20 kange --> 
+										<!-- <th class="info" style="width:150px">찾아보기</th> -->
 										<!-- <th class="info">코드</th> -->
-										<th class="info">원재료</th>
+										<!-- <th class="info">원재료</th> -->
 										<!-- <th class="info">납품업체</th> -->
-										<th class="info">배합비</th>
-										<th class="info" style="width:150px" >삭제</th>
+										<!-- <th class="info">배합비</th> -->
+                                        <!-- <th class="info" style="width:150px" >삭제</th> -->
+
+                                        <th class="info">번호</th>
+                                        <th class="info">구분</th>
+                                        <th class="info">원재료</th>
+                                        <th class="info">배합비율</th>
+                                        <th class="info">중량</th>
+                                        <th class="info" style="width:150px" >삭제</th>
+                                        
 									</tr>
 								</thead>
 								<tbody id="material_ratio_add_area">									
@@ -174,7 +194,7 @@
 </div>
 <!-- // 원자재 목록 레이어  -->
 
-<script>
+<script> 
     $(function(){
         
         makeMaterialRatios();
@@ -191,9 +211,10 @@
         var data = JSON.parse( $(arg_this).data('material').replace(/'/g, '"') );
 
         $( current_opener ).parent().parent().find('input[name="material_idx[]"]').val( data.material_idx );
-        $( current_opener ).parent().parent().find('input[name="material_code[]"]').val( data.material_code );
-        $( current_opener ).parent().parent().find('input[name="material_name[]"]').val( data.material_name );
-        $( current_opener ).parent().parent().find('input[name="material_company_name[]"]').val( data.company_name );
+        $( current_opener ).parent().parent().find('input[name="material_group[]"]').val( data.material_group );
+        $( current_opener ).parent().parent().find('input[name="material_origin[]"]').val( data.material_origin );
+        $( current_opener ).parent().parent().find('input[name="material_ratio[]"]').val( data.meterial_ratio );
+        $( current_opener ).parent().parent().find('input[name="material_weight[]"]').val( data.meterial_weight );
 
         $('#search_material_modal').modal('hide');
 
@@ -203,8 +224,8 @@
         포장단위 추가버튼 동작
      */
      function addForm(){
-
-        var empty_data = [{material_idx: '', material_code: '', material_name: '', material_company_name: '', material_ratio: '' }];
+        
+        var empty_data = [{material_idx: '', material_group: '', material_origin: '', material_company_ratio: '', material_weight: '' }];        
 
         $('#material_ratio_add_area').append( $('#tmplate_material_form').tmpl( empty_data ) );
         
@@ -246,6 +267,23 @@
 
     }
 
+    /*
+    //original(밑에서는 주석이 안되서 여기에 갖다놓음) 11/09/20 kange 
+    <script id="tmplate_material_form" type="text/x-jquery-tmpl">
+    <tr>
+        <td >
+            <button type="button" class="btn btn-sm btn-info waves-effect waves-light m-l-10" onclick="searchMaterial(this)">찾기</button>
+            <input type="hidden" name="material_idx[]" value="${material_idx}"  >
+        </td>
+        <!-- <td><input type="text" name="material_code[]" class="form-control width100" maxlength="20" value="${material_code}"  ></td> -->
+        <td><input type="text" name="material_name[]" class="form-control width100" maxlength="20" value="${material_name}" ></td>
+        <!-- <td><input type="text" name="material_company_name[]" class="form-control width100" maxlength="20" value="${material_company_name}"  ></td> -->
+        <td><input type="text" name="material_ratio[]" class="form-control width100 isNum" maxlength="20" value="${material_ratio}"  ></td>										
+        <td><button type="button" class="btn btn-sm btn-danger waves-effect waves-light" onclick="delForm(this)">삭제</button></td>										
+    </tr>    
+    */
+
+
 </script>
 
 <style>    
@@ -257,21 +295,32 @@
     } */
 </style>
 
-
-
-
 <script id="tmplate_material_form" type="text/x-jquery-tmpl">
-<tr>
-    <td >
-        <button type="button" class="btn btn-sm btn-info waves-effect waves-light m-l-10" onclick="searchMaterial(this)">찾기</button>
-        <input type="hidden" name="material_idx[]" value="${material_idx}"  >
-    </td>
-    <!-- <td><input type="text" name="material_code[]" class="form-control width100" maxlength="20" value="${material_code}"  ></td> -->
-    <td><input type="text" name="material_name[]" class="form-control width100" maxlength="20" value="${material_name}" ></td>
-    <!-- <td><input type="text" name="material_company_name[]" class="form-control width100" maxlength="20" value="${material_company_name}"  ></td> -->
-    <td><input type="text" name="material_ratio[]" class="form-control width100 isNum" maxlength="20" value="${material_ratio}"  ></td>										
-    <td><button type="button" class="btn btn-sm btn-danger waves-effect waves-light" onclick="delForm(this)">삭제</button></td>										
-</tr>
+
+    <tr>
+        <td><input type="text" name="material_idx[]" class="form-control width100" maxlength="20" value="${material_idx}"></td>
+        
+        <td>
+            <select name="material_group[]" class="form-control" width100 >
+                <option value="option1">선택하세요</option>                                        
+                <option value="option2">원료</option>
+                <option value="option3">가공원료</option>                
+            </select>        
+        </td>
+
+        <td>
+            <select name="material_origin[]" class="form-control" width100 >
+                <option value="option1">선택하세요</option>                                        
+                <option value="option2">원재료1</option>
+                <option value="option3">원재료2</option>                
+            </select>        
+        </td>        
+        
+        <td><input type="text" name="material_ratio[]" class="form-control width100 isNum" maxlength="20" value="${material_ratio}"  ></td>
+        <td><input type="text" name="material_weight[]" class="form-control width100 isNum" maxlength="20" value="${material_weight}"></td>
+        <td><button type="button" class="btn btn-sm btn-danger waves-effect waves-light" onclick="delForm(this)">삭제</button></td>																	
+    </tr>
+    
 </script>
 
 

@@ -94,13 +94,17 @@
                                     <tr>
                                         <th class="info middle-align">정/부</th>
                                         <td colspan="3">
+                                            <label><input type="checkbox" name="person_in_charge" value="" checked>정</label>
+                                            <label><input type="checkbox" name="person_in_charge" value="" >부</label>
 
+                                            <!-- 주석처리 11/09/20 kange
                                             <select class="form-control" name="person_in_charge" id="person_in_charge" style="width:200px" >
                                                
                                                 <option value="Y" <?=($person_in_charge == 'Y' ? 'selected="selected"' : '' )?> >사용</option>
                                                 <option value="N" <?=($person_in_charge == 'N' ? 'selected="selected"' : '' )?> >미사용</option>
                                                 
                                             </select>
+                                            주석처리 11/09/20 kange -->
 
                                         </td>
                                     </tr>

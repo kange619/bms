@@ -7,7 +7,7 @@
             <section class="content-header">                    
                 <h1>
                     배합비율 정보관리
-                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_edit?page=<?=$page?><?=$params?>'">+등록</button>                    
+                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>                    
                 </h1>                   
             </section>
 
