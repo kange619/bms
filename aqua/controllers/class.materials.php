@@ -1746,12 +1746,88 @@ class materials extends baseController {
 			$result['msg'] = '남은 수량이 입력된 사용값보다 적어 작업이 불가능합니다.';
 			jsonExit( $result );
         }
-
-        
-        
+                
     }
 
+/**
+     * 가공원료 기준목록 
+     * 11/10/20 kange add  
+     */
+    public function worked_materials_list(){
+
+        $page_name = 'worked_materials';
+     
+        $this->page_data['paging'] = $this->paging; 
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/materials/'. $page_name .'_list.php';
+        $this->page_data['list'] = $list_result['rows'];        
+        $this->view( $this->page_data );
+
+    }        
     
+
+    /**
+     * 가공원료 기준 작성화면 
+     * 11/10/20 kange add 
+     */
+    public function worked_materials_write(){
+       
+        $page_name = 'worked_materials';
+            
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/materials/'. $page_name .'_write.php';
+        $this->page_data['list'] = $list_result['rows'];
+        
+        $this->view( $this->page_data );
+
+    }    
+
+    /**
+     * 원료기준 페이지 
+     * 11/10/20 kange add  
+     */
+    public function raw_materials_list(){
+
+        $page_name = 'raw_materials';
+     
+        $this->page_data['paging'] = $this->paging; 
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/materials/'. $page_name .'_list.php';
+        $this->page_data['list'] = $list_result['rows'];        
+        $this->view( $this->page_data );
+
+    }        
+    
+
+    /**
+     * 원료기준 작성화면 
+     * 11/10/20 kange add 
+     */
+    public function raw_materials_write(){
+       
+        $page_name = 'raw_materials';
+            
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/materials/'. $page_name .'_write.php';
+        $this->page_data['list'] = $list_result['rows'];
+        
+        $this->view( $this->page_data );
+
+    }
 
 
 }

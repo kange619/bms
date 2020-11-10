@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    부자재 기준등록
+                    원/부자재 기준 관리
                     <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>                 
                 </h1>                   
             </section>
@@ -23,8 +23,7 @@
                                 <input type="hidden" name="sch_order_field" id="sch_order_field" value="<?=$sch_order_field?>">
                                 <input type="hidden" name="sch_order_status" id="sch_order_status" value="<?=$sch_order_status?>">
 
-
-                                <!-- <div class="col-sm-5">
+                                <div class="col-sm-5">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">분류</label>
                                         <div class="col-sm-9">
@@ -75,30 +74,8 @@
                                             <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="품목">
                                         </div>
                                     </div>
-                                </div> -->
-
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label">등록일</label>
-                                        
-                                            <div class="input-daterange input-group" id="date-range">
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
-                                                <span class="input-group-addon bg-primary b-0 text-white">~</span>
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
-                                            </div>
-                                        
-                                    </div>
-                                </div>      
-                                      
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">검색</label>                                        
-                                        <div class="col-sm-7">
-                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" >
-                                        </div>
-                                    </div>
-                                </div>     
-
+                                </div>
+                                
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-sm-offset-5 col-sm-7 m-t-15">
@@ -107,8 +84,7 @@
                                             <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
                                         </div>
                                     </div>
-                                </div>    
-                                                                
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -127,14 +103,13 @@
                             <table class="table table-bordered text-center dataTable" id="excelTable">
                                 <thead>
                                     <tr class="active">
-                                        <th class="info sorting" data-order="entry_no" style="width: 5%">No</th>
                                         <th class="info sorting" data-order="material_idx"  style="width: 10%;">품목코드</th>
-                                        <th class="info sorting" data-order="material_name" style="width: 30%;" >품목</th>                                                                        
+                                        <th class="info sorting" data-order="material_kind" >분류</th>
+                                        <th class="info sorting" data-order="material_name" style="width: 30%;" >품목</th>
                                         <th class="info sorting" data-order="net_contents" >단위용량(중량)</th>
                                         <th class="info sorting" data-order="reg_date" >등록일</th>                                        
                                         <th class="info sorting" data-order="use_flag" >사용여부</th>                                                                     
-                                        <th class="info" >삭제</th>                                                       
-                                        <!-- <th class="info sorting" data-order="material_kind" >분류</th>               -->
+                                        <th class="info" >수정</th>                                                                     
                                     </tr>                                
                                 </thead>
                                 <tbody>
@@ -144,9 +119,8 @@
                                         foreach($list AS $key=>$value) {
                                     ?>
                                     <tr>
-                                        <td><?=$value['entry'];?></td>
                                         <td><?=$value['material_idx'];?></td>
-                                        <!-- <td><?=( $value['material_kind'] == 'raw' ) ? '원자재' : '부자재' ;?></td> -->
+                                        <td><?=( $value['material_kind'] == 'raw' ) ? '원자재' : '부자재' ;?></td>
                                         <td><?=$value['material_name'];?></td>
                                         <td><?=$value['net_contents'];?></td>
                                         <td><?=$value['reg_date'];?></td>

@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    부자재 기준 관리  > <?=$page_work?>
+                    원/부자재 기준 관리  > <?=$page_work?>
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
                 </h1>                
             </section>

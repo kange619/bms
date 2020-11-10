@@ -107,9 +107,23 @@
                             "code": "SF342"
                         },
                         {
-                            "title": "원\/부자재 기준 관리",
-                            "link": "\/materials\/materials_list?top_code=SI003&left_code=SF350",
+                            "title": "원\/부자재 기준",                            
                             "code": "SF350"
+                        },
+                        {
+                            "title": "가공원료 기준등록",                            
+                            "link": "\/materials\/worked_materials_list?top_code=SI003&left_code=SF351",
+                            "code": "SF351"
+                        },
+                        {
+                            "title": "원료 기준등록",                            
+                            "link": "\/materials\/raw_materials_list?top_code=SI003&left_code=SF352",
+                            "code": "SF352"
+                        },
+                        {
+                            "title": "부자재 기준등록",
+                            "link": "\/materials\/materials_list?top_code=SI003&left_code=SF353",
+                            "code": "SF353"
                         },
                         {
                             "title": "원료배합비율",

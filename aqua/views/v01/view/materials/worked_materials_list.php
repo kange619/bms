@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    부자재 기준등록
+                    가공원료 기준등록
                     <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>                 
                 </h1>                   
             </section>
