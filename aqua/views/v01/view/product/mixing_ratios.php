@@ -99,14 +99,22 @@
                             <table class="table table-bordered text-center dataTable" id="excelTable">
                                 <thead>
                                     <tr class="active">
-                                        <th class="info" scope="col" style="width: 3%;">NO</th>                                                                              
+                                        <!-- OLD START kange 11/10/20 -->
+                                        <!-- <th class="info" scope="col" style="width: 3%;">NO</th>                                                                              
                                         <th class="info sorting" data-order="item_report_no" scope="col" >품목보고번호</th>                                        
                                         <th class="info sorting" data-order="product_name" scope="col" >제품명</th>                                        
                                         <th class="info sorting" data-order="food_code" scope="col" >식품유형</th>                                                          
                                         <th class="info sorting" data-order="product_expiration_date" scope="col" >유통기한</th>                                                          
                                         <th class="info sorting" data-order="haccp_certify" scope="col" >HACCP 인증</th>                                                          
                                         <th class="info sorting" data-order="reg_date" scope="col" >등록일</th>
-                                        <th class="info" scope="col" >배합비율변경</th>                                                          
+                                        <th class="info" scope="col" >배합비율변경</th> -->
+                                        <!-- OLD END kange 11/10/20 -->
+
+                                        <th class="info" scope="col" style="width: 3%;">NO</th>
+                                        <th class="info sorting" data-order="item" scope="col" >품목</th>                                        
+                                        <th class="info sorting" data-order="product_name" scope="col" >제품명</th>                                              
+                                        <th class="info sorting" data-order="reg_date" scope="col" >등록일</th>
+
                                     </tr>                                
                                 </thead>
                                 <tbody>
@@ -115,7 +123,8 @@
                                                 
                                         foreach($list AS $key=>$value) {
                                     ?>
-                                    <tr>
+                                    <!-- OLD START kange 11/10/20 -->
+                                    <!-- <tr>
                                         <td><?=( ( $paging->total_rs - ( $page-1 ) * $list_rows - $key ) );?></td>
                                         <td><?=$value['item_report_no']?></td>
                                         <td><?=$value['product_name']?></td>
@@ -138,7 +147,15 @@
                                                 ?>
                                             </a>
                                         </td>
-                                    </tr>
+                                    </tr> -->
+                                    <tr>
+                                        <td><?=( ( $paging->total_rs - ( $page-1 ) * $list_rows - $key ) );?></td>
+                                        <td><?=$value['product_name']?></td>                                        
+                                        <td><?=$value['item']?></td>                                        
+                                        <td><?=dateType($value['reg_date'], 8)?></td>                                        
+                                    </tr>                                    
+                                    <!-- OLD END kange 11/10/20 -->
+
                                     <?php   
                                         }
                                     } else {

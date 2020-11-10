@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    협력업체 정보  <?=$page_work?>
+                    납품기업정보 등록  <?=$page_work?>
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
                 </h1>                
             </section>
@@ -159,52 +159,15 @@
             </div>
             <!-- // 신규 담당자 정보 입력  -->
 
-            <!-- 파일 정보  -->
+            <!-- 제조식품 유형선택  -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card-box">
-                    
-                        <div class="table-responsive m-b-0">
-                            <h5 class="header-title m-b-10">
-                                <b>규격서</b>
-                                <button type="button" class="btn btn-sm btn-default waves-effect w-md m-l-30" style="top:-4px;" onclick="showSpecificationHistory()">이력보기</button>
-                                <button type="button" class="pull-right btn btn-sm btn-purple waves-effect w-md m-l-5" style="top:-4px;" onclick="addDocForm()">추가</button>
-                            </h5>
-                            <hr class="m-t-0">
-                            
-                            <table class="table table-bordered text-center" style="table-layout:fixed;">
-								<thead>
-									<tr>
-										<th class="info" >품목명</th>										
-										<th class="info" style="width:500px" >파일찾기</th>										
-										<th class="info" style="width:150px" >삭제</th>
-									</tr>
-								</thead>
-								<tbody id="add_file_area">									
-                                    
-									
-                                </tbody>
-							</table>
-
-
-                        </div> 
-                    
-                    </div>
-
-                </div>
-            </div>
-            <!-- // 파일 정보 -->
-
-            <!-- 주석 start 11/10/20 kange -->
-            <!-- 제조식품 유형선택  -->
-            <!-- <div class="row">
-                <div class="col-lg-12">
-                    <div class="card-box">
                         
                         
                         <div class="table-responsive m-b-0">
                             <h5 class="header-title m-b-10">
-                                <b>납품 재료</b>     
+                                <b>납품 품목</b>     
                                 <button type="button" class="pull-right btn btn-sm btn-purple waves-effect w-md m-l-5" style="top:-4px;" onclick="addForm()">추가</button>               
                             </h5>
                             <hr class="m-t-0">
@@ -233,9 +196,8 @@
                     </div>
 
                 </div>
-            </div> -->
+            </div>
             <!-- // 제조식품 유형선택  -->
-            <!-- 주석 end 11/10/20 kange -->
 
             </form>
 
@@ -366,62 +328,6 @@
     </div><!-- /.modal-dialog -->
 </div>
 <!-- // 부자재 목록 레이어  -->
-
-<!-- 규격서 기록 레이어  -->
-<div id="material_specification_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="width: 500px; border: 1px solid;">
-        <div class="modal-content p-0 b-0">                                    
-            <div class="panel panel-color panel-inverse m-0" style="width:800px" >
-                <div class="panel-heading">
-                    <button type="button" class="close m-t-5" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 class="panel-title">규격서 이력보기</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="row img-contents">
-                        <div class="col-lg-12 table-responsive m-b-0">                            
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr class="active">
-                                        <th class="info" style="width: 30%;">품목명</th>
-                                        <th class="info" style="width: 70%;">파일</th>
-                                        
-                                        
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                        if( count( $material_specification_log ) > 0  ){
-                                            foreach( $material_specification_log AS $item ) {                                                
-                                    ?>
-                                    <tr style="cursor: pointer;" >                                                                             
-                                        <td class="text-center vertical-align"><?=$item['file_title']?></td>
-                                        <td class="text-center vertical-align">
-                                            <a href="/file_down.php?key=<?=$item['idx']?>" ><?=$item['origin_name']?></a>
-                                        </td>                                        
-                                    </tr>
-                                    <?php
-                                            }
-                                        } else {
-                                    ?>
-                                    <tr style="cursor: pointer;" >
-                                        <td colspan="2" class="text-center">
-                                            이력이 없습니다.
-                                        </td>
-                                    </tr>
-                                    <?php
-                                        }
-                                    ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>                                    
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
-<!-- // 규격서 기록 레이어  -->
-
 
 <script>
 
@@ -561,124 +467,6 @@
         }).open();
     }
 
-    /**
-        저장된 규격서 정보 dom 생성
-     */
-    function makeFilesHandler(){
-
-        var files = <?=$material_specification_info?>;
-        var file_idx = [];
-        var data = [];
-        
-        $.each(files, function(idx, item){
-
-            file_idx.push(item.idx);
-            
-            data.push({
-                file_idx : item.idx
-                ,file_title : item.file_title
-                , file_origin_name : item.origin_name
-                , file_server_name : item.server_name
-            });
-        });
-        
-        console.log( data );
-
-        $('#file_idx').val(file_idx.join(','));
-
-        $('#add_file_area').append( $('#tmplate_add_file_form').tmpl( data ) );
-
-    }
-
-    /**
-        규격서 양식 추가
-     */
-    function addDocForm(){
-
-        var empty_data = [{file_title: '',  file_origin_name : '' }];
-
-        $('#add_file_area').append( $('#tmplate_add_file_form').tmpl( empty_data ) );
-
-    }
-
-    /**
-    * 규격서 파일 form 삭제
-    */
-    function delDocForm( arg_this, arg_del_file_idx ){
-
-        var get_del_file_idx = $('#del_file_idx').val();
-        var del_file_idx_arr, result_val;
-
-        if( get_del_file_idx == '' ) {
-
-            $('#del_file_idx').val( arg_del_file_idx );
-
-        } else {
-
-            if( get_del_file_idx.indexOf(',') > -1 ) {
-                
-                del_file_idx_arr = get_del_file_idx.split(',');
-                del_file_idx_arr.push( arg_del_file_idx );
-                result_val = del_file_idx_arr.join(',');
-
-            } else {
-                result_val = get_del_file_idx+','+arg_del_file_idx;
-            }
-            
-            $('#del_file_idx').val(result_val);
-
-        }
-
-        $( arg_this ).parent().parent().remove();
-
-    }
-
-    //  업로드 버튼 이벤트 처리
-    function readFile(arg_this) {
-
-        if (arg_this.files && arg_this.files[0]) {
-
-            if(window.FileReader){  // modern browser
-                var filename = $(arg_this)[0].files[0].name;
-            } 
-            else {  // old IE
-                var filename = $(arg_this).val().split('/').pop().split('\\').pop();  // 파일명만 추출
-            }
-            
-            $(arg_this).parent().find('code').text(filename);   
-
-            if( $(arg_this).data('fild_idx') !== '') {
-
-                var get_del_file_idx = $('#del_file_idx').val();
-                var del_file_idx_arr, result_val;
-
-                if( get_del_file_idx == '' ) {
-
-                    $('#del_file_idx').val( $(arg_this).data('fild_idx') );
-
-                    } else {
-
-                    if( get_del_file_idx.indexOf(',') > -1 ) {
-                        
-                        del_file_idx_arr = get_del_file_idx.split(',');
-                        del_file_idx_arr.push( $(arg_this).data('fild_idx') );
-                        result_val = del_file_idx_arr.join(',');
-
-                    } else {
-                        result_val = get_del_file_idx+','+$(arg_this).data('fild_idx');
-                    }
-
-                    $('#del_file_idx').val(result_val);
-
-                }
-            }
-        }
-    }
-
-    function showSpecificationHistory(){
-        $('#material_specification_modal').modal();
-    }
-
 </script>
 
 <style>    
@@ -707,28 +495,6 @@
     <td><input type="text" name="standard_info[]" class="form-control " placeholder="kg/g/L/ml" value="${standard_info}" style="min-width:150px" ></td> 
     <td><input type="text" name="material_unit_price[]" class="form-control " placeholder="" value="${material_unit_price}" style="min-width:150px" ></td> 
     <td><button type="button" class="btn btn-sm btn-danger waves-effect waves-light" onclick="delForm(this, '${materials_usage_idx}')">삭제</button></td>
-</tr>
-</script>
-
-
-<script id="tmplate_add_file_form" type="text/x-jquery-tmpl">
-<tr>
-    <td><input type="text" name="file_title[]" class="form-control " value="${file_title}" style="width:100% !important" data-valid="blank" ></td>    
-    <td>
-        <div class="form-group">                                                
-            <div class="upload-btn-wrapper">
-                <button type="button" class="btn btn-primary">업로드</button>
-                <input type="file" name="doc_file[]" onchange="readFile(this);" style="width:120px !important;height:50px" data-fild_idx="${file_idx}" >                                                    
-                <code class="control-label m-l-10"></code>
-            </div>
-
-            {{if file_origin_name }}
-            <br/><br/><a href="/file_down.php?key=${file_idx}" >${file_origin_name}</a>
-            {{/if}}        
-
-        </div>
-    </td>										
-    <td><button type="button" class="btn btn-sm btn-danger waves-effect waves-light" onclick="delDocForm(this,'${file_idx}' )"  >삭제</button></td>
 </tr>
 </script>
 

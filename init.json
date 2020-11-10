@@ -87,7 +87,7 @@
                             "code": "SF320"
                         },                                                 
                         {
-                            "title": "HACCP담당자등록",
+                            "title": "HACCP 담당자등록",
                             "link": "\/company\/member_list?top_code=SI003&left_code=SF330",
                             "code": "SF330"
                         },                                                                          
@@ -112,27 +112,26 @@
                             "code": "SF350"
                         },
                         {
-                            "title": "원료배합비율1",
-                            "link": "\/product\/product_list?top_code=SI003&left_code=SF360",
-                            "code": "SF360"
-                        },
-                        {
-                            "title": "원료배합비율2",
+                            "title": "원료배합비율",
                             "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF361",
                             "code": "SF361"
                         },
                         {
                             "title": "공정순서관리",
                             "code" : "SF370"
-                        },                        
+                        },       
+                        {
+                            "title": "전처리공정등록",                            
+                            "code" : "SF371"
+                        },                                                
                         {
                             "title": "구매기업정보등록",
-                            "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF380",
+                            "link": "\/materials\/company_list?top_code=SI003&left_code=SF380",
                             "code": "SF380"
-                        },
+                        },                        
                         {
                             "title": "납품기업정보등록",
-                            "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF390",
+                            "link": "\/company\/vendor_list?top_code=SI003&left_code=SF390",
                             "code": "SF390"
                         },
                         {
@@ -151,12 +150,7 @@
                     ],
                     "SI009": [
                     ],
-                    "SI005": [
-                        {
-                            "title": "협력업체 정보",
-                            "link": "\/materials\/company_list?top_code=SI005&left_code=SF037",
-                            "code": "SF037"
-                        },
+                    "SI005": [                        
                         {
                             "title": "원\/부자재 주문관리",
                             "link": "\/materials\/order_list?top_code=SI005&left_code=SF038",

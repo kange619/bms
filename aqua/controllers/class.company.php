@@ -506,7 +506,33 @@ class company extends baseController {
         $this->view( $this->page_data );        
     }
 
+    /*
+    * 납품기업업체 목록을 생성한다 
+    */ 
+    public function vendor_list(){        
+                
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = 'vendor';
+        $this->page_data['contents_path'] = '/materials/vendor_list.php';        
+        $this->view( $this->page_data );
 
+    }
+
+    /**
+     * 기업정보 작성 페이지를 구성한다.
+     */
+    public function vendor_write(){
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = 'vendor';
+        $this->page_data['contents_path'] = '/materials/vendor_write.php';        
+        $this->view( $this->page_data );
+
+    }
 
 }
 
