@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    납품기업정보
+                    생산제품등록관리
                     <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>                 
                 </h1>                   
             </section>
@@ -22,27 +22,29 @@
                                 <input type="hidden" name="left_code" value="<?=$left_code?>">
                                 <input type="hidden" name="sch_order_field" id="sch_order_field" value="<?=$sch_order_field?>">
                                 <input type="hidden" name="sch_order_status" id="sch_order_status" value="<?=$sch_order_status?>">
-
+                                
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label">등록일</label>
-                                        <div class="col-sm-9">
+                                        
                                             <div class="input-daterange input-group" id="date-range">
                                                 <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
                                                 <span class="input-group-addon bg-primary b-0 text-white">~</span>
                                                 <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
                                             </div>
-                                        </div>
+                                        
                                     </div>
-                                </div>
+                                </div>      
+                                      
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">검색</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="회사명, 사업자등록번호, 담당자명, 휴대폰번호">
+                                        <label class="col-sm-2 control-label">검색</label>                                        
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" >
                                         </div>
                                     </div>
-                                </div>
+                                </div>     
+
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-sm-offset-5 col-sm-7 m-t-15">
@@ -51,7 +53,8 @@
                                             <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
                                         </div>
                                     </div>
-                                </div>
+                                </div>    
+                                                                
                             </form>
                         </div>
                     </div>
@@ -68,19 +71,16 @@
                         <hr class="m-t-0">
                         <div class="table-responsive m-b-0">
                             <table class="table table-bordered text-center dataTable" id="excelTable">
-                                <thead>
+                            <thead>
                                     <tr class="active">
-                                        <th class="info" style="width: 3%;">NO</th>
-                                        <th class="info sorting " data-order="reg_date" >등록일</th>
-                                        <th class="info sorting " data-order="company_name" style="width: 10%;">회사명</th> 
-                                        <th class="info sorting " data-order="registration_no" >사업자등록번호</th>
-                                        <th class="info sorting " data-order="ceo_name" >대표명</th>
-                                        <th class="info sorting " data-order="company_tel" >전화번호</th>
-                                        <th class="info sorting " data-order="manager_name" >담당자</th>
-                                        <th class="info sorting " data-order="manager_phone_no" >휴대폰번호</th>
-                                        <th class="info sorting " data-order="manager_email" >이메일</th>                                                                                                         
-                                        <th class="info sorting " data-order="use_flag" >사용여부</th>                                                                                                         
-                                        <th class="info " >삭제</th>                                                                                                         
+                                        <th class="info sorting" data-order="entry_no" style="width: 5%">No</th>
+                                        <th class="info sorting" data-order="material_idx"  style="width: 10%;">등록일</th>
+                                        <th class="info sorting" data-order="material_name" style="width: 30%;" >품목</th>                                                                        
+                                        <th class="info sorting" data-order="net_contents" >제품명</th>
+                                        <th class="info sorting" data-order="reg_date" >제품등록번호</th>                                        
+                                        <th class="info sorting" data-order="use_flag" >품목신고번호</th>                                                                     
+                                        <th class="info" >삭제</th>                                                       
+                                        <!-- <th class="info sorting" data-order="material_kind" >분류</th>               -->
                                     </tr>                                
                                 </thead>
                                 <tbody>
@@ -90,34 +90,41 @@
                                         foreach($list AS $key=>$value) {
                                     ?>
                                     <tr>
-                                        <td><?=( ( $paging->total_rs - ( $page-1 ) * $list_rows - $key ) );?></td>
+                                        <td><?=$value['entry'];?></td>
+                                        <td><?=$value['material_idx'];?></td>
+                                        <!-- <td><?=( $value['material_kind'] == 'raw' ) ? '원자재' : '부자재' ;?></td> -->
+                                        <td><?=$value['material_name'];?></td>
+                                        <td><?=$value['net_contents'];?></td>
                                         <td><?=$value['reg_date'];?></td>
+                                        <td><?=$value['use_flag'];?></td>
                                         <td>
-                                            <a class="underline" href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&material_company_idx=<?=$value['material_company_idx'];?>">
-                                                <?=$value['company_name'];?>
+                                            <a href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&material_idx=<?=$value['material_idx'];?>">
+                                                <button type="button" class="btn btn-sm btn-purple waves-effect waves-light" >수정</button>
                                             </a>
-                                        </td>
-                                        <td><?=$value['registration_no'];?></td>
-                                        <td><?=$value['ceo_name'];?></td>
-                                        <td><?=$value['company_tel'];?></td>
-                                        <td><?=$value['manager_name'];?></td>
-                                        <td><?=$value['manager_phone_no'];?></td>
-                                        <td><?=$value['manager_email'];?></td>
-                                        <td><?=($value['use_flag'] == 'Y') ? '사용' : '미사용' ;?></td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger" onclick="delProc('<?=$value['material_company_idx'];?>')">삭제</button>
+                                            <button type="button" class="btn btn-danger" onclick="delProc('<?=$value['material_idx'];?>')">삭제</button>
                                         </td>
                                     </tr>
                                     <?php   
                                         }
                                     } else {
                                     ?>                                
-                                        <tr><td colspan="11">데이터가 없습니다</td></tr>
+                                        <tr><td colspan="9">데이터가 없습니다</td></tr>
                                     <?php
                                     }
                                     ?>
-                                </tbody>                                       
+                                </tbody>                                      
                             </table>
+
+                            <form name="list_form" id="list_form" method="post" action="./<?=$page_name?>_proc" >
+                                <input type="hidden" name="mode" id="list_form_mode" />
+                                <input type="hidden" name="material_idx" id="material_idx" />
+                                <input type="hidden" name="page" value="<?=$page?>">
+                                <input type="hidden" name="list_rows" value="<?=$list_rows?>">                                                        
+                                <input type="hidden" name="top_code" value="<?=$top_code?>">
+                                <input type="hidden" name="left_code" value="<?=$left_code?>">
+                                <input type="hidden" name="ref_params" value="<?=$params?>" />
+                            </form>
+
                         </div>
                         <div class="text-center">
                             <div class="pagination">                    
@@ -130,14 +137,7 @@
                     </div>                       
                 </div>
             </div><!-- end row --> 
-            <form name="list_form" id="list_form" method="post" action="./<?=$page_name?>_proc">
-                <input type="hidden" name="mode" id="list_form_mode" />
-                <input type="hidden" name="material_company_idx" id="material_company_idx" />
-                <input type="hidden" name="page" value="<?=$page?>" />
-                <input type="hidden" name="top_code" value="<?=$top_code?>" />
-                <input type="hidden" name="left_code" value="<?=$left_code?>" />
-                <input type="hidden" name="ref_params" value="<?=$params?>" />
-            </form>
+
         </div> <!-- // container -->
     </div> <!-- // content -->
 </div> <!-- // content-page -->
@@ -146,10 +146,11 @@
 
         if(confirm('해당 정보를 삭제하시겠습니까?') == true ){
             $('#list_form_mode').val('del');
-            $('#material_company_idx').val(arg_idx);
+            $('#material_idx').val(arg_idx);
             $('#list_form').submit();
         }
-        
+
     }
 </script>
+
             

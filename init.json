@@ -39,6 +39,11 @@
                         "code": "SI003"
                     },
                     {
+                        "title": "구매관리(원\/부자재관리)",
+                        "link": "\/materials\/company_list?top_code=SI005&left_code=SF037",
+                        "code": "SI005"
+                    },
+                    {
                         "title": "HACCP 문서관리",
                         "link": "\/standard\/sanitation_standard_list?top_code=SI012&left_code=SF072",
                         "code": "SI012"
@@ -47,29 +52,25 @@
                         "title": "생산정보관리(삭제예정)",
                         "link": "\/product\/product_list?top_code=SI009&left_code=SF054",
                         "code": "SI009"
-                    },
-                    {
-                        "title": "원\/부자재관리",
-                        "link": "\/materials\/company_list?top_code=SI005&left_code=SF037",
-                        "code": "SI005"
-                    },
+                    },                    
                     {
                         "title": "생산관리",
                         "link": "\/production\/production_list?top_code=SI006&left_code=SF043",
                         "code": "SI006"
                     },
                     {
-                        "title": "품질관리",
-                        "link": "\/haccp\/monitor?top_code=SI010&left_code=SF067",
-                        "code": "SI010"
-                    },
-                    {
-                        "title": "수주\/출하관리",
+                        "title": "출하관리",
                         "link": "\/client\/client_list?top_code=SI007&left_code=SF046",
                         "code": "SI007"
                     },
                     {
-                        "title": "전자문서",
+                        "title": "HACCP모니터링(품질관리)",
+                        "link": "\/haccp\/monitor?top_code=SI010&left_code=SF067",
+                        "code": "SI010"
+                    },
+                    
+                    {
+                        "title": "자료관리(전자문서)",
                         "link": "\/doc\/doc_state?top_code=SI011&left_code=ccp",
                         "code": "SI011"
                     }
@@ -126,6 +127,11 @@
                             "code": "SF353"
                         },
                         {
+                            "title": "생산제품등록",
+                            "link": "\/production\/production_goods_list?top_code=SI003&left_code=SF360",
+                            "code": "SF360"
+                        },
+                        {
                             "title": "원료배합비율",
                             "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF361",
                             "code": "SF361"
@@ -155,16 +161,34 @@
                         }                                                                                                                                                                                                          
                  
                     ],
-                    "SI012": [                        
+                    "SI005": [ 
                         {
-                            "title": "HACCP 개정이력 관리",
-                            "link": "\/standard\/haccp_update_record_list?top_code=SI012&left_code=SF074",
-                            "code": "SF074"
-                        }
-                    ],
-                    "SI009": [
-                    ],
-                    "SI005": [                        
+                            "title": "원료재고관리",                            
+                            "code": "SF510"
+                        },                       
+                        {
+                            "title": "부자재재고관리",                            
+                            "code": "SF520"
+                        },                       
+                        {
+                            "title": "구매관리",                            
+                            "code": "SF530"
+                        },                       
+                        {
+                            "title": "입고관리",                            
+                            "code": "SF540"
+                        },                       
+                        {
+                            "title": "재고이력관리",                            
+                            "code": "SF550"
+                        },
+                        {
+                            "title": "->(가공)원료재고이력",                            
+                            "code": "SF551"
+                        },  {
+                            "title": "->부자재재고이력",                            
+                            "code": "SF552"
+                        },                         
                         {
                             "title": "원\/부자재 주문관리",
                             "link": "\/materials\/order_list?top_code=SI005&left_code=SF038",
@@ -181,7 +205,33 @@
                             "code": "SF040"
                         }
                     ],
+                    "SI012": [                        
+                        {
+                            "title": "HACCP 개정이력 관리",
+                            "link": "\/standard\/haccp_update_record_list?top_code=SI012&left_code=SF074",
+                            "code": "SF074"
+                        }
+                    ],
+                    "SI009": [
+                    ],
+                
                     "SI006": [
+                        {
+                            "title": "당일생산리스트",
+                            "code": "SF610"
+                        },
+                        {
+                            "title": "원\/부자재출고",
+                            "code": "SF620"
+                        },
+                        {
+                            "title": "제조사원 업무등록",
+                            "code": "SF630"
+                        },
+                        {
+                            "title": "사원별 업무투입현황",
+                            "code": "SF640"
+                        },
                         {
                             "title": "생산 지시관리",
                             "link": "\/production\/production_list?top_code=SI006&left_code=SF043",
@@ -221,6 +271,15 @@
                         }
                     ],
                     "SI007": [
+                        {
+                            "title": "제품재고현황",
+                            "code": "SF710"
+                        },
+                        {
+                            "title": "출하관리",
+                            "code": "SF720"
+                        },
+
                         {
                             "title": "B2B 고객정보",
                             "link": "\/client\/client_list?top_code=SI007&left_code=SF046",

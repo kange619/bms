@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    원/부자재 기준 관리  > <?=$page_work?>
+                    원료 기준등록 > <?=$page_work?>
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
                 </h1>                
             </section>
@@ -21,7 +21,7 @@
                 <input type="hidden" name="file_idx" id="file_idx" value="<?=$file_idx?>" />
 
            <!-- 서비스 정보 -->
-           <div class="row">
+           <!-- <div class="row">
                 <div class="col-lg-12">
                     <div class="card-box">
                         
@@ -102,9 +102,157 @@
                     </div>
 
                 </div>
-            </div>
+            </div> -->
             <!-- //서비스 정보 --> 
 
+            <!-- 기본정보 -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-box">                        
+                        <div class="table-responsive m-b-0">
+                            <h5 class="header-title m-b-10">
+                                <b>기본정보</b>    
+                            </h5>
+                            <hr class="m-t-0">
+                            <table class="table table-bordered text-left">
+                                <tbody>                                                                         
+                                    <tr>                                                                                                                                              
+                                        <th class="info">품명</th>
+                                        <td class="text-left" colspan="1" width="500px">
+                                            <input type="text" class="form-control" name="" > 
+										</td>                                      
+                                        <th class="info">분류</th>
+                                        <td class="text-left" colspan="1" width="500px">                                            
+                                            <select class="form-control" name="" style="width:30%">
+                                                <option value="raw">원자재</option>
+                                                <option value="sub">부자재</option>
+                                            </select>                                            
+										</td>                                                                                 
+									</tr>                                                                           
+                                    <tr>                                                                                                                                              
+                                        <th class="info">판매원</th>
+                                        <td class="text-left" colspan="1" width="500px">
+                                            <input type="text" class="form-control" name=""> 
+										</td>                                      
+                                        <th class="info">보관방법</th>
+                                        <td class="text-left" colspan="1" width="500px">                                            
+                                        <input type="text" class="form-control" name="" > 
+										</td>                                                                                 
+									</tr>
+                                    <tr>                                                                                                                                              
+                                        <th class="info">원산지</th>
+                                        <td class="text-left" colspan="1" width="500px">
+                                            <input type="text" class="form-control" name=""> 
+										</td>                                      
+                                        <th class="info">등급</th>
+                                        <td class="text-left" colspan="1" width="500px">                                            
+                                        <input type="text" class="form-control" name="" > 
+										</td>                                                                                 
+									</tr>
+                                    <tr>                                                                                                                                              
+                                        <th class="info">성상(색상)</th>
+                                        <td class="text-left" colspan="1" width="500px">
+                                            <input type="text" class="form-control" name=""> 
+										</td>                                      
+                                        <th class="info">주요원재료</th>
+                                        <td class="text-left" colspan="1" width="500px">                                            
+                                            <input type="text" class="form-control" name=""> 
+										</td>                                                                                 
+									</tr>
+                                    <tr>                                                                                                                                              
+                                        <th class="info">적정재고</th>
+                                        <td class="text-left" colspan="1" width="500px">
+                                            <input type="text" class="form-control" name=""> 
+										</td>                                      
+                                        <th class="info">기타</th>
+                                        <td class="text-left" colspan="1" width="500px">                                            
+                                        <input type="text" class="form-control" name="" > 
+										</td>                                                                                 
+									</tr>                                    
+                                </tbody>
+                            </table>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <!-- 기본정보 -->            
+
+            <!-- 관능 -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-box">                        
+                        <div class="table-responsive m-b-0">
+                            <h5 class="header-title m-b-10">
+                                <b>관능</b>    
+                            </h5>
+                            <hr class="m-t-0">
+                            <table class="table table-bordered text-left">
+                                <tbody>                                                                                                             
+                                    <tr>                                                                                                                                              
+                                        <th class="info">외관</th>
+                                        <td class="text-left" colspan="3" width="500px">
+                                            <input type="text" class="form-control" name="">                                             
+										</td>                                                                                                                         
+									</tr>  
+                                    <tr>                                                                                                                                              
+                                        <th class="info">색상</th>
+                                        <td class="text-left" colspan="3" width="500px">
+                                            <input type="text" class="form-control" name="">                                             
+										</td>                                                                                                                         
+									</tr>  
+                                    <tr>                                                                                                                                              
+                                        <th class="info">냄새</th>
+                                        <td class="text-left" colspan="3" width="500px">
+                                            <input type="text" class="form-control" name="">                                             
+										</td>                                                                                                                         
+									</tr>  
+                                    <tr>                                                                                                                                              
+                                        <th class="info">조직감</th>
+                                        <td class="text-left" colspan="3" width="500px">
+                                            <input type="text" class="form-control" name="">                                             
+										</td>                                                                                                                         
+									</tr>                                      
+                                    <tr>                                                                                                                                              
+                                        <th class="info">기타</th>
+                                        <td class="text-left" colspan="3" width="500px">
+                                            <input type="text" class="form-control" name="">                                             
+										</td>                                                                                                                         
+									</tr>   
+                                    <tr>                                                                                                                                              
+                                        <th class="info">타코메타기준</th>
+                                        <td class="text-left" colspan="3" width="500px">
+                                            <input type="text" class="form-control" name="">                                             
+										</td>                                                                                                                         
+									</tr>                                    
+
+                                    <th class="info middle-align">예시사진(좋은예)</th>
+                                    <td colspan="3" >                                            
+                                        <div class="form-group">                                                
+                                            <div class="upload-btn-wrapper">
+                                                <button type="button" class="btn btn-primary">업로드</button>
+                                                <input type="file" name="material_std_file" id="material_std_file"  onchange="readFile(this, 'material_std_file');">                                                    
+                                                <code class="control-label m-l-10 material_std_file"></code>
+                                                
+                                            </div>
+
+                                            <?php
+                                                if( isset( $file_origin_name ) == true ) {
+                                            ?>
+                                            <br/><br/><a href="/file_down.php?key=<?=$file_idx?>" ><?=$file_origin_name?></a>
+                                            <?php
+                                                } 
+                                            ?>
+                                            
+                                        </div>
+                                    </td>       
+
+                                </tbody>
+                            </table>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <!-- 관능 -->  
            
            
             </form>
