@@ -7,7 +7,7 @@
             <section class="content-header">                    
                 <h1>
                     생산제품등록관리
-                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>                 
+                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>                                     
                 </h1>                   
             </section>
 
@@ -126,11 +126,6 @@
                             </form>
 
                         </div>
-                        <div class="text-center">
-                            <div class="pagination">                    
-                                <!-- <?=$paging->draw(); ?> -->
-                            </div>
-                        </div>
 
                         <?php include_once( $this->getViewPhysicalPath( '/view/inc/select_list_rows.php' )  ); ?>
 
@@ -141,16 +136,17 @@
         </div> <!-- // container -->
     </div> <!-- // content -->
 </div> <!-- // content-page -->
-<script>
-    function delProc( arg_idx ){
 
+<script>
+
+    function delProc( arg_idx ){
         if(confirm('해당 정보를 삭제하시겠습니까?') == true ){
             $('#list_form_mode').val('del');
             $('#material_idx').val(arg_idx);
             $('#list_form').submit();
         }
-
     }
 </script>
+
 
             

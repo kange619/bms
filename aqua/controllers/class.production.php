@@ -1224,9 +1224,8 @@ class production extends baseController {
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
-        $this->page_data['page_name'] = $page_name;
-        $this->page_data['contents_path'] = '/production/'. $page_name .'_list.php';
-        //$this->page_data['contents_path'] = '/production/'. $page_name .'_write.php';
+        $this->page_data['page_name'] = $page_name;        
+        $this->page_data['contents_path'] = '/production/'. $page_name .'_write.php';
         $this->page_data['list'] = $list_result['rows'];
         
         $this->view( $this->page_data );
