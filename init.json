@@ -172,6 +172,7 @@
                         },                       
                         {
                             "title": "구매관리",                            
+                            "link": "\/materials\/purch_materials_list?top_code=SI005&left_code=SF530",
                             "code": "SF530"
                         },                       
                         {

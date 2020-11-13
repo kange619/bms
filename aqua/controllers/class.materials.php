@@ -1814,7 +1814,7 @@ class materials extends baseController {
      * 원료기준 작성화면 
      * 11/10/20 kange add 
      */
-    public function raw_materials_write(){
+    public function raw_materials_write(){        
        
         $page_name = 'raw_materials';
             
@@ -1828,6 +1828,62 @@ class materials extends baseController {
         $this->view( $this->page_data );
 
     }
+
+
+    /**
+     * 원/부자재 구매 페이지 
+     * 11/13/20 kange add  
+     */
+    public function purch_materials_list(){
+
+        $page_name = 'purch_materials';
+     
+        $this->page_data['paging'] = $this->paging; 
+        
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/materials/'. $page_name .'_list.php';
+        $this->page_data['list'] = $list_result['rows'];        
+        $this->view( $this->page_data );
+
+    }        
+    
+
+    /**
+     * 원/부자재 구매 작성화면 
+     * 11/13/20 kange add 
+     */
+    public function purch_materials_write(){
+       
+        $page_name = 'purch_materials';
+            
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/materials/'. $page_name .'_write.php';
+        $this->page_data['list'] = $list_result['rows'];
+        
+        $this->view( $this->page_data );
+
+    }   
+    
+    public function purch_materials_detail(){
+       
+        $page_name = 'purch_materials';
+            
+        $this->page_data['use_top'] = true;        
+        $this->page_data['use_left'] = true;
+        $this->page_data['use_footer'] = true;        
+        $this->page_data['page_name'] = $page_name;
+        $this->page_data['contents_path'] = '/materials/'. $page_name .'_detail.php';
+        $this->page_data['list'] = $list_result['rows'];
+        
+        $this->view( $this->page_data );
+
+    }    
 
 
 }
