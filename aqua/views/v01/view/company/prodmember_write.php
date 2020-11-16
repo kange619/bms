@@ -1,3 +1,4 @@
+
 <!-- Start content-page -->
 <div class="content-page" >
     <!-- Start content -->
@@ -12,126 +13,102 @@
             </section>
 
             <form class="form-horizontal" role="form" method="post" id="form_write" enctype="multipart/form-data"  action="./<?=$page_name?>_proc">                
-                <input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
-                <input type="hidden" name="company_member_idx" value="<?=$company_member_idx?>" />                
+                <input type="hidden" name="mode" id="mode" value="<?=$mode?>" />                
+                <input type="hidden" name="company_member_idx" value="<?=$production_member_idx?>" />                
                 <input type="hidden" name="page" value="<?=$page?>" />
                 <input type="hidden" name="top_code" value="<?=$top_code?>" />
                 <input type="hidden" name="left_code" value="<?=$left_code?>" />
                 <input type="hidden" name="ref_params" value="<?=$params?>" />
 
 
-            <!-- 기본정보 -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card-box">
-                        
-                        <div class="table-responsive m-b-0">
-                            <h5 class="header-title m-b-10">
-                                <b>생산업무 담당자등록</b>                    
-                            </h5>
-                            <hr class="m-t-0">
-                            <table class="table table-bordered text-left">
-                                <tbody>
+                <!-- 기본정보 -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-box">
+                            
+                            <div class="table-responsive m-b-0">
+                                <h5 class="header-title m-b-10">
+                                    <b>생산업무 담당자등록</b>                    
+                                </h5>
+                                <hr class="m-t-0">
+                                <table class="table table-bordered text-left">
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <th class="info middle-align">이름</th>
+                                            <td colspan="3">
+                                                <input class="form-control" type="text" id="name" name="name" data-valid="kr|en" value="<?=$name;?>"/>
+                                            </td>
+                                        </tr> 
+
+                                        <tr>
+                                            <th class="info middle-align">휴대폰 번호(ID)</th>
+                                            <td colspan="3">
+                                                <input class="form-control" type="text" id="phone_no" name="phone_no" placeholder="'-'없이 입력하세요" maxlength="11" value="<?=$phone_no?>" data-valid="num/11" />  
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <th class="info middle-align">비밀번호</th>
+                                            <td colspan="3">
+                                                <input class="form-control" type="password" id="password" name="password" <?=( $mode == 'ins' ) ? 'data-valid="pw"' : '' ?> />
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th class="info middle-align">비밀번호 확인</th>
+                                            <td colspan="3">
+                                                <input class="form-control" type="password" id="re_password" name="re_password"/>
+                                                <span class="m-l-10" id="re_pw_result"></span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th class="info middle-align">업무구분</th>
+                                            <td colspan="3">                                            
+                                                <select name="work_position" class="form-control" id="work_position" style="width:200px">
+                                                    <option value="1" {work_position1}>option1</option>
+                                                    <option value="2" {work_position2}>option2</option>
+                                                </select> 
+                                            </td>
+                                        </tr>      
+
+                                        <tr>
+                                            <th class="info middle-align">업무내용</th>
+                                            <td colspan="3">
+                                                <select name="work_detail" class="form-control" id="work_detail" style="width:200px">
+                                                    <option value="1" {work_detail1}>option1</option>
+                                                    <option value="2" {work_detail2}>option2</option>
+                                                </select> 
+                                            </td>
+                                        </tr>   
+                                                                
                                     
-                                    <tr>
-                                        <th class="info middle-align">이름</th>
-                                        <td colspan="3">
-                                            <input class="form-control" type="text" id="member_name" name="member_name" value="<?=$member_name?>" data-valid="kr|en" />
-                                        </td>
-                                    </tr> 
+                                        <tr>
+                                            <th class="info middle-align">정/부</th>
+                                            <td colspan="3">
+                                                <label><input type="checkbox" name="person_in_charge" value="" checked>정</label>
+                                                <label><input type="checkbox" name="person_in_charge" value="" >부</label>
 
-                                    <tr>
-                                        <th class="info middle-align">휴대폰 번호(ID)</th>
-                                        <td colspan="3">
-                                            <input class="form-control" type="text" id="phone_no" name="phone_no" placeholder="'-'없이 입력하세요" maxlength="11" value="<?=$phone_no?>" data-valid="num/11" />  
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr>
-                                        <th class="info middle-align">비밀번호</th>
-                                        <td colspan="3">
-                                            <input class="form-control" type="password" id="password" name="password" <?=( $mode == 'ins' ) ? 'data-valid="pw"' : '' ?> />
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
 
-                                    <tr>
-                                        <th class="info middle-align">비밀번호 확인</th>
-                                        <td colspan="3">
-                                            <input class="form-control" type="password" id="re_password" name="re_password"  />
-                                            <span class="m-l-10" id="re_pw_result"></span>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <th class="info middle-align" id="date-range" >보건증갱신기간</th>
+                                            <td colspan="3">
+                                                <input type="text" class="form-control datepicker" name="health_certi_date" value="" style="width:200px">                                            
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div> 
 
-                                    <tr>
-                                        <th class="info middle-align">업무구분</th>
-                                        <td colspan="3">
-
-                                            <select class="form-control" name="job_position" id="job_position" style="width:200px" >
-                                               
-                                                <option value="Y" <?=($job_position == 'Y' ? 'selected="selected"' : '' )?> >option1</option>
-                                                <option value="N" <?=($job_position == 'N' ? 'selected="selected"' : '' )?> >option2</option>
-                                                
-                                            </select>
-
-                                        </td>
-                                    </tr>      
-
-                                    <tr>
-                                        <th class="info middle-align">업무내용</th>
-                                        <td colspan="3">
-
-                                            <select class="form-control" name="job_detail" id="job_detail" style="width:200px" >
-                                               
-                                                <option value="Y" <?=($job_detail == 'Y' ? 'selected="selected"' : '' )?> >option1</option>
-                                                <option value="N" <?=($job_detail == 'N' ? 'selected="selected"' : '' )?> >option2</option>
-                                                
-                                            </select>
-
-                                        </td>
-                                    </tr>   
-                                                               
-                                
-                                    <tr>
-                                        <th class="info middle-align">정/부</th>
-                                        <td colspan="3">
-                                            <label><input type="checkbox" name="person_in_charge" value="" checked>정</label>
-                                            <label><input type="checkbox" name="person_in_charge" value="" >부</label>
-
-                                            <!-- 주석처리 11/09/20 kange
-                                            <select class="form-control" name="person_in_charge" id="person_in_charge" style="width:200px" >
-                                               
-                                                <option value="Y" <?=($person_in_charge == 'Y' ? 'selected="selected"' : '' )?> >사용</option>
-                                                <option value="N" <?=($person_in_charge == 'N' ? 'selected="selected"' : '' )?> >미사용</option>
-                                                
-                                            </select>
-                                            주석처리 11/09/20 kange -->
-
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <th class="info middle-align">보건증갱신기간</th>
-                                        <td colspan="3">
-
-                                            <select class="form-control" name="renew_certi" id="renew_certi" style="width:200px" >
-                                               
-                                                <option value="Y" <?=($renew_certi == 'Y' ? 'selected="selected"' : '' )?> >사용</option>
-                                                <option value="N" <?=($renew_certi == 'N' ? 'selected="selected"' : '' )?> >미사용</option>
-                                                
-                                            </select>
-
-                                        </td>
-                                    </tr>
-                                    
-                                </tbody>
-                            </table>
-                        </div> 
+                        </div>
 
                     </div>
-
                 </div>
-            </div>
-            <!-- //기본정보 -->
+                <!-- //기본정보 -->
             
             </form>
 

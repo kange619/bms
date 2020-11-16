@@ -215,11 +215,29 @@ class companyModel extends baseModel {
 
     }    
 
+    /**
+     * 생산담당자 정보를 반환한다.
+     */
+    public function getProductionMember( $arg_where ) {
 
-    
-    
+        $this->table_member = 't_production_member';
 
+        $query = " SELECT * FROM ". $this->table_member ." WHERE " . $arg_where;
+        $query_result = $this->db->execute( $query );
 
+        return $query_result['return_data'];
+
+    }    
+
+    /**
+     * 생산담당자 정보를 insert 한다.
+     * 11/16/20 kange Add 
+     */
+    public function insertProductionMember( $arg_data ){
+
+        $this->table_member = 't_production_member';
+        return $this->db->insert( $this->table_member, $arg_data );
+    } 
 }
 
 ?>

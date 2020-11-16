@@ -481,20 +481,10 @@ class company extends baseController {
     /**
      * 생산 담당자 등록 페이지를 생성한다.
      */
-
     public function prodMember_list(){      
 
         # 리스트 정보요청
         $list_result = $this->model->getTest();
-
-        // $data = [
-        //     'MileageDefault' => $postDatas['giveMileage'] ,
-        //     'MileagePolicy' => $postDatas['useType'] ,
-        //     'MileageRate' => n2Array('rate',$postDatas) ,
-        //     'MileageUseLimit' => $postDatas['useMileage'][0] ,
-        //     'MileageUseMin' => $postDatas['useMileage'][1] ,
-        //     'MileageUseMax' => $postDatas['useMileage'][2] 
-        // ];
         
         $this->paging->total_rs = $list_result['total_rs'];        
         $this->page_data['paging'] = $this->paging; 
@@ -508,22 +498,44 @@ class company extends baseController {
 
         //echoBr($list_result);
 
-        echoPre($this->page_data);
-        $this->view( $this->page_data );        
-        
-        // $this->page_data['use_top'] = true;        
-        // $this->page_data['use_left'] = true;
-        // $this->page_data['use_footer'] = true;        
-        // $this->page_data['page_name'] = 'prodmember';
-        // $this->page_data['contents_path'] = '/company/prodmember_list.php';        
-        // $this->view( $this->page_data );        
-
+        //echoPre($this->page_data);
+        $this->view( $this->page_data );                
     } 
 
     /**
      * 생산 담당자 수정 페이지를 생성한다
+     * 11/16/20 kange Add 
      */
     public function prodMember_write(){
+                
+        //Set Value Add 
+
+        $query_result = [];
+       
+
+        if( $this->page_data['mode'] == 'edit') {
+        
+            $this->issetParams( $this->page_data, ['production_member_idx']);
+            
+            $this->page_data['page_work'] = '수정';
+            
+            # 회원 정보
+            $security_result = $this->model->getProductionMember( " production_member_idx = '". $this->page_data['production_member_idx'] ."' " );
+
+            if( count( $security_result['row'] ) > 0  ) {
+                $this->page_data = array_merge( $this->page_data, $security_result['row'] );
+            } else {
+                errorBack('해당 게시물이 삭제되었거나 정상적인 접근 방법이 아닙니다.');
+            }
+                        
+
+        } else {
+
+            $this->page_data['mode'] = 'ins';
+            $this->page_data['page_work'] = '등록';
+
+        }
+
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
@@ -531,6 +543,50 @@ class company extends baseController {
         $this->page_data['contents_path'] = '/company/prodmember_write.php';        
         $this->view( $this->page_data );        
     }
+
+
+    /**
+     * 생산담당자 데이터를 처리한다.
+     * 11/16/20 kange Add
+     */
+    public function prodMember_proc(){
+
+        # post 접근 체크
+        postCheck(); 
+        //echoBr( $this->page_data ); exit;
+        
+        $this->page_name = 'prodmember';
+        
+        // # 트랜잭션 시작
+        $this->model->runTransaction();
+
+        # 회원 비밀번호 일치 확인
+        if( $this->page_data['password'] !== $this->page_data['re_password'] ) {
+            errorBack('비밀번호 값과 재입력 값이 일치하지 않습니다.');
+        }
+
+        $query_result = [                       
+                         'name' => $this->page_data['name']
+                        ,'phone_no' => $this->page_data['phone_no']
+                        ,'password' => hash_conv( $this->page_data['password'] )                        
+                        ,'work_position' => $this->page_data['work_position']
+                        ,'work_detail' => $this->page_data['work_detail']
+                        ,'reg_idx' => getAccountInfo()['idx']
+                        ,'edit_idx' => getAccountInfo()['idx']            
+                        ,'edit_date' => 'NOW()'
+                        ,'health_certi_date' => $this->page_data['health_certi_date']
+                        ,'reg_date' => 'NOW()'
+                        ,'use_flag' => 'Y'
+                        ,'del_flag' => 'N'
+                        ];
+
+        $this->model->insertProductionMember($query_result);
+        
+        # 트랜잭션 종료
+        $this->model->stopTransaction();
+
+        movePage('replace', '저장되었습니다.', './company_info?top_code=' . $this->page_data['top_code'] . '&left_code=' .$this->page_data['left_code']  );        
+    }    
 
     /*
     * 납품기업업체 목록을 생성한다 

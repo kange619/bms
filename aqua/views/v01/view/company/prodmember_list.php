@@ -1,6 +1,6 @@
-<?php
+<!-- <?php
 var_dump($list);
-?>
+?> -->
 
 
 <!-- Start content-page -->
@@ -36,15 +36,7 @@ var_dump($list);
                                         <th class="info">보건증갱신기간</th>
                                         <th class="info">정/부</th>
                                         <th class="info">상태</th>
-
-                                        <!-- 
-                                        <th class="info sorting " data-order="reg_date" >가입일시</th>                                        
-                                        <th class="info sorting " data-order="member_name" >담당자</th>
-                                        <th class="info sorting " data-order="phone_no" >휴대폰번호</th>
-                                        <th class="info sorting " data-order="email" >이메일</th>                                                                                                         
-                                        <th class="info sorting " data-order="use_flag" >상태</th>                                                                                                         
-                                        <th class="info " >삭제</th>     
-                                        -->                                                                                                                                            
+                                                                                                                                     
                                     </tr>                                
                                 </thead>        
 
@@ -57,15 +49,12 @@ var_dump($list);
                                 </tbody> 
 
                                 <tbody>
-                                    <?php echo $paging->total_rs; ?>
-                                    <?php 
-                                    if( $paging->total_rs > 0 ){ 
-                                                
+                                   
+                                    <?php                                                                                     
                                         foreach($list AS $key=>$value) {
                                     ?>
                                     <tr>
-                                        <td><?=( $paging->total_rs - ($page-1) * (int)$list_rs-$key );?></td>
-                                        <td><?=$value['reg_date'];?></td>
+                                        <td><?=( $paging->total_rs - ($page-1) * (int)$list_rs-$key );?></td>                                        
                                         <td>
                                             <a class="underline" href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&production_member_idx=<?=$value['production_member_idx'];?>">
                                                 <?=$value['name'];?>
@@ -76,15 +65,12 @@ var_dump($list);
                                         <td><?=$value['work_position'];?></td>
                                         <td><?=$value['work_detail'];?></td>                                    
                                         <td><?=$value['health_certi_date'];?></td>
+                                        <td><?=" "?></td>
+                                        <td><?=$value['use_flag'];?></td>
                                     </tr>
                                     <?php   
                                         }
-                                    } else {
-                                    ?>                                
-                                        <tr><td colspan="9">데이터가 없습니다</td></tr>
-                                    <?php
-                                    }
-                                    ?>
+                                    ?>                                                                    
                                 </tbody>                                
                             </table>                            
                         </div>      
@@ -93,7 +79,14 @@ var_dump($list);
                     </div>                       
                 </div>
             </div><!-- end row --> 
-
+            <form name="list_form" id="list_form" method="post" action="./<?=$page_name?>_proc">
+                <input type="hidden" name="mode" id="write" />
+                <input type="hidden" name="production_member_idx" id="production_member_idx" />
+                <input type="hidden" name="page" value="<?=$page?>" />
+                <input type="hidden" name="top_code" value="<?=$top_code?>" />
+                <input type="hidden" name="left_code" value="<?=$left_code?>" />
+                <input type="hidden" name="ref_params" value="<?=$params?>" />
+            </form>
 
         </div> <!-- // container -->
     </div> <!-- // content -->
