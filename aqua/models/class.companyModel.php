@@ -200,6 +200,21 @@ class companyModel extends baseModel {
     }
 
 
+    /**
+     * 생산담당자 정보를 반환한다.
+     * 11/16/20 kange Add 
+     */
+    public function getTest() {
+
+        $this->table_member = 't_production_member';
+
+        $query = " SELECT * FROM ". $this->table_member;
+        $query_result = $this->db->execute( $query );
+
+        return $query_result['return_data'];
+
+    }    
+
 
     
     

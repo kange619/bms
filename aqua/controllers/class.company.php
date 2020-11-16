@@ -59,7 +59,6 @@ class company extends baseController {
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=            
         
         $this->page_data['page_work'] = '수정';
-
         # 기업정보를 요청한다.
         $query_result = $this->model->getCompany( " company_idx = '". COMPANY_CODE ."' " );
 
@@ -484,13 +483,40 @@ class company extends baseController {
      */
 
     public function prodMember_list(){      
- 
+
+        # 리스트 정보요청
+        $list_result = $this->model->getTest();
+
+        // $data = [
+        //     'MileageDefault' => $postDatas['giveMileage'] ,
+        //     'MileagePolicy' => $postDatas['useType'] ,
+        //     'MileageRate' => n2Array('rate',$postDatas) ,
+        //     'MileageUseLimit' => $postDatas['useMileage'][0] ,
+        //     'MileageUseMin' => $postDatas['useMileage'][1] ,
+        //     'MileageUseMax' => $postDatas['useMileage'][2] 
+        // ];
+        
+        $this->paging->total_rs = $list_result['total_rs'];        
+        $this->page_data['paging'] = $this->paging; 
+        
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
         $this->page_data['page_name'] = 'prodmember';
-        $this->page_data['contents_path'] = '/company/prodmember_list.php';        
+        $this->page_data['contents_path'] = '/company/prodmember_list.php';
+        $this->page_data['list'] = $list_result['rows'];                      
+
+        //echoBr($list_result);
+
+        echoPre($this->page_data);
         $this->view( $this->page_data );        
+        
+        // $this->page_data['use_top'] = true;        
+        // $this->page_data['use_left'] = true;
+        // $this->page_data['use_footer'] = true;        
+        // $this->page_data['page_name'] = 'prodmember';
+        // $this->page_data['contents_path'] = '/company/prodmember_list.php';        
+        // $this->view( $this->page_data );        
 
     } 
 

@@ -1,3 +1,8 @@
+<?php
+var_dump($list);
+?>
+
+
 <!-- Start content-page -->
 <div class="content-page" >
     <!-- Start content -->
@@ -23,14 +28,14 @@
                             <table class="table table-bordered text-center dataTable" id="excelTable">
                                 <thead>
                                     <tr class="active">
-                                        <th class="info " style="width: 3%;">NO</th>
-                                        <th class="info sorting " data-order="reg_date" >이름</th>                                                                                
-                                        <th class="info sorting " data-order="phone_no" >휴대폰번호</th>
-                                        <th class="info sorting " data-order="job_position" >업무구분</th>                                                                                                         
-                                        <th class="info sorting " data-order="job_detail" >업무내용</th>                                                                                                         
-                                        <th class="info sorting " data-order="renew_certi" >보건증갱신기간</th>
-                                        <th class="info sorting " data-order="person_in_charge" >정/부</th>
-                                        <th class="info sorting " data-order="prodmem_status" >상태</th>
+                                        <th class="info" style="width: 3%;">NO</th>
+                                        <th class="info">이름</th>                                                                                
+                                        <th class="info">휴대폰번호</th>
+                                        <th class="info">업무구분</th>                                                                                                         
+                                        <th class="info">업무내용</th>                                                                                                         
+                                        <th class="info">보건증갱신기간</th>
+                                        <th class="info">정/부</th>
+                                        <th class="info">상태</th>
 
                                         <!-- 
                                         <th class="info sorting " data-order="reg_date" >가입일시</th>                                        
@@ -41,9 +46,50 @@
                                         <th class="info " >삭제</th>     
                                         -->                                                                                                                                            
                                     </tr>                                
-                                </thead>                                    
-                            </table>
-                        </div>                        
+                                </thead>        
+
+                                <tbody>
+                                    
+                                    <tr>
+                                        
+                                    </tr>
+
+                                </tbody> 
+
+                                <tbody>
+                                    <?php echo $paging->total_rs; ?>
+                                    <?php 
+                                    if( $paging->total_rs > 0 ){ 
+                                                
+                                        foreach($list AS $key=>$value) {
+                                    ?>
+                                    <tr>
+                                        <td><?=( $paging->total_rs - ($page-1) * (int)$list_rs-$key );?></td>
+                                        <td><?=$value['reg_date'];?></td>
+                                        <td>
+                                            <a class="underline" href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&production_member_idx=<?=$value['production_member_idx'];?>">
+                                                <?=$value['name'];?>
+                                            </a>
+                                        </td>
+                                        
+                                        <td><?=$value['phone_no'];?></td>
+                                        <td><?=$value['work_position'];?></td>
+                                        <td><?=$value['work_detail'];?></td>                                    
+                                        <td><?=$value['health_certi_date'];?></td>
+                                    </tr>
+                                    <?php   
+                                        }
+                                    } else {
+                                    ?>                                
+                                        <tr><td colspan="9">데이터가 없습니다</td></tr>
+                                    <?php
+                                    }
+                                    ?>
+                                </tbody>                                
+                            </table>                            
+                        </div>      
+
+                        <?php include_once( $this->getViewPhysicalPath( '/view/inc/select_list_rows.php' )  ); ?>                  
                     </div>                       
                 </div>
             </div><!-- end row --> 
