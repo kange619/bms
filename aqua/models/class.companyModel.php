@@ -208,7 +208,7 @@ class companyModel extends baseModel {
 
         $this->table_member = 't_production_member';
 
-        $query = " SELECT * FROM ". $this->table_member;
+        $query = " SELECT * FROM ". $this->table_member . " WHERE 1=1 ORDER BY production_member_idx DESC";
         $query_result = $this->db->execute( $query );
 
         return $query_result['return_data'];
@@ -238,6 +238,15 @@ class companyModel extends baseModel {
         $this->table_member = 't_production_member';
         return $this->db->insert( $this->table_member, $arg_data );
     } 
+
+    /**
+     * 생산담당자 정보 update
+     * 11/16/20 kange Add 
+     */
+    public function updateProductionMember( $arg_data, $arg_where ) {
+        $this->table = 't_production_member';        
+        return $this->db->update( $this->table, $arg_data, $arg_where );
+    }
 }
 
 ?>

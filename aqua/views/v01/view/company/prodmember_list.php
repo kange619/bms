@@ -54,7 +54,8 @@ var_dump($list);
                                         foreach($list AS $key=>$value) {
                                     ?>
                                     <tr>
-                                        <td><?=( $paging->total_rs - ($page-1) * (int)$list_rs-$key );?></td>                                        
+                                        <!-- <td><?=( $paging->total_rs - ($page-1) * (int)$list_rs-$key );?></td>                                         -->
+                                        <td><?=$value['production_member_idx']?></td>
                                         <td>
                                             <a class="underline" href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&production_member_idx=<?=$value['production_member_idx'];?>">
                                                 <?=$value['name'];?>
