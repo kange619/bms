@@ -84,7 +84,7 @@
                         }, 
                         {
                             "title": "생산담당자등록",
-                            "link": "\/company\/prodMember_list?top_code=SI003&left_code=SF320",
+                            "link": "\/company\/production_member_list?top_code=SI003&left_code=SF320",
                             "code": "SF320"
                         },                                                 
                         {
