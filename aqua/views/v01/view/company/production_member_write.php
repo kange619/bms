@@ -14,7 +14,7 @@
 
             <form class="form-horizontal" role="form" method="post" id="form_write" enctype="multipart/form-data"  action="./<?=$page_name?>_proc">                
                 <input type="hidden" name="mode" id="mode" value="<?=$mode?>" />                
-                <input type="hidden" name="company_member_idx" value="<?=$production_member_idx?>" />                
+                <input type="hidden" name="production_member_idx" value="<?=$production_member_idx?>" />
                 <input type="hidden" name="page" value="<?=$page?>" />
                 <input type="hidden" name="top_code" value="<?=$top_code?>" />
                 <input type="hidden" name="left_code" value="<?=$left_code?>" />
@@ -67,8 +67,8 @@
                                             <th class="info middle-align">업무구분</th>
                                             <td colspan="3">                                            
                                                 <select name="work_position" class="form-control" id="work_position" style="width:200px">
-                                                    <option value="1" {work_position1}>option1</option>
-                                                    <option value="2" {work_position2}>option2</option>
+                                                    <option value="1" >option1</option>
+                                                    <option value="2" >option2</option>
                                                 </select> 
                                             </td>
                                         </tr>      
@@ -77,8 +77,8 @@
                                             <th class="info middle-align">업무내용</th>
                                             <td colspan="3">
                                                 <select name="work_detail" class="form-control" id="work_detail" style="width:200px">
-                                                    <option value="1" {work_detail1}>option1</option>
-                                                    <option value="2" {work_detail2}>option2</option>
+                                                    <option value="1" >option1</option>
+                                                    <option value="2" >option2</option>
                                                 </select> 
                                             </td>
                                         </tr>   
@@ -109,23 +109,21 @@
                     </div>
                 </div>
                 <!-- //기본정보 -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <?php
+                        if($mode == 'edit') {
+                            ?>
+                            <button type="button" class="pull-left btn btn-danger waves-effect w-md m-l-5" onclick="delProc()">삭제</button>
+                            <?php
+                        }
+                        ?>
+                        <button type="button" class="pull-right btn btn-primary waves-effect w-md m-l-5" onclick="register()">저장</button>
+                    </div>
+                </div>
             
             </form>
-
-            <div class="row"> 
-                <div class="col-lg-12">
-                    <?php
-                        if($mode == 'edit') {
-                    ?>                            
-                    <button type="button" class="pull-left btn btn-danger waves-effect w-md m-l-5" onclick="delProc()">삭제</button> 
-                    <?php
-                        }
-                    ?>
-                    <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
-                    <button type="button" class="pull-right btn btn-primary waves-effect w-md m-l-5" onclick="register()">저장</button>
-               </div>
-            </div>
-
 
         </div> <!-- // container -->
     </div> <!-- // content -->
@@ -144,10 +142,10 @@
             return;
         }
 
-        viewFormValid.alert_type = 'add';        
+        viewFormValid.alert_type = 'add';
         if( viewFormValid.run( 'form_write' ) === true ) {
             // submit
-           
+
             $('#form_write').submit();
         }
 

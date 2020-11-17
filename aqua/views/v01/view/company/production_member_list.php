@@ -12,7 +12,7 @@ var_dump($list);
             <section class="content-header">                    
                 <h1>
                     생산담당자 관리 
-                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">추가</button>                
+                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?mode=ins&page=<?=$page?><?=$params?>'">추가</button>
                 </h1>                   
             </section>
 
@@ -79,9 +79,10 @@ var_dump($list);
                         <?php include_once( $this->getViewPhysicalPath( '/view/inc/select_list_rows.php' )  ); ?>                  
                     </div>                       
                 </div>
-            </div><!-- end row --> 
+            </div><!-- end row -->
+
             <form name="list_form" id="list_form" method="post" action="./<?=$page_name?>_proc">
-                <input type="hidden" name="mode" id="write" />
+                <input type="hidden" name="mode" id="ins" />
                 <input type="hidden" name="production_member_idx" id="production_member_idx" />
                 <input type="hidden" name="page" value="<?=$page?>" />
                 <input type="hidden" name="top_code" value="<?=$top_code?>" />

@@ -204,11 +204,11 @@ class companyModel extends baseModel {
      * 생산담당자 정보를 반환한다.
      * 11/16/20 kange Add 
      */
-    public function getTest() {
+    public function setProductionMember() {
 
         $this->table_member = 't_production_member';
 
-        $query = " SELECT * FROM ". $this->table_member . " WHERE 1=1 ORDER BY production_member_idx DESC";
+        $query = " SELECT * FROM ". $this->table_member . " WHERE 1=1 AND del_flag <> 'Y' ORDER BY production_member_idx DESC";
         $query_result = $this->db->execute( $query );
 
         return $query_result['return_data'];
@@ -247,6 +247,7 @@ class companyModel extends baseModel {
         $this->table = 't_production_member';        
         return $this->db->update( $this->table, $arg_data, $arg_where );
     }
+
 }
 
 ?>

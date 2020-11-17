@@ -481,24 +481,25 @@ class company extends baseController {
     /**
      * 생산 담당자 등록 페이지를 생성한다.
      */
-    public function prodMember_list(){      
+    public function production_member_list(){
 
         # 리스트 정보요청
-        $list_result = $this->model->getTest();
+        $list_result = $this->model->setProductionMember();
         
         $this->paging->total_rs = $list_result['total_rs'];        
-        $this->page_data['paging'] = $this->paging; 
-        
+        $this->page_data['paging'] = $this->paging;
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
-        $this->page_data['page_name'] = 'prodmember';
-        $this->page_data['contents_path'] = '/company/prodmember_list.php';
+        $this->page_data['page_name'] = 'production_member';
+        $this->page_data['contents_path'] = '/company/production_member_list.php';
         $this->page_data['list'] = $list_result['rows'];                      
 
         //echoBr($list_result);
 
         //echoPre($this->page_data);
+        //exit;
+
         $this->view( $this->page_data );                
     } 
 
@@ -506,17 +507,14 @@ class company extends baseController {
      * 생산 담당자 수정 페이지를 생성한다
      * 11/16/20 kange Add 
      */
-    public function prodMember_write(){
-                
-        //Set Value Add 
+    public function production_member_write(){
 
+        //Set Value Add
         $query_result = [];
-       
 
         if( $this->page_data['mode'] == 'edit') {
         
             $this->issetParams( $this->page_data, ['production_member_idx']);
-            
             $this->page_data['page_work'] = '수정';
             
             # 회원 정보
@@ -527,7 +525,6 @@ class company extends baseController {
             } else {
                 errorBack('해당 게시물이 삭제되었거나 정상적인 접근 방법이 아닙니다.');
             }
-                        
 
         } else {
 
@@ -539,53 +536,138 @@ class company extends baseController {
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
-        $this->page_data['page_name'] = 'prodmember';
-        $this->page_data['contents_path'] = '/company/prodmember_write.php';        
+        $this->page_data['page_name'] = 'production_member';
+        $this->page_data['contents_path'] = '/company/production_member_write.php';
         $this->view( $this->page_data );        
     }
-
 
     /**
      * 생산담당자 데이터를 처리한다.
      * 11/16/20 kange Add
      */
-    public function prodMember_proc(){
+    public function production_member_proc(){
 
-        # post 접근 체크
-        postCheck(); 
-        //echoBr( $this->page_data ); exit;
-        
-        $this->page_name = 'prodmember';
-        
-        // # 트랜잭션 시작
-        $this->model->runTransaction();
+        #post 접근 체크
+        postCheck();
 
-        # 회원 비밀번호 일치 확인
-        if( $this->page_data['password'] !== $this->page_data['re_password'] ) {
-            errorBack('비밀번호 값과 재입력 값이 일치하지 않습니다.');
+        $this->page_name = 'production_member';
+
+        switch($this->page_data['mode']){
+            case 'ins' :
+            {
+
+                //echoPre($this->page_data);
+                //exit;
+
+                // # 트랜잭션 시작
+                $this->model->runTransaction();
+
+                # 회원 비밀번호 일치 확인
+                if( $this->page_data['password'] !== $this->page_data['re_password'] ) {
+                    errorBack('비밀번호 값과 재입력 값이 일치하지 않습니다.');
+                }
+
+                $query_result = [
+                    'name' => $this->page_data['name']
+                    ,'phone_no' => $this->page_data['phone_no']
+                    ,'password' => hash_conv( $this->page_data['password'] )
+                    ,'work_position' => 1
+                    ,'work_detail' => 1
+                    ,'reg_idx' => getAccountInfo()['idx']
+                    ,'edit_idx' => getAccountInfo()['idx']
+                    ,'edit_date' => 'NOW()'
+                    ,'health_certi_date' => $this->page_data['health_certi_date']
+                    ,'reg_date' => 'NOW()'
+                    ,'use_flag' => 'Y'
+                    ,'del_flag' => 'N'
+                ];
+
+                $this->model->insertProductionMember($query_result);
+
+                # 트랜잭션 종료
+                $this->model->stopTransaction();
+
+                movePage('replace', '저장되었습니다.', './production_member_list?top_code=' . $this->page_data['top_code'] . '&left_code=' .$this->page_data['left_code']  );
+
+                break;
+            }
+            case 'edit' :
+            {
+
+                //echoPre($this->page_data);
+                //exit;
+
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+
+                $update_data = [
+                    'name' => $this->page_data['name']
+                    ,'phone_no' => $this->page_data['phone_no']
+                    ,'password' => hash_conv( $this->page_data['password'] )
+                    ,'work_position' => $this->page_data['work_position']
+                    ,'work_detail' => $this->page_data['work_detail']
+                    ,'reg_idx' => getAccountInfo()['idx']
+                    ,'edit_idx' => getAccountInfo()['idx']
+                    ,'edit_date' => 'NOW()'
+                    ,'health_certi_date' => $this->page_data['health_certi_date']
+                    ,'reg_date' => 'NOW()'
+                    ,'use_flag' => 'Y'
+                    ,'del_flag' => 'N'
+                ];
+
+                //echoPre($this->page_data);
+                //exit;
+
+//                if( empty( $this->page_data['password'] ) == false ) {
+//
+//                    # 회원 비밀번호 일치 확인
+//                    if( $this->page_data['password'] !== $this->page_data['re_password'] ) {
+//                        errorBack('비밀번호 값과 재입력 값이 일치하지 않습니다.');
+//                    }
+//
+//                    $update_data['password'] = hash_conv( $this->page_data['password'] );
+//                }
+
+
+                $this->model->updateProductionMember( $update_data ," production_member_idx = '" . $this->page_data['production_member_idx']. "'" );
+
+
+                # 트랜잭션 종료
+                $this->model->stopTransaction();
+
+
+                movePage('replace', '저장되었습니다.', './'. $this->page_name .'_write?production_member_idx='. $this->page_data['production_member_idx']. '&mode=edit' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+                //movePage('replace', '저장되었습니다.', './'. $this->page_name .'_list?page=1' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+            }
+            case 'del' :
+            {
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                # 필수값 체크
+                #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+                $this->issetParams( $this->page_data, [
+                    'production_member_idx'
+                ]);
+
+                # 트랜잭션 시작
+                $this->model->runTransaction();
+
+                $this->model->updateProductionMember( ['del_flag'=>'Y'] ," production_member_idx = '" . $this->page_data['production_member_idx']. "'" );
+
+                # 트랜잭션 종료
+                $this->model->stopTransaction();
+
+                movePage('replace', '삭제되었습니다.', './'. $this->page_name .'_list?page=1' . htmlspecialchars_decode( $this->page_data['ref_params'] ) );
+
+                break;
+
+            }
+            default : {
+                errorBack('잘못된 접근입니다.');
+            }
         }
 
-        $query_result = [                       
-                         'name' => $this->page_data['name']
-                        ,'phone_no' => $this->page_data['phone_no']
-                        ,'password' => hash_conv( $this->page_data['password'] )                        
-                        ,'work_position' => $this->page_data['work_position']
-                        ,'work_detail' => $this->page_data['work_detail']
-                        ,'reg_idx' => getAccountInfo()['idx']
-                        ,'edit_idx' => getAccountInfo()['idx']            
-                        ,'edit_date' => 'NOW()'
-                        ,'health_certi_date' => $this->page_data['health_certi_date']
-                        ,'reg_date' => 'NOW()'
-                        ,'use_flag' => 'Y'
-                        ,'del_flag' => 'N'
-                        ];
-
-        $this->model->insertProductionMember($query_result);
-        
-        # 트랜잭션 종료
-        $this->model->stopTransaction();
-
-        movePage('replace', '저장되었습니다.', './company_info?top_code=' . $this->page_data['top_code'] . '&left_code=' .$this->page_data['left_code']  );        
     }    
 
     /*
