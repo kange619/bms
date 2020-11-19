@@ -64,9 +64,9 @@ var_dump($list);
                                         
                                         <td><?=$value['phone_no'];?></td>
                                         <td><?=$value['work_position'];?></td>
-                                        <td><?=$value['work_detail'];?></td>                                    
+                                        <td><?=$value['work_detail'];?></td>                                                                            
                                         <td><?=$value['health_certi_date'];?></td>
-                                        <td><?=" "?></td>
+                                        <td><?=$value['person_in_charge'];?></td>
                                         <td><?=$value['use_flag'];?></td>
                                     </tr>
                                     <?php   

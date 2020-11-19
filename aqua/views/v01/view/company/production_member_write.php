@@ -66,9 +66,9 @@
                                         <tr>
                                             <th class="info middle-align">업무구분</th>
                                             <td colspan="3">                                            
-                                                <select name="work_position" class="form-control" id="work_position" style="width:200px">
-                                                    <option value="1" >option1</option>
-                                                    <option value="2" >option2</option>
+                                                <select name="work_position" class="form-control" id="work_position" style="width:200px" >                                                    
+                                                    <option value="1" <?=($work_position == '1' ? 'selected="selected"' : '' )?> >option1</option>
+                                                    <option value="2" <?=($work_position == '2' ? 'selected="selected"' : '' )?> >option2</option>
                                                 </select> 
                                             </td>
                                         </tr>      
@@ -76,9 +76,9 @@
                                         <tr>
                                             <th class="info middle-align">업무내용</th>
                                             <td colspan="3">
-                                                <select name="work_detail" class="form-control" id="work_detail" style="width:200px">
-                                                    <option value="1" >option1</option>
-                                                    <option value="2" >option2</option>
+                                                <select name="work_detail" class="form-control" id="work_detail" style="width:200px" value="<?=$work_detail;?>">
+                                                    <option value="1" <?=($work_detail == '1' ? 'selected="selected"' : '' )?> >option1</option>
+                                                    <option value="2" <?=($work_detail == '2' ? 'selected="selected"' : '' )?> >option2</option>
                                                 </select> 
                                             </td>
                                         </tr>   
@@ -87,8 +87,14 @@
                                         <tr>
                                             <th class="info middle-align">정/부</th>
                                             <td colspan="3">
-                                                <label><input type="checkbox" name="person_in_charge" value="" checked>정</label>
-                                                <label><input type="checkbox" name="person_in_charge" value="" >부</label>
+                                                <!-- <label><input type="checkbox" name="person_in_charge" value="" checked>정</label>
+                                                <label><input type="checkbox" name="person_in_charge" value="person_in_charge2" >부</label> -->
+
+                                                <input type="checkbox" name="person_in_charge[]" id="person_in_charge_cheif" value="chief" <?=(strpos( $person_in_charge, 'cheif' ) > -1 ) ? 'checked="checked"' : '' ?> >
+                                                <label class="m-r-10" for="person_in_charge_cheif">정</label>
+
+                                                <input type="checkbox" name="person_in_charge[]" id="person_in_charge_deputy" value="deputy" <?=(strpos( $person_in_charge, 'deputy' ) > -1 ) ? 'checked="checked"' : '' ?> >
+                                                <label class="m-r-10" for="person_in_charge_deputy">부</label>
 
                                             </td>
                                         </tr>
@@ -96,7 +102,7 @@
                                         <tr>
                                             <th class="info middle-align" id="date-range" >보건증갱신기간</th>
                                             <td colspan="3">
-                                                <input type="text" class="form-control datepicker" name="health_certi_date" value="" style="width:200px">                                            
+                                                <input type="text" class="form-control datepicker" name="health_certi_date" value="" style="width:200px" value="<?=$health_certi_date?>">                                            
                                             </td>
                                         </tr>
                                         

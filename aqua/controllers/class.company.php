@@ -516,9 +516,9 @@ class company extends baseController {
         
             $this->issetParams( $this->page_data, ['production_member_idx']);
             $this->page_data['page_work'] = '수정';
-            
+           
             # 회원 정보
-            $security_result = $this->model->getProductionMember( " production_member_idx = '". $this->page_data['production_member_idx'] ."' " );
+            $security_result = $this->model->getProductionMember( " production_member_idx = '". $this->page_data['production_member_idx'] ."' " );                                
 
             if( count( $security_result['row'] ) > 0  ) {
                 $this->page_data = array_merge( $this->page_data, $security_result['row'] );
@@ -533,11 +533,15 @@ class company extends baseController {
 
         }
 
+        // echoPre($this->page_data);
+        // exit;
+        
         $this->page_data['use_top'] = true;        
         $this->page_data['use_left'] = true;
         $this->page_data['use_footer'] = true;        
         $this->page_data['page_name'] = 'production_member';
         $this->page_data['contents_path'] = '/company/production_member_write.php';
+        
         $this->view( $this->page_data );        
     }
 
@@ -551,6 +555,9 @@ class company extends baseController {
         postCheck();
 
         $this->page_name = 'production_member';
+
+        // echoPre($this->page_data);
+        // exit;
 
         switch($this->page_data['mode']){
             case 'ins' :
@@ -567,12 +574,18 @@ class company extends baseController {
                     errorBack('비밀번호 값과 재입력 값이 일치하지 않습니다.');
                 }
 
+                # person_in_charge 문자열로 변환
+                if( count( $this->page_data['person_in_charge'] ) > 0 ){
+                    $this->page_data['person_in_charge'] = join(',', $this->page_data['person_in_charge'] );
+                }
+
                 $query_result = [
                     'name' => $this->page_data['name']
                     ,'phone_no' => $this->page_data['phone_no']
                     ,'password' => hash_conv( $this->page_data['password'] )
-                    ,'work_position' => 1
-                    ,'work_detail' => 1
+                    ,'work_position' => $this->page_data['work_position']
+                    ,'work_detail' => $this->page_data['work_detail']
+                    ,'person_in_charge' => $this->page_data['person_in_charge']
                     ,'reg_idx' => getAccountInfo()['idx']
                     ,'edit_idx' => getAccountInfo()['idx']
                     ,'edit_date' => 'NOW()'
@@ -600,12 +613,18 @@ class company extends baseController {
                 # 트랜잭션 시작
                 $this->model->runTransaction();
 
+                # person_in_charge 문자열로 변환
+                if( count( $this->page_data['person_in_charge'] ) > 0 ){
+                    $this->page_data['person_in_charge'] = join(',', $this->page_data['person_in_charge'] );
+                }
+
                 $update_data = [
                     'name' => $this->page_data['name']
                     ,'phone_no' => $this->page_data['phone_no']
                     ,'password' => hash_conv( $this->page_data['password'] )
                     ,'work_position' => $this->page_data['work_position']
                     ,'work_detail' => $this->page_data['work_detail']
+                    ,'person_in_charge' => $this->page_data['person_in_charge']
                     ,'reg_idx' => getAccountInfo()['idx']
                     ,'edit_idx' => getAccountInfo()['idx']
                     ,'edit_date' => 'NOW()'
@@ -614,9 +633,7 @@ class company extends baseController {
                     ,'use_flag' => 'Y'
                     ,'del_flag' => 'N'
                 ];
-
-                //echoPre($this->page_data);
-                //exit;
+                
 
 //                if( empty( $this->page_data['password'] ) == false ) {
 //
