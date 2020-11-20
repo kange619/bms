@@ -207,7 +207,6 @@ class company extends baseController {
                                     OR ( registration_no LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( ceo_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( member_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( phone_no LIKE '%". $this->page_data['sch_keyword'] ."%' )
                             ) ";
         }
 
@@ -222,6 +221,8 @@ class company extends baseController {
         if($this->page_data['sch_use_flag']) {
             $query_where .= " AND use_flag = '".$this->page_data['sch_use_flag']."' ";
         }
+
+        
 
         # 리스트 정보요청
         $list_result = $this->model->getCompanyMembers([            

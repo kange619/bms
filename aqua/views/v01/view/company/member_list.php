@@ -63,7 +63,8 @@
                                     <div class="form-group">
                                         <div class="col-sm-offset-5 col-sm-7 m-t-15">
                                             <button type="button" class="btn btn-primary waves-effect waves-light" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>'">기본설정</button>
-                                            <button type="submit" class="btn btn-inverse waves-effect m-l-5" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>$sch_keyword=<?=$sch_keyword?>'">검색</button>
+                                            <!-- <button type="reset" class="btn btn-primary waves-effect waves-light">기본설정</button> -->
+                                            <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
                                         </div>
                                     </div>
                                 </div>
