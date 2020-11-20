@@ -73,15 +73,49 @@ class standard extends baseController {
             $query_sort = ' ORDER BY df_sort DESC ';
         }
 
-        if( $this->page_data['sch_keyword'] ) {
-            $query_where .= " AND ( 
-                                    ( df_title LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( df_item_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( df_contents LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( df_reason LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                            ) ";
+        // 11/20/20 kange 소스원본 
+        // if( $this->page_data['sch_keyword'] ) {
+        //     $query_where .= " AND ( 
+        //                             ( df_title LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+        //                             OR ( df_item_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+        //                             OR ( df_contents LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+        //                             OR ( df_reason LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+        //                     ) ";
+        // }
+        // 11/20/20 kange 소스원본 
+        
+        if( $this->page_data['sch_keyword']){
+            
+            switch($this->page_data['documentType']){
+                
+                case 'All' : {
+                    $query_where .= " AND(
+                                            ( df_title LIKE '%". $this->page_data['sch_keyword'] ."%')
+                                            OR ( df_item_name LIKE '%". $this->page_data['sch_keyword'] ."%')
+                                        )";
+                    break;
+    
+                }
+                case 'Item' : {
+                    $query_where .= " AND(
+                                            ( df_item_name LIKE '%". $this->page_data['sch_keyword'] ."%')
+                                        )";
+                    break;
+    
+                }
+    
+                case 'Document' : {
+                    $query_where .= " AND(
+                                            ( df_title LIKE '%". $this->page_data['sch_keyword'] ."%')                                            
+                                        )";
+                    break;
+    
+                }
+    
+            }            
         }
-
+        
+                
         if($this->page_data['sch_s_date']) {
             $query_where .= " AND ( reg_date >= '".$this->page_data['sch_s_date']." 00:00:00' ) ";
         }
@@ -89,8 +123,7 @@ class standard extends baseController {
 		if($this->page_data['sch_e_date']) {
             $query_where .= " AND ( reg_date <= '".$this->page_data['sch_e_date']." 23:59:59' ) ";
         }
-
-
+        
         # 리스트 정보요청
         $list_result = $this->model->getDocumentFiles([            
             'query_where' => $query_where
