@@ -207,6 +207,7 @@ class company extends baseController {
                                     OR ( registration_no LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( ceo_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( member_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+                                    OR ( phone_no LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                             ) ";
         }
 
