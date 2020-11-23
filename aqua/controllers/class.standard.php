@@ -142,7 +142,6 @@ class standard extends baseController {
         $this->page_data['contents_path'] = '/standard/'. $page_name .'_list.php';
         $this->page_data['list'] = $list_result['rows'];        
         $this->view( $this->page_data );
-
     }
 
     /**
@@ -189,9 +188,7 @@ class standard extends baseController {
             $query_where .= " AND ( df_apply_date <= '".$this->page_data['sch_apply_e_date']." 23:59:59' ) ";
         }
 
-
         
-
         # 리스트 정보요청
         $list_result = $this->model->getDocumentFiles([            
             'query_where' => $query_where
@@ -299,13 +296,45 @@ class standard extends baseController {
             $query_sort = ' ORDER BY df_sort DESC ';
         }
 
-        if( $this->page_data['sch_keyword'] ) {
-            $query_where .= " AND ( 
-                                    ( df_title LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( df_contents LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( df_reason LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+        // 11/23/20 kange 원본 주석처리
+//        if( $this->page_data['sch_keyword'] ) {
+//            $query_where .= " AND (
+//                                    ( df_title LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                                    OR ( df_contents LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                                    OR ( df_reason LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                            ) ";
+//        }
+//
+        // 11/23/20 kange 원본 주석처리
+
+        // 11/23/20 kange 검색 조건 추가 
+        if( $this->page_data['sch_keyword']){
+            switch($this->page_data['workFilter']){
+
+                case 'All' : {
+                    $query_where .= " AND (
+                                    ( df_work_checklist_doc_title LIKE '%". $this->page_data['sch_keyword'] ."%' )
+                                    OR ( df_work_checklist_title LIKE '%". $this->page_data['sch_keyword'] ."%' )                                    
                             ) ";
+                    break;
+                }
+
+                case 'workType' : {
+                    $query_where .= " AND (
+                                    ( df_work_checklist_title LIKE '%". $this->page_data['sch_keyword'] ."%' )                                    
+                            ) ";
+                    break;
+                }
+                case 'workDetail' : {
+                    $query_where .= " AND (
+                                    ( df_work_checklist_doc_title LIKE '%". $this->page_data['sch_keyword'] ."%' )                                    
+                            ) ";
+                    break;
+                }
+
+            }
         }
+        // 11/23/20 kange 검색 조건 추가
 
         if($this->page_data['sch_s_date']) {
             $query_where .= " AND ( reg_date >= '".$this->page_data['sch_s_date']." 00:00:00' ) ";
@@ -314,7 +343,6 @@ class standard extends baseController {
 		if($this->page_data['sch_e_date']) {
             $query_where .= " AND ( reg_date <= '".$this->page_data['sch_e_date']." 23:59:59' ) ";
         }
-
 
         # 리스트 정보요청
         $list_result = $this->model->getDocumentFiles([            
