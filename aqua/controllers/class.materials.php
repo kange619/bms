@@ -1227,8 +1227,10 @@ class materials extends baseController {
         # SET Values
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         $page_name = 'materials';
-     
-        $query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' )  ";
+
+        //11/24/20 KANGE ADD.1 material_kind = 'sub' 조건 추가 (부자재)
+        //$query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' )  ";
+        $query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' ) AND (material_kind = 'sub') ";
         
         $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
 
@@ -1255,20 +1257,41 @@ class materials extends baseController {
         }
 
 
-        if( $this->page_data['sch_keyword'] ) {
-            $query_where .= " AND ( 
-                                    ( material_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                   
-                            ) ";
-        }
+//        if( $this->page_data['sch_keyword'] ) {
+//            $query_where .= " AND (
+//                                    ( material_name LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//
+//                            ) ";
+//        }
+        //11/24/20 KANGE ADD.2 검색 조건 추가
+        if($this->page_data['sch_keyword']){
 
-        
+            switch($this->page_data['searchType']){
+                case 'All' : {
+                    $query_where .= " AND (material_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'itemCode' : {
+                    //11/24/20 KANGE itemCode 찾으면 그걸로 바꿔야함
+                    $query_where .= " AND (material_idx LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'itemName' : {
+                    $query_where .= " AND (material_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+            }
+        }
+        //11/24/20 KANGE ADD.2 검색 조건 추가
+
+
         # 리스트 정보요청
         $list_result = $this->model->getMaterialStds([            
             'query_where' => $query_where
             ,'query_sort' => $query_sort
             ,'limit' => $limit
         ]);
+
 
         $this->paging->total_rs = $list_result['total_rs'];        
         $this->page_data['paging'] = $this->paging; 
@@ -1791,20 +1814,73 @@ class materials extends baseController {
 
     /**
      * 원료기준 페이지 
-     * 11/10/20 kange add  
+     * 11/24/20 KANGE ADD.3
      */
     public function raw_materials_list(){
 
         $page_name = 'raw_materials';
-     
-        $this->page_data['paging'] = $this->paging; 
-        
-        $this->page_data['use_top'] = true;        
+        $query_where = " AND ( del_flag='N' ) AND ( company_idx = '". COMPANY_CODE ."' ) AND (material_kind = 'raw') ";
+
+        $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
+
+        if( $this->page_data['sch_order_field'] ){
+            $query_sort = ' ORDER BY '. $this->page_data['sch_order_field'] .' '.$this->page_data['sch_order_status'].' ';
+        } else {
+            $query_sort = ' ORDER BY use_flag ASC, material_idx DESC  ';
+        }
+
+        if($this->page_data['sch_s_date']) {
+            $query_where .= " AND ( reg_date >= '".$this->page_data['sch_s_date']." 00:00:00' ) ";
+        }
+
+        if($this->page_data['sch_e_date']) {
+            $query_where .= " AND ( reg_date <= '".$this->page_data['sch_e_date']." 23:59:59' ) ";
+        }
+
+        if($this->page_data['sch_material_kind']) {
+            $query_where .= " AND ( material_kind = '".$this->page_data['sch_material_kind']."' ) ";
+        }
+
+        if($this->page_data['sch_use_flag']) {
+            $query_where .= " AND ( use_flag = '".$this->page_data['sch_use_flag']."' ) ";
+        }
+
+        if($this->page_data['sch_keyword']){
+
+            switch($this->page_data['searchType']){
+                case 'All' : {
+                    $query_where .= " AND (material_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'itemCode' : {
+                    //11/24/20 KANGE itemCode 찾으면 그걸로 바꿔야함
+                    $query_where .= " AND (material_idx LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'itemName' : {
+                    $query_where .= " AND (material_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+            }
+        }
+
+        # 리스트 정보요청
+        $list_result = $this->model->getMaterialStds([
+            'query_where' => $query_where
+            ,'query_sort' => $query_sort
+            ,'limit' => $limit
+        ]);
+
+
+        $this->paging->total_rs = $list_result['total_rs'];
+        $this->page_data['paging'] = $this->paging;
+
+        $this->page_data['use_top'] = true;
         $this->page_data['use_left'] = true;
-        $this->page_data['use_footer'] = true;        
+        $this->page_data['use_footer'] = true;
         $this->page_data['page_name'] = $page_name;
         $this->page_data['contents_path'] = '/materials/'. $page_name .'_list.php';
-        $this->page_data['list'] = $list_result['rows'];        
+        $this->page_data['list'] = $list_result['rows'];
         $this->view( $this->page_data );
 
     }        
