@@ -1,3 +1,4 @@
+
 <!-- Start content-page -->
 <div class="content-page" >
     <!-- Start content -->
@@ -7,7 +8,7 @@
             <section class="content-header">                    
                 <h1>
                     생산제품등록관리
-                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>                                     
+                    <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>
                 </h1>                   
             </section>
 
@@ -41,14 +42,18 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">검색</label>
                                         <div class="col-sm-2">
-                                            <select class="form-control" name="documentType" id="documentType" >
-                                                <option value="All" <?=($documentType == 'All' ? 'selected="selected"' : '' )?> >전체</option>
-                                                <option value="Item" <?=($documentType == 'Item' ? 'selected="selected"' : '' )?> >품목명</option>
-                                                <option value="Document" <?=($documentType == 'Document' ? 'selected="selected"' : '' )?> >문서명</option>
+
+                                            <select class="form-control" name="searchType" id="searchType" >
+                                                <option value="All" <?=($searchType == 'All' ? 'selected="selected"' : '' )?> >전체</option>
+                                                <option value="item" <?=($searchType == 'item' ? 'selected="selected"' : '' )?> >품목</option>
+                                                <option value="productName" <?=($searchType == 'productName' ? 'selected="selected"' : '' )?> >제품명</option>
+                                                <option value="productRegNo" <?=($searchType == 'productRegNo' ? 'selected="selected"' : '' )?> >제품등록번호</option>
+                                                <option value="itemReportNo" <?=($searchType == 'itemReportNo' ? 'selected="selected"' : '' )?> >품목신고번호</option>
                                             </select>
+
                                         </div>
                                         <div class="col-sm-7">
-                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="품목명, 문서명">
+                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="품목, 제품명, 제품등록번호, 품목신고번호">
                                         </div>
                                     </div>
                                 </div>
@@ -81,30 +86,30 @@
                             <table class="table table-bordered text-center dataTable" id="excelTable">
                             <thead>
                                     <tr class="active">
-                                        <th class="info sorting" data-order="entry_no" style="width: 5%">No</th>
-                                        <th class="info sorting" data-order="material_idx"  style="width: 10%;">등록일</th>
-                                        <th class="info sorting" data-order="material_name" style="width: 30%;" >품목</th>                                                                        
-                                        <th class="info sorting" data-order="net_contents" >제품명</th>
-                                        <th class="info sorting" data-order="reg_date" >제품등록번호</th>                                        
-                                        <th class="info sorting" data-order="use_flag" >품목신고번호</th>                                                                     
+                                        <th class="info sorting" data-order="product_idx" style="width: 5%">No</th>
+                                        <th class="info sorting" data-order="reg_date"  style="width: 10%;">등록일</th>
+                                        <th class="info sorting" data-order="product_name" style="width: 30%;" >품목</th>
+                                        <th class="info sorting" data-order="product_name" >제품명</th>
+                                        <th class="info sorting" data-order="product_registration_no" >제품등록번호</th>
+                                        <th class="info sorting" data-order="item_report_no" >품목신고번호</th>
                                         <th class="info" >삭제</th>                                                       
                                         <!-- <th class="info sorting" data-order="material_kind" >분류</th>               -->
                                     </tr>                                
                                 </thead>
                                 <tbody>
                                     <?php 
-                                    if( $paging->total_rs > 0 ){ 
+                                    if( $paging->total_rs > 0 ){
                                                 
                                         foreach($list AS $key=>$value) {
                                     ?>
                                     <tr>
-                                        <td><?=$value['entry'];?></td>
-                                        <td><?=$value['material_idx'];?></td>
-                                        <!-- <td><?=( $value['material_kind'] == 'raw' ) ? '원자재' : '부자재' ;?></td> -->
-                                        <td><?=$value['material_name'];?></td>
-                                        <td><?=$value['net_contents'];?></td>
+                                        <td><?=$value['product_idx'];?></td>
                                         <td><?=$value['reg_date'];?></td>
-                                        <td><?=$value['use_flag'];?></td>
+                                        <!-- <td><?=( $value['material_kind'] == 'raw' ) ? '원자재' : '부자재' ;?></td> -->
+                                        <td><?=$value['product_name'];?></td>
+                                        <td><?=$value['product_name'];?></td>
+                                        <td><?=$value['product_registration_no'];?></td>
+                                        <td><?=$value['item_report_no'];?></td>
                                         <td>
                                             <a href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&material_idx=<?=$value['material_idx'];?>">
                                                 <button type="button" class="btn btn-sm btn-purple waves-effect waves-light" >수정</button>
@@ -115,7 +120,7 @@
                                     <?php   
                                         }
                                     } else {
-                                    ?>                                
+                                    ?>
                                         <tr><td colspan="9">데이터가 없습니다</td></tr>
                                     <?php
                                     }

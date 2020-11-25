@@ -67,6 +67,7 @@ class productModel extends baseModel {
     /**
      * 제품 정보를 가져온다.
      */
+
     public function getProduct( $arg_where ){
 
         $query = " SELECT * FROM ". $this->table ." WHERE " . $arg_where;
@@ -74,6 +75,31 @@ class productModel extends baseModel {
 
         return $query_result['return_data'];
 
+    }
+
+    /**
+     * 11/25/20 KANGE ADD.3 생산제품 갯수, 상세 데이터 조회 모델
+     */
+
+    public function getProductionGoods( $arg_where ){
+
+        $result = [];
+
+        //count select total_rs 로 데이터 갯수를 전달함
+        $query = " SELECT COUNT(*) AS cnt FROM ". $this->table ." WHERE 1=1 " . $arg_data['query_where'];
+
+        $query_result = $this->db->execute( $query );
+
+        $result['total_rs'] = $query_result['return_data']['row']['cnt'];
+
+        //data select
+        $query = " SELECT * FROM ". $this->table ." WHERE 1=1" . $arg_where['query_where'];
+
+        $query_result = $this->db->execute( $query );
+
+        $result['rows'] = $query_result['return_data']['rows'];
+
+        return $result;
     }
 
     /**

@@ -31,8 +31,8 @@ class production extends baseController {
         $this->paging = $this->new('pageHelper');
         $this->model = $this->new('productionModel');         
         $this->model_product = $this->new('productModel');         
-        $this->model_material = $this->new('materialsModel');         
-       
+        $this->model_material = $this->new('materialsModel');
+
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
         # GET parameters
         #+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
@@ -1193,21 +1193,77 @@ class production extends baseController {
     }   
 
     /**
-     * 생산제품등록 페이지를 생성한다.
-     * 11/11/20 kange add  
+     * 생산제품 리스트 페이지를 생성한다.
+     * 11/25/20 KANGE ADD.2
      */
 
     public function production_goods_list(){
                
         $page_name = 'production_goods';
-            
-        $this->page_data['use_top'] = true;        
+
+        $this->page_data['food_types'] = $this->getConfig()['food_types'];
+
+        $query_where = " AND del_flag='N' AND company_idx = '". COMPANY_CODE ."' ";
+
+        $limit = " LIMIT ".(($this->page_data['page']-1)*$this->page_data['list_rows']).", ".$this->page_data['list_rows'];
+
+        if( $this->page_data['sch_keyword'] ) {
+
+            switch($this->page_data['searchType']){
+                case 'All' : {
+                    $query_where .= " AND ( 
+                                    ( product_name LIKE '%". $this->page_data['sch_keyword'] ."%' )                                      
+                                    OR ( product_registration_no LIKE '%". $this->page_data['sch_keyword'] ."%' )
+                                    OR ( item_report_no LIKE '%". $this->page_data['sch_keyword'] ."%' )
+                            ) ";
+                    break;
+                }
+                case 'item' : {
+                    $query_where .= " AND (product_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'productName' : {
+                    $query_where .= " AND (product_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'productRegNo' : {
+                    $query_where .= " AND (product_registration_no LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'itemReportNo' : {
+                    $query_where .= " AND (item_report_no LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+
+            }
+        }
+
+        if($this->page_data['sch_s_date']) {
+            $query_where .= " AND ( reg_date >= '".$this->page_data['sch_s_date']." 00:00:00' ) ";
+        }
+
+        if($this->page_data['sch_e_date']) {
+            $query_where .= " AND ( reg_date <= '".$this->page_data['sch_e_date']." 23:59:59' ) ";
+        }
+
+        # 리스트 정보요청
+        $list_result = $this->model_product->getProductionGoods([
+            'query_where' => $query_where
+        ]);
+
+        $this->paging->total_rs = $list_result['total_rs'];
+
+        $this->page_data['paging'] = $this->paging;
+
+        $this->page_data['use_top'] = true;
         $this->page_data['use_left'] = true;
-        $this->page_data['use_footer'] = true;        
+        $this->page_data['use_footer'] = true;
+        //$this->page_data['page_name'] = $this->page_name;
         $this->page_data['page_name'] = $page_name;
+
+
         $this->page_data['contents_path'] = '/production/'. $page_name .'_list.php';
         $this->page_data['list'] = $list_result['rows'];
-        
         $this->view( $this->page_data );
 
     }
