@@ -49,7 +49,7 @@
                         "code": "SI012"
                     },
                     {
-                        "title": "생산정보관리(삭제예정)",
+                        "title": "주문처리",
                         "link": "\/product\/product_list?top_code=SI009&left_code=SF054",
                         "code": "SI009"
                     },                    
@@ -151,7 +151,7 @@
                         },                        
                         {
                             "title": "납품기업정보등록",
-                            "link": "\/company\/vendor_list?top_code=SI003&left_code=SF390",
+                            "link": "\/client\/client_list?top_code=SI003&left_code=SF390",
                             "code": "SF390"
                         },
                         {
@@ -214,6 +214,14 @@
                         }
                     ],
                     "SI009": [
+                        {
+                            "title": "B2B 주문처리",
+                            "code": "SF910"
+                        },
+                        {
+                            "title": "B2C 주문처리",
+                            "code": "SF920"
+                        }
                     ],
                 
                     "SI006": [

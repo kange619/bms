@@ -26,32 +26,43 @@
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label">등록일</label>
-                                        <div class="col-sm-9">
-                                            <div class="input-daterange input-group" id="date-range">
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
-                                                <span class="input-group-addon bg-primary b-0 text-white">~</span>
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
-                                            </div>
+
+                                        <div class="input-daterange input-group" id="date-range">
+                                            <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
+                                            <span class="input-group-addon bg-primary b-0 text-white">~</span>
+                                            <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
                                         </div>
+
                                     </div>
                                 </div>
+
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">검색</label>
-                                        <div class="col-sm-9">
+                                        <div class="col-sm-2">
+                                            <select class="form-control" name="searchType" id="searchType" >
+                                                <option value="All" <?=($searchType == 'All' ? 'selected="selected"' : '' )?> >전체</option>
+                                                <option value="companyName" <?=($searchType == 'companyName' ? 'selected="selected"' : '' )?> >회사명</option>
+                                                <option value="registrationNo" <?=($searchType == 'registrationNo' ? 'selected="selected"' : '' )?> >사업자등록번호</option>
+                                                <option value="managerName" <?=($searchType == 'managerName' ? 'selected="selected"' : '' )?> >담당자명</option>
+                                                <option value="phoneNo" <?=($searchType == 'phoneNo' ? 'selected="selected"' : '' )?> >휴대폰번호</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-7">
                                             <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="회사명, 사업자등록번호, 담당자명, 휴대폰번호">
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-sm-offset-5 col-sm-7 m-t-15">
                                             <button type="button" class="btn btn-primary waves-effect waves-light" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>'">기본설정</button>
-                                            <!-- <button type="reset" class="btn btn-primary waves-effect waves-light">기본설정</button> -->
-                                            <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
+                                            <button type="submit" class="btn btn-inverse waves-effect m-l-5" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>&sch_keyword=<?=$sch_keyword?>'">검색</button>
                                         </div>
                                     </div>
                                 </div>
+
                             </form>
                         </div>
                     </div>

@@ -65,16 +65,48 @@ class client extends baseController {
         }
 
 
-        if( $this->page_data['sch_keyword'] ) {
-            $query_where .= " AND ( 
+//        if( $this->page_data['sch_keyword'] ) {
+//            $query_where .= " AND (
+//                                    ( company_name LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                                    OR ( registration_no LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                                    OR ( ceo_name LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                                    OR ( manager_name LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                                    OR ( manager_phone_no LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                                    OR ( manager_email LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                            ) ";
+//        }
+
+        if($this->page_data['sch_keyword']){
+
+            switch($this->page_data['searchType']){
+                case 'All' : {
+                    $query_where .= " AND ( 
                                     ( company_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( registration_no LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( ceo_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( manager_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                                     OR ( manager_phone_no LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( manager_email LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
                             ) ";
+                    break;
+                }
+                case 'companyName' : {
+                    $query_where .= " AND (company_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'registrationNo' : {
+                    $query_where .= " AND (registration_no LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'managerName' : {
+                    $query_where .= " AND (manager_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'phoneNo' : {
+                    $query_where .= " AND (manager_phone_no LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+            }
         }
+
 
         if($this->page_data['sch_s_date']) {
             $query_where .= " AND ( reg_date >= '".$this->page_data['sch_s_date']." 00:00:00' ) ";
