@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    제품정보관리 > 제품 정보 <?=$page_work?>
+                    생산제품등록
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
                 </h1>                
             </section>
@@ -34,45 +34,55 @@
                             <table class="table table-bordered text-left">
                                 <tbody>
                                     
+<!--                                    <tr>-->
+<!--										<th class="info">식품유형</th>-->
+<!--                                        <td class="text-left" colspan="3">-->
+<!--                                            <select class="form-control" name="food_code" style="width:30%" >-->
+<!--                                                --><?php
+//                                                    foreach( $food_types AS $key=>$val ) {
+//                                                ?>
+<!--                                                <option value="--><?//=$key?><!--" --><?//=($key == $food_code) ? 'selected="selected"' : '' ?><!-- >--><?//=$val?><!--</option>-->
+<!--                                                --><?php
+//                                                    }
+//                                                ?>
+<!--                                            </select>-->
+<!--										</td>-->
+<!--									</tr>-->
+
                                     <tr>
-										<th class="info">식품유형</th>
-                                        <td class="text-left" colspan="3">
-                                            <select class="form-control" name="food_code" style="width:30%" >
-                                                <?php
-                                                    foreach( $food_types AS $key=>$val ) {
-                                                ?>
-                                                <option value="<?=$key?>" <?=($key == $food_code) ? 'selected="selected"' : '' ?> ><?=$val?></option>
-                                                <?php
-                                                    }
-                                                ?>
-                                            </select>
-										</td>
-									</tr>
+                                        <th class="info middle-align">품목명</th>
+                                        <td colspan="3">
+                                            <input class="form-control" type="text" name="product_name" id="product_name"  placeholder="제품명을 입력해주세요." value="<?=$product_name?>" data-valid="blank" />
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <th class="info middle-align">제품명</th>
                                         <td colspan="3">
                                             <input class="form-control" type="text" name="product_name" id="product_name"  placeholder="제품명을 입력해주세요." value="<?=$product_name?>" data-valid="blank" />  
                                         </td>
                                     </tr>
-                                    <!-- <tr>
+                                    <tr>
                                         <th class="info middle-align">제품등록번호</th>
                                         <td colspan="3">
-                                            <input class="form-control" type="text" name="product_registration_no" id="product_registration_no"  placeholder="제품등록번호를 입력해주세요."  value="<?=$product_registration_no?>" data-valid="blank" />  
+                                            <input class="form-control" type="text" name="product_registration_no" id="product_registration_no"  placeholder="제품등록번호를 입력해주세요."  value="<?=$product_registration_no?>" data-valid="blank" />
                                         </td>
-                                    </tr> -->
+                                    </tr>
                                     <tr>
-                                        <th class="info middle-align">품목보고번호</th>
+                                        <th class="info middle-align">품목신고번호</th>
                                         <td colspan="3">
                                             <input class="form-control" type="text" name="item_report_no" id="item_report_no" placeholder="201404640-472" value="<?=$item_report_no?>" data-valid="blank" />  
                                         </td>
                                     </tr>
+
+                                    <!--
                                     <tr>
                                         <th class="info middle-align">유통기한(일)</th>
                                         <td colspan="3">
                                             <input class="form-control" type="text" name="product_expiration_date" id="product_expiration_date" placeholder="180" value="<?=$product_expiration_date?>" data-valid="num" />  
                                         </td>
                                     </tr>
-                                         
+
+
                                     <tr>
                                         <th class="info middle-align">보관방법</th>
                                         <td colspan="3">
@@ -80,10 +90,20 @@
                                         </td>
                                     </tr>
 
+
                                     <tr>
                                         <th class="info middle-align">포장방법</th>
                                         <td colspan="3">
                                             <input class="form-control" type="text" name="product_packing_method" id="product_packing_method"  placeholder="포장방법을 입력해주세요."  value="<?=$product_packing_method?>"  />  
+                                        </td>
+                                    </tr>
+                                    -->
+
+                                    <tr>
+                                        <th class="info middle-align">조리원지정</th>
+                                        <td colspan="3">
+                                            <input class="form-control" type="text" name="production_member" id="production_member" style="width:30%"/>
+                                            <button type="button" class="pull-mid btn btn-sm btn-purple waves-effect w-md m-l-5" style="top:5px" onclick="changePartner()" >검색하기</button>
                                         </td>
                                     </tr>
 
@@ -187,6 +207,44 @@
                 </div>
             </div>
             <!-- // 제품 포장단위 -->
+
+            <!-- 조리원 검색 레이어  -->
+            <div id="company_member_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog" style="width: 500px; border: 1px solid;">
+                    <div class="modal-content p-0 b-0">
+                        <div class="panel panel-color panel-inverse m-0">
+                            <div class="panel-heading">
+                                <button type="button" class="close m-t-5" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h3 class="panel-title">조리원 지정</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row img-contents">
+                                    <div class="col-lg-12 table-responsive m-b-0">
+
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr class="active">
+                                                <th class="info" style="width: 40%;">성명</th>
+                                                <th class="info" style="width: 40%;">작업품목</th>
+                                                <th class="info" style="width: 20%;">지정</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr style="cursor: pointer;" >
+                                                <td colspan="3" class="text-center">
+                                                    회원 정보가 없습니다.
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+            <!-- 조리원 검색 레이어  -->
 
             
             </form>
@@ -302,6 +360,13 @@
             $('#form_write').submit();
         }
 
+    }
+
+    /**
+     * 조리원 검색 레이어 open
+     */
+    function changePartner(){
+        $('#company_member_modal').modal();
     }
 
 </script>

@@ -63,11 +63,42 @@ class product extends baseController {
             $query_sort = ' ORDER BY product_idx DESC ';
         }
 
+//        if( $this->page_data['sch_keyword'] ) {
+//            $query_where .= " AND (
+//                                    ( product_name LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                                    OR ( item_report_no LIKE '%". $this->page_data['sch_keyword'] ."%' )
+//                            ) ";
+//        }
+
         if( $this->page_data['sch_keyword'] ) {
-            $query_where .= " AND ( 
-                                    ( product_name LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
-                                    OR ( item_report_no LIKE '%". $this->page_data['sch_keyword'] ."%' ) 
+
+            switch($this->page_data['searchType']){
+                case 'All' : {
+                    $query_where .= " AND ( 
+                                    ( product_name LIKE '%". $this->page_data['sch_keyword'] ."%' )                                      
+                                    OR ( product_registration_no LIKE '%". $this->page_data['sch_keyword'] ."%' )
+                                    OR ( item_report_no LIKE '%". $this->page_data['sch_keyword'] ."%' )
                             ) ";
+                    break;
+                }
+                case 'item' : {
+                    $query_where .= " AND (product_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'productName' : {
+                    $query_where .= " AND (product_name LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'productRegNo' : {
+                    $query_where .= " AND (product_registration_no LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+                case 'itemReportNo' : {
+                    $query_where .= " AND (item_report_no LIKE '%". $this->page_data['sch_keyword'] ."%') ";
+                    break;
+                }
+
+            }
         }
 
         if($this->page_data['sch_s_date']) {

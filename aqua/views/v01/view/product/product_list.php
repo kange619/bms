@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    제품정보관리
+                    생산제품등록
                     <button type="button" class="pull-right btn btn-primary waves-effect w-md" onclick="location.href='./<?=$page_name?>_write?page=<?=$page?><?=$params?>'">+등록</button>                    
                 </h1>                   
             </section>
@@ -23,24 +23,65 @@
                                 <input type="hidden" name="sch_order_field" id="sch_order_field" value="<?=$sch_order_field?>">
                                 <input type="hidden" name="sch_order_status" id="sch_order_status" value="<?=$sch_order_status?>">
 
+<!--                                <div class="col-sm-4">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label class="col-sm-3 control-label">등록일</label>-->
+<!--                                        <div class="col-sm-9">-->
+<!--                                            <div class="input-daterange input-group" id="date-range">-->
+<!--                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="--><?//=$sch_s_date;?><!--">-->
+<!--                                                <span class="input-group-addon bg-primary b-0 text-white">~</span>-->
+<!--                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="--><?//=$sch_e_date;?><!--">-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!---->
+<!--                                <div class="col-sm-6">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label class="col-sm-2 control-label">검색</label>-->
+<!--                                        <div class="col-sm-9">-->
+<!--                                            <input type="text" class="form-control" name="sch_keyword" value="--><?//=$sch_keyword;?><!--" placeholder="제품명, 품목보고번호">-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!---->
+<!--                                <div class="col-md-12">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="col-sm-offset-5 col-sm-7 m-t-15">-->
+<!--                                            <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label">등록일</label>
-                                        <div class="col-sm-9">
-                                            <div class="input-daterange input-group" id="date-range">
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
-                                                <span class="input-group-addon bg-primary b-0 text-white">~</span>
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
-                                            </div>
+
+                                        <div class="input-daterange input-group" id="date-range">
+                                            <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
+                                            <span class="input-group-addon bg-primary b-0 text-white">~</span>
+                                            <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
                                         </div>
+
                                     </div>
                                 </div>
 
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">검색</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="제품명, 품목보고번호">
+                                        <div class="col-sm-2">
+
+                                            <select class="form-control" name="searchType" id="searchType" >
+                                                <option value="All" <?=($searchType == 'All' ? 'selected="selected"' : '' )?> >전체</option>
+                                                <option value="item" <?=($searchType == 'item' ? 'selected="selected"' : '' )?> >품목</option>
+                                                <option value="productName" <?=($searchType == 'productName' ? 'selected="selected"' : '' )?> >제품명</option>
+                                                <option value="productRegNo" <?=($searchType == 'productRegNo' ? 'selected="selected"' : '' )?> >제품등록번호</option>
+                                                <option value="itemReportNo" <?=($searchType == 'itemReportNo' ? 'selected="selected"' : '' )?> >품목신고번호</option>
+                                            </select>
+
+                                        </div>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="품목, 제품명, 제품등록번호, 품목신고번호">
                                         </div>
                                     </div>
                                 </div>
@@ -49,11 +90,11 @@
                                     <div class="form-group">
                                         <div class="col-sm-offset-5 col-sm-7 m-t-15">
                                             <button type="button" class="btn btn-primary waves-effect waves-light" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>'">기본설정</button>
-                                            <!-- <button type="reset" class="btn btn-primary waves-effect waves-light">기본설정</button> -->
                                             <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
                                         </div>
                                     </div>
                                 </div>
+
                             </form>
                         </div>
                     </div>
@@ -72,13 +113,16 @@
                             <table class="table table-bordered text-center dataTable" id="excelTable">
                                 <thead>
                                     <tr class="active">
-                                        <th class="info" scope="col" style="width: 3%;">NO</th>                                                                              
-                                        <th class="info sorting" data-order="item_report_no" scope="col" >품목보고번호</th>                                        
-                                        <th class="info sorting" data-order="product_name" scope="col" >제품명</th>                                        
-                                        <th class="info sorting" data-order="food_code" scope="col" >식품유형</th>                                                          
-                                        <th class="info sorting" data-order="product_expiration_date" scope="col" >유통기한</th>                                                          
-                                        <th class="info sorting" data-order="haccp_certify" scope="col" >HACCP 인증</th>                                                          
+                                        <th class="info" scope="col" style="width: 3%;">NO</th>
                                         <th class="info sorting" data-order="reg_date" scope="col" >등록일</th>
+                                        <th class="info sorting" data-order="product_name" scope="col" >품목</th>
+                                        <th class="info sorting" data-order="product_name" scope="col" >제품명</th>
+                                        <th class="info sorting" data-order="item_report_no" scope="col" >제품등록번호</th>
+                                        <th class="info sorting" data-order="item_report_no" scope="col" >품목신고번호</th>
+<!--                                        <th class="info sorting" data-order="food_code" scope="col" >식품유형</th>                                                          -->
+<!--                                        <th class="info sorting" data-order="product_expiration_date" scope="col" >유통기한</th>                                                          -->
+<!--                                        <th class="info sorting" data-order="haccp_certify" scope="col" >HACCP 인증</th>                                                          -->
+
                                         <th class="info" style="width:200px">변경</th>                                                          
                                     </tr>                                
                                 </thead>
@@ -90,12 +134,15 @@
                                     ?>
                                     <tr>
                                         <td><?=( ( $paging->total_rs - ( $page-1 ) * $list_rows - $key ) );?></td>
-                                        <td><?=$value['item_report_no']?></td>
-                                        <td><?=$value['product_name']?></td>
-                                        <td><?=$food_types[ $value['food_code'] ]?></td>
-                                        <td><?=$value['product_expiration_date']?></td>
-                                        <td><?=($value['haccp_certify'] == 'Y' ) ? '인증' : '미인증' ?></td>
                                         <td><?=dateType($value['reg_date'], 8)?></td>
+                                        <td><?=$value['product_name']?></td>
+                                        <td><?=$value['product_name']?></td>
+                                        <td><?=$value['product_registration_no']?></td>
+                                        <td><?=$value['item_report_no']?></td>
+<!--                                        <td>--><?//=$food_types[ $value['food_code'] ]?><!--</td>-->
+<!--                                        <td>--><?//=$value['product_expiration_date']?><!--</td>-->
+<!--                                        <td>--><?//=($value['haccp_certify'] == 'Y' ) ? '인증' : '미인증' ?><!--</td>-->
+
                                         <td>
                                             <a href="./<?=$page_name?>_write?mode=edit&page=<?=$page?><?=$params?>&product_idx=<?=$value['product_idx'];?>">
                                                 <button type="button" class="btn btn-sm btn-purple waves-effect waves-light" >수정</button>

@@ -98,7 +98,7 @@
                                         foreach($list AS $key=>$value) {
                                     ?>
                                     <tr>
-                                        <td><?=$value['entry'];?></td>
+                                        <td><?=( ( $paging->total_rs - ( $page-1 ) * $list_rows - $key ) );?></td>
                                         <td><?=$value['material_idx'];?></td>
                                         <!-- <td><?=( $value['material_kind'] == 'raw' ) ? '원자재' : '부자재' ;?></td> -->
                                         <td><?=$value['material_name'];?></td>

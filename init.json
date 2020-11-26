@@ -128,13 +128,13 @@
                         },
                         {
                             "title": "생산제품등록",
-                            "link": "\/production\/production_goods_list?top_code=SI003&left_code=SF360",
+                            "link": "\/product\/product_list?top_code=SI003&left_code=SF360",
                             "code": "SF360"
                         },
                         {
                             "title": "원료배합비율",
-                            "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF361",
-                            "code": "SF361"
+                            "link": "\/product\/mixing_ratios?top_code=SI003&left_code=SF362",
+                            "code": "SF362"
                         },
                         {
                             "title": "공정순서관리",
