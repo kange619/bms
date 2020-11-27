@@ -20,16 +20,47 @@
                                 <input type="hidden" name="top_code" value="<?=$top_code?>">
                                 <input type="hidden" name="left_code" value="<?=$left_code?>">
 
+<!--                                <div class="col-sm-4">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label class="col-sm-3 control-label">작성일</label>-->
+<!--                                        <div class="col-sm-9">-->
+<!--                                            <div class="input-daterange input-group" id="date-range">-->
+<!--                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="--><?//=$sch_s_date;?><!--">-->
+<!--                                                <span class="input-group-addon bg-primary b-0 text-white">~</span>-->
+<!--                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="--><?//=$sch_e_date;?><!--">-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                <div class="col-md-12">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <div class="col-sm-offset-5 col-sm-7 m-t-15">-->
+<!--                                            <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label">작성일</label>
-                                        <div class="col-sm-9">
-                                            <div class="input-daterange input-group" id="date-range">
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
-                                                <span class="input-group-addon bg-primary b-0 text-white">~</span>
-                                                <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
-                                            </div>
+
+                                        <div class="input-daterange input-group" id="date-range">
+                                            <input type="text" class="form-control datepicker" readonly="readonly" name="sch_s_date" value="<?=$sch_s_date;?>">
+                                            <span class="input-group-addon bg-primary b-0 text-white">~</span>
+                                            <input type="text" class="form-control datepicker" readonly="readonly" name="sch_e_date" value="<?=$sch_e_date;?>">
                                         </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">검색</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="sch_keyword" value="<?=$sch_keyword;?>" placeholder="제목 ">
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -37,11 +68,11 @@
                                     <div class="form-group">
                                         <div class="col-sm-offset-5 col-sm-7 m-t-15">
                                             <button type="button" class="btn btn-primary waves-effect waves-light" onclick="location.href='./<?=$page_name?>_list?top_code=<?=$top_code?>&left_code=<?=$left_code?>'">기본설정</button>
-                                            <!-- <button type="reset" class="btn btn-primary waves-effect waves-light">기본설정</button> -->
                                             <button type="submit" class="btn btn-inverse waves-effect m-l-5">검색</button>
                                         </div>
                                     </div>
                                 </div>
+
                             </form>
                         </div>
                     </div>
@@ -61,9 +92,10 @@
                                 <thead>
                                     <tr class="active">
                                         <th class="info" style="width: 3%;">NO</th>
-                                        <th class="info" >보고서 작성일</th>                                        
-                                        <th class="info" >기간</th>                                        
-                                        <th class="info" >상세보기</th>                                                          
+                                        <th class="info" >제목</th>
+                                        <th class="info" >정보보고서 작성일</th>
+                                        <th class="info" >기간</th>
+                                        <th class="info" >상세보기</th>
                                     </tr>                                
                                 </thead>
                                 <tbody>
@@ -74,6 +106,7 @@
                                     ?>
                                     <tr>
                                         <td><?=( ( $paging->total_rs - ( $page-1 ) * $list_rows - $key ) );?></td>
+                                        <td></td>
                                         <td><?=dateType($value['write_date'], 8)?></td>
                                         <td><?=dateType( $value['start_date'], 8);?>~<?=dateType( $value['end_date'], 8);?></td>
                                         <td>
@@ -81,12 +114,13 @@
                                                 <span class="buildField_btnSave" >상세보기</span>
                                             </a>
                                         </td>
+
                                     </tr>
                                     <?php   
                                         }
                                     } else {
                                     ?>                                
-                                        <tr><td colspan="4">데이터가 없습니다</td></tr>
+                                        <tr><td colspan="5">데이터가 없습니다</td></tr>
                                     <?php
                                     }
                                     ?>
