@@ -59,20 +59,15 @@
                         "code": "SI007"
                     },
                     {
-                        "title": "HACCP모니터링(품질관리)",
+                        "title": "HACCP모니터링",
                         "link": "\/haccp\/monitor?top_code=SI010&left_code=SF067",
                         "code": "SI010"
                     },
                     
                     {
-                        "title": "자료관리(전자문서)",
+                        "title": "자료관리",
                         "link": "\/doc\/doc_state?top_code=SI011&left_code=ccp",
                         "code": "SI011"
-                    },
-                    {
-                        "title": "HACCP 문서관리",
-                        "link": "\/standard\/sanitation_standard_list?top_code=SI012&left_code=SF072",
-                        "code": "SI012"
                     }
                 ],
                 "left_menu": {
@@ -201,9 +196,7 @@
                     ],
                     "SI012": [                        
                         {
-                            "title": "HACCP 개정이력 관리",
-                            "link": "\/standard\/haccp_update_record_list?top_code=SI012&left_code=SF074",
-                            "code": "SF074"
+
                         }
                     ],
                     "SI009": [
@@ -247,29 +240,46 @@
                     ],
                     "SI010": [
                         {
-                            "title": "모니터링",
+                            "title": "HACCP 이행점검표",
+                            "link": "\/standard\/haccp_update_record_list?top_code=SI010&left_code=SF074",
+                            "code": "SF074"
+                        },
+                        {
+                            "title": "CCP 모니터링",
                             "link": "\/haccp\/monitor?top_code=SI010&left_code=SF067",
                             "code": "SF067"
                         },
                         {
-                            "title": "모니터링 한계치",
-                            "link": "\/haccp\/monitor_limit?top_code=SI010&left_code=SF068",
-                            "code": "SF068"
-                        },
-                        {
-                            "title": "모니터링 이탈관리",
+                            "title": "CCP 이탈관리",
                             "link": "\/haccp\/monitor_warning_list?top_code=SI010&left_code=SF069",
                             "code": "SF069"
                         },
                         {
-                            "title": "모니터링 정보",
+                            "title": "CCP 모니터링 정보",
                             "link": "\/haccp\/monitoring_log?top_code=SI010&left_code=SF070",
+                            "code": "SF070"
+                        },
+                        {
+                            "title": "선행기준이탈관리",
+                            "code": "SF070"
+                        },
+                        {
+                            "title": "제품이력관리",
+                            "code": "SF070"
+                        },
+                        {
+                            "title": "시험검사관리",
                             "code": "SF070"
                         },
                         {
                             "title": "KPI관리",
                             "link": "\/haccp\/kpi_list?top_code=SI010&left_code=SF071",
                             "code": "SF071"
+                        },
+                        {
+                            "title": "모니터링 한계치",
+                            "link": "\/haccp\/monitor_limit?top_code=SI010&left_code=SF068",
+                            "code": "SF068"
                         }
                     ],
                     "SI007": [
@@ -277,16 +287,7 @@
                             "title": "제품재고현황",
                             "code": "SF710"
                         },
-                        {
-                            "title": "출하관리",
-                            "code": "SF720"
-                        },
 
-                        {
-                            "title": "B2B 고객정보",
-                            "link": "\/client\/client_list?top_code=SI007&left_code=SF046",
-                            "code": "SF046"
-                        },
                         {
                             "title": "수주관리",
                             "link": "\/client\/receive_an_order_list?top_code=SI007&left_code=SF047",

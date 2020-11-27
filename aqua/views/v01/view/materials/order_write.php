@@ -6,7 +6,7 @@
 
             <section class="content-header">                    
                 <h1>
-                    원/부자재 주문관리  > 주문 <?=$page_work?>
+                    원/부자재 주문관리  > 주문<?=$page_work?>
                     <button type="button" class="pull-right btn btn-inverse waves-effect w-md m-l-5" onclick="location.href='./<?=$page_name?>_list?page=<?=$page?><?=$params?>'">목록</button> 
                 </h1>                
             </section>
@@ -18,7 +18,104 @@
                 <input type="hidden" name="top_code" value="<?=$top_code?>" />
                 <input type="hidden" name="left_code" value="<?=$left_code?>" />
                 <input type="hidden" name="ref_params" value="<?=$params?>" />
-            
+
+
+
+                <!-- 주문 정보  -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-box">
+
+                            <div class="table-responsive m-b-0">
+                                <h5 class="header-title m-b-10">
+                                    <b>주문 정보</b>
+                                </h5>
+                                <hr class="m-t-0">
+
+                                <table class="table table-bordered text-left">
+                                    <tbody>
+
+<!--                                    <tr>-->
+<!---->
+<!--                                        <th class="info middle-align">업체선택</th>-->
+<!--                                        <td class="text-left" colspan="1" >-->
+<!--                                            <select class="form-control" name="" style="width:30%">-->
+<!--                                                <option value="raw">원자재</option>-->
+<!--                                                <option value="sub">부자재</option>-->
+<!--                                            </select>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+
+
+                                    <tr>
+                                        <th class="info middle-align">업체선택</th>
+                                        <td colspan="3">
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <div class="input-daterange input-group">
+                                                        <select class="form-control" name="selectedCompany" id="selectedCompany" >
+                                                            <option value="All" <?=($searchType == 'All' ? 'selected="selected"' : '' )?> >전체</option>
+                                                            <option value="option1" <?=($searchType == 'option1' ? 'selected="selected"' : '' )?> >option1</option>
+                                                            <option value="option2" <?=($searchType == 'option2' ? 'selected="selected"' : '' )?> >option2</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <th class="info middle-align">주문일</th>
+                                        <td colspan="3">
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <div class="input-daterange input-group">
+                                                        <input type="text" class="form-control datepicker " name="order_date" id="order_date" value="<?=date('Y-m-d')?>" data-valid="blank" readonly="readonly" style="width:100px !important">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th class="info middle-align">주문일</th>
+                                        <td colspan="3">
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <div class="input-daterange input-group">
+                                                        <input type="text" class="form-control datepicker " name="order_date" id="order_date" value=""  readonly="readonly" style="width:100px !important" >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <th class="info middle-align">입고예정일</th>
+                                        <td colspan="3">
+                                            <div class="form-group">
+                                                <div class="col-sm-4">
+                                                    <div class="input-daterange input-group">
+                                                        <input type="text" class="form-control datepicker " name="receipt_date" id="receipt_date" value=""  readonly="readonly" style="width:100px !important" >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <!-- // 주문 정보 -->
 
             <!-- 재료현황 -->
             <div class="row">
@@ -93,58 +190,7 @@
             </div>
             <!-- //재료현황 -->
 
-            
-            <!-- 주문 정보  -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card-box">
-                    
-                        <div class="table-responsive m-b-0">
-                            <h5 class="header-title m-b-10">
-                                <b>주문 정보</b>
-                            </h5>
-                            <hr class="m-t-0">
-                            
-                            <table class="table table-bordered text-left">
-                                <tbody>
-                                    
-                                    <tr>
-                                        <th class="info middle-align">주문일</th>
-                                        <td colspan="3">
-                                            <div class="form-group">                                            
-                                                <div class="col-sm-4">
-                                                    <div class="input-daterange input-group">
-                                                        <input type="text" class="form-control datepicker " name="order_date" id="order_date" value="<?=date('Y-m-d')?>" data-valid="blank" readonly="readonly" style="width:100px !important">  
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
 
-                                    <tr>
-                                        <th class="info middle-align">입고예정일</th>
-                                        <td colspan="3">
-                                        <div class="form-group">                                            
-                                            <div class="col-sm-4">
-                                                <div class="input-daterange input-group">
-                                                    <input type="text" class="form-control datepicker " name="receipt_date" id="receipt_date" value=""  readonly="readonly" style="width:100px !important" >  
-                                                </div>
-                                            </div>
-                                        </div>
-                                        </td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                            
-
-                        </div> 
-                    
-                    </div>
-
-                </div>
-            </div>
-            <!-- // 주문 정보 -->
             
             </form>
 
