@@ -39,14 +39,9 @@
                         "code": "SI003"
                     },
                     {
-                        "title": "구매관리(원\/부자재관리)",
+                        "title": "구매관리",
                         "link": "\/materials\/company_list?top_code=SI005&left_code=SF037",
                         "code": "SI005"
-                    },
-                    {
-                        "title": "HACCP 문서관리",
-                        "link": "\/standard\/sanitation_standard_list?top_code=SI012&left_code=SF072",
-                        "code": "SI012"
                     },
                     {
                         "title": "주문처리",
@@ -73,6 +68,11 @@
                         "title": "자료관리(전자문서)",
                         "link": "\/doc\/doc_state?top_code=SI011&left_code=ccp",
                         "code": "SI011"
+                    },
+                    {
+                        "title": "HACCP 문서관리",
+                        "link": "\/standard\/sanitation_standard_list?top_code=SI012&left_code=SF072",
+                        "code": "SI012"
                     }
                 ],
                 "left_menu": {
@@ -165,45 +165,38 @@
                         {
                             "title": "원료재고관리",                            
                             "code": "SF510"
-                        },                       
+                        },
                         {
-                            "title": "부자재재고관리",                            
+                            "title": "부자재재고관리",
+                            "link": "\/materials\/stock_list?top_code=SI005&left_code=SF520",
                             "code": "SF520"
-                        },                       
+                        },
+
                         {
-                            "title": "구매관리",                            
-                            "link": "\/materials\/purch_materials_list?top_code=SI005&left_code=SF530",
+                            "title": "구매관리",
+                            "link": "\/materials\/order_list?top_code=SI005&left_code=SF530",
                             "code": "SF530"
-                        },                       
+                        },
                         {
-                            "title": "입고관리",                            
+                            "title": "입고관리",
+                            "link": "\/materials\/warehouse_list?top_code=SI005&left_code=SF540",
                             "code": "SF540"
-                        },                       
+                        },
                         {
-                            "title": "재고이력관리",                            
+                            "title": "dummy",
+                            "link": "\/materials\/purch_materials_list?top_code=SI005&left_code=SF550",
                             "code": "SF550"
                         },
                         {
+                            "title": "재고이력관리",                            
+                            "code": "SF560"
+                        },
+                        {
                             "title": "->(가공)원료재고이력",                            
-                            "code": "SF551"
+                            "code": "SF561"
                         },  {
                             "title": "->부자재재고이력",                            
-                            "code": "SF552"
-                        },                         
-                        {
-                            "title": "원\/부자재 주문관리",
-                            "link": "\/materials\/order_list?top_code=SI005&left_code=SF038",
-                            "code": "SF038"
-                        },
-                        {
-                            "title": "원\/부자재 입고관리",
-                            "link": "\/materials\/warehouse_list?top_code=SI005&left_code=SF039",
-                            "code": "SF039"
-                        },
-                        {
-                            "title": "원\/부자재 재고관리",
-                            "link": "\/materials\/stock_list?top_code=SI005&left_code=SF040",
-                            "code": "SF040"
+                            "code": "SF562"
                         }
                     ],
                     "SI012": [                        
